@@ -7,6 +7,19 @@
     --danger-color: #dc3545;
     --light-color: #f8f9fa;
     --dark-color: #343a40;
+    --white-color: #fff;
+}
+
+.white-bg {
+    background-color: var(--white-color);
+}
+
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+.required{
+    color: #dc3545;
 }
 
 .cursor {
@@ -50,6 +63,20 @@ nav a:hover {
 
 .main-content {
     margin-left: 250px;
-    padding-left: 10px;
     transition: margin 0.3s ease;
+    position: relative;
 }
+
+
+footer {
+    position: fixed;
+    bottom: 0;
+    padding: 0;
+    margin: 0;
+}
+
+footer p {
+    padding: 0;
+    margin: 0;
+}
+

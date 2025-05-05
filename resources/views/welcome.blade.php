@@ -1,9 +1,12 @@
-@extends('layouts.app')
-@section('title', 'LEIAAI LMS')
-@section('header_title', 'Welcome to LEIAAI LMS')
-@section('header_description', 'Your Learning Management System')
-@section('content')
+@php
+    $title = 'Dashboard'
+@endphp
 
+@extends('layouts.app')
+@section('header_title', 'Dashboard')
+{{-- @section('header_description', 'Your Learning Management System') --}}
+@section('content')
+<h1>All content goes here!</h1>
 @endsection
 
 

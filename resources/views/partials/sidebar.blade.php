@@ -5,8 +5,8 @@
     </div>
 
     <nav class="nav flex-column">
-        <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-house me-2"></i> Dashboard</a>
-        <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-user me-2"></i> Users</a>
+        <a href="{{ url('/') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-house me-2"></i> Dashboard</a>
+        <a href="{{ route('user.Home') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-user me-2"></i> Users</a>
         <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-award me-2"></i> Courses</a>
         <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-book me-2"></i> Contents</a>
         <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-bookmark me-2"></i> Assessments</a>
