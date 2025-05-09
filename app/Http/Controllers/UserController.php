@@ -11,15 +11,23 @@ class UserController extends Controller
     /**
      * Display the users DataTable view.
      */
-    public function index(Request $request)
+    public function Index(Request $request)
     {
-        // If AJAX request, return JSON data for DataTables
         if ($request->ajax()) {
-            return DataTables::of(User::query())->make(true);
+            $data = User::query();
+
+            return DataTables::of($data)
+                ->addColumn('action', function ($row) {
+                    $viewBtn = '<a href= "#" class="btn btn-sm btn-warning"><i class="fa-solid fa-eye"></i></a>';
+                    $editBtn = '<button  class="btn btn-sm btn-primary" id=" ' . $row->id . ' "><i class="fa-solid fa-pen-to-square"></i></button>';
+                    $deleteBtn = '<button  class="btn btn-sm btn-danger" id=" ' . $row->id . ' "><i class="fa-solid fa-trash"></i></button>';
+                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                })
+                ->rawColumns(['action']) // Important to render HTML
+                ->make(true);
         }
 
-        // Otherwise, return the Blade view
-        return view('pages.users.user'); // ✅ This should be your DataTable Blade view
+        return view('pages.users.user');
     }
 
     /**

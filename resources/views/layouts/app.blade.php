@@ -19,8 +19,10 @@
 
 <body style="background-color: #F4F5F7">
     {{-- Navigations (Navbar) --}}
-    <div class="main-content">
+    <div class="nav_container">
         @include('partials.navbar')
+    </div>
+    <div class="main-content">
 
         <header>
             {{-- header title --}}

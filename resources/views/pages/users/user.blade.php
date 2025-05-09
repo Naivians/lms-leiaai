@@ -16,9 +16,11 @@
                 <th>Suffix</th>
                 <th>Role</th>
                 <th>Email</th>
+                <th>Action</th>
             </tr>
         </thead>
     </table>
+
 @endsection
 
 @section('scripts')
@@ -28,13 +30,16 @@
             processing: true,
             serverSide: true,
             ajax: '{{ route("user.Home") }}',
+            dom: 'Blfrtip',
+            buttons: ['copy', 'csv', 'print', 'colvis'],
             columns: [
-                { data: 'id', name: 'id' },
-                { data: 'fname', name: 'fname' },
-                { data: 'lname', name: 'lname' },
-                { data: 'ext_name', name: 'ext_name' },
-                { data: 'role', name: 'role' },
-                { data: 'email', name: 'email' }
+                { data: 'id' },
+                { data: 'fname' },
+                { data: 'lname' },
+                { data: 'ext_name' },
+                { data: 'role' },
+                { data: 'email' },
+                { data: 'action', orderable: false, searchable: false }
             ]
         });
     });

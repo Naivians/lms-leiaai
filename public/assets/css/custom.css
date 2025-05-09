@@ -50,18 +50,18 @@ nav a:hover {
     height: auto;
 }
 
-.sidebar-collapsed {
+.sidebar-collapsed, .nav_collapse {
     margin-left: -250px;
     opacity: 0;
     transition: all 0.3s ease;
 }
 
-.main-content.expanded {
+.main-content.expanded, .nav_container.expanded {
     margin-left: 0;
 }
 
 
-.main-content {
+.main-content, .nav_container {
     margin-left: 250px;
     transition: margin 0.3s ease;
     position: relative;
