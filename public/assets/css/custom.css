@@ -15,10 +15,10 @@
 }
 
 * {
-    font-family: 'Poppins', sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
-.required{
+.required {
     color: #dc3545;
 }
 
@@ -50,23 +50,24 @@ nav a:hover {
     height: auto;
 }
 
-.sidebar-collapsed, .nav_collapse {
+.sidebar-collapsed,
+.nav_collapse {
     margin-left: -250px;
     opacity: 0;
     transition: all 0.3s ease;
 }
 
-.main-content.expanded, .nav_container.expanded {
+.main-content.expanded,
+.nav_container.expanded {
     margin-left: 0;
 }
 
-
-.main-content, .nav_container {
+.main-content,
+.nav_container {
     margin-left: 250px;
     transition: margin 0.3s ease;
     position: relative;
 }
-
 
 footer {
     position: fixed;
@@ -80,3 +81,51 @@ footer p {
     margin: 0;
 }
 
+.class_grid_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.google-classroom-announce {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(60, 64, 67, 0.1), 0 4px 8px rgba(60, 64, 67, 0.1);
+    transition: box-shadow 0.2s ease, background-color 0.2s ease;
+    width: 100%;
+    font-family: "Roboto", sans-serif;
+}
+
+.google-classroom-announce:hover {
+    box-shadow: 0 2px 6px rgba(60, 64, 67, 0.15),
+        0 6px 12px rgba(60, 64, 67, 0.15);
+    background-color: #f8f9fa;
+}
+
+.announce-icon {
+    color: #5f6368;
+    margin-right: 12px;
+    font-size: 20px;
+}
+
+.announce-text {
+    color: #5f6368;
+    font-size: 16px;
+}
+
+.add-teacher-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}

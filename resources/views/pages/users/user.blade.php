@@ -20,11 +20,10 @@
             </tr>
         </thead>
     </table>
-
 @endsection
 
 @section('scripts')
-<script>
+    <script>
     $(document).ready(function () {
         $('#myTable').DataTable({
             processing: true,

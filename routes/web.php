@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClassController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,5 +20,13 @@ Route::get('/', function () {
 });
 
 // Auth Controllers
+// users
 Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
 Route::get('/add', [UserController::class, 'AddUsers'])->name('user.Store');
+
+// class
+Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
+Route::get('/class/stream', [ClassController::class, 'Stream'])->name('class.stream');
+Route::get('/class/classwork', [ClassController::class, 'Classwork'])->name('class.classwork');
+Route::get('/class/people', [ClassController::class, 'People'])->name('class.people');
+Route::get('/class/grade', [ClassController::class, 'Grade'])->name('class.grade');

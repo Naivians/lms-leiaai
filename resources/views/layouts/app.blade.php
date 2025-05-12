@@ -18,6 +18,13 @@
 </head>
 
 <body style="background-color: #F4F5F7">
+    {{-- modals --}}
+    @include('partials.modal')
+
+    {{-- header --}}
+
+
+
     {{-- Navigations (Navbar) --}}
     <div class="nav_container">
         @include('partials.navbar')
@@ -26,16 +33,36 @@
 
         <header>
             {{-- header title --}}
-            <div class="header_container my-2 mx-3 p-3 white-bg d-flex align-item-center justify-content-between">
-                <h1 class="fs-3 m-0 ">@yield('header_title')</h1>
-                @switch($title)
-                    {{-- add other pages here --}}
-                    @case('User')
-                        <a href="{{ route('user.Store') }}" class="btn btn-primary" style="width: 200px;">Add Users</a>
-                    @break
+            {{-- @if (isset($title) && $title != 'Streams')
 
-                    @default
-                @endswitch
+            @endif --}}
+            <div class="card my-2 mx-3 {{ isset($title) && $title === 'Streams' ? 'd-none' : '' }}">
+                <div class="card-header header_container  white-bg d-flex align-item-center justify-content-between">
+                    <h1 class="fs-3 m-0 ">@yield('header_title')</h1>
+                    @switch($title)
+                        {{-- add other pages here --}}
+                        @case('User')
+                            <div class="card-tools">
+                                <a href="{{ route('user.Store') }}" class="btn btn-primary btn-sm"><i
+                                        class="fa-solid fa-plus me-2"></i> Add
+                                    Users</a>
+                            </div>
+                        @break
+
+                        @case('Classes')
+                            <div class="card-tools">
+                                {{-- {{ route('user.Store') }} --}}
+                                <div class="card-tools">
+                                    <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal"><i class="fa-solid fa-plus me-2"></i> Create Class
+                                    </button>
+                                </div>
+                            </div>
+                        @break
+
+                        @default
+                    @endswitch
+                </div>
             </div>
         </header>
 
@@ -67,6 +94,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous">
+    </script>
+    <!-- Quill CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
+
 
     @yield('scripts')
 </body>

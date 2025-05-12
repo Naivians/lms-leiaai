@@ -13,7 +13,7 @@ class UserController extends Controller
      */
     public function Index(Request $request)
     {
-        if ($request->ajax()) {
+    if ($request->ajax()) {
             $data = User::query();
 
             return DataTables::of($data)

@@ -7,6 +7,8 @@
 
 
     <form action="" id="addForm">
+        @csrf
+
         <div class="form-floating mb-3">
             <input type="text" class="form-control" id="fname" placeholder="First Name" required autocomplete="off">
             <label for="fname">First Name <span class="text-danger">*</span></label>
