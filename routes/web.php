@@ -27,6 +27,6 @@ Route::get('/add', [UserController::class, 'AddUsers'])->name('user.Store');
 // class
 Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
 Route::get('/class/stream', [ClassController::class, 'Stream'])->name('class.stream');
-Route::get('/class/classwork', [ClassController::class, 'Classwork'])->name('class.classwork');
+Route::get('/class/Announcement', [ClassController::class, 'Announcements'])->name('class.announcement');
 Route::get('/class/people', [ClassController::class, 'People'])->name('class.people');
 Route::get('/class/grade', [ClassController::class, 'Grade'])->name('class.grade');

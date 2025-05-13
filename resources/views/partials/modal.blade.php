@@ -51,7 +51,8 @@
      </div>
  @endif
 
- <div class="modal fade" id="announcementForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+ {{-- announcement Add --}}
+ {{-- <div class="modal fade" id="announcementForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
      <div class="modal-dialog modal-lg">
          <div class="modal-content">
              <div class="modal-header">
@@ -59,12 +60,8 @@
                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
              </div>
              <div class="modal-body">
-                 {{-- <div class="form-floating mb-2">
-                            <textarea class="form-control" placeholder="Leave a comment here" id="floatingTextarea" style="height: 100px;"></textarea>
-                            <label for="floatingTextarea">Announce something to your class</label>
-                        </div> --}}
 
-                 <!-- Toolbar -->
+
                  <div id="toolbar" class="w-100">
                      <button class="ql-bold"></button>
                      <button class="ql-italic"></button>
@@ -72,7 +69,6 @@
                      <button class="ql-list" value="bullet"></button>
                      <button class="ql-clean"></button>
                  </div>
-                 <!-- Editor -->
                  <div id="editor" style="height: 400px; width: 100%;" class="mb-2"></div>
                  <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-bullhorn"></i> Announce
                  </button>
@@ -80,4 +76,4 @@
 
          </div>
      </div>
- </div>
+ </div> --}}

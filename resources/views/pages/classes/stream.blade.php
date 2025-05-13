@@ -6,10 +6,10 @@
 
 @section('content')
     <!-- Nav tabs -->
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <ul class="nav nav-tabs" id="classTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="streams" data-bs-toggle="tab" data-bs-target="#tab1" type="button"
-                role="tab" aria-controls="tab1" aria-selected="true">
+            <button class="nav-link" id="streams" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab"
+                aria-controls="tab1" aria-selected="true">
                 Streams
             </button>
         </li>
@@ -35,41 +35,69 @@
     </ul>
 
     <div class="tab-content mt-3">
-        <div class="tab-pane fade show active" id="tab1" role="tabpanel" aria-labelledby="streams">
+        <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="streams">
+            <a href="{{ route('class.announcement') }}" class="text-decoration-none">
+                <div class="announce_form-controller my-3">
+                    <div class="google-classroom-announce announce_btn">
+                        <div class="announce-text w-100">
+                            <div>
+                                <div class="d-flex align-items-center">
+                                    <div class="announcement_header">
+                                        <div class="announcement_img_container">
+                                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class=" mx-2 my-0">Announce something to your class</p>
+                                    </div>
 
-            <div class="announce_form-controller my-3" style="cursor: pointer" data-bs-toggle="modal"
-                data-bs-target="#announcementForm">
-                <div class="google-classroom-announce announce_btn">
-                    <div class="announce-text w-100">
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <img src="{{ asset('assets/img/leiaai_logo.png') }}" alt=""
-                                        class="rounded-circle me-2" style="width: 50px; height: 50px;">
                                 </div>
-                                <h5 class="m-0">Announce something to your class</h5>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="announce_form-controller my-3">
-                <div class="google-classroom-announce">
-                    <div class="announce-text w-100">
-
-                        <div class="d-flex justify-content-between">
-                            <div class="d-flex">
-                                <img src="{{ asset('assets/img/leiaai_logo.png') }}" alt=""
-                                    class="rounded-circle me-2" style="width: 50px; height: 50px;">
-                                <div>
-                                    <h5 class="m-0">John Doe</h5>
-                                    <p class="m-0">May 20, 2025</p>
-                                </div>
-                            </div>
+            </a>
+            <div class="card my-3">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
                         </div>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatibus.</p>
+                        <div>
+                            <h5 class="mx-2 my-0">Teachers Name</h5>
+                            <small class="mx-2">May 13, 2025</small>
+                        </div>
                     </div>
+                    <div class="edit_btn">
+                        {{-- edit_announcementForm --}}
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
+                            data-id="123" data-content="<p>This is your announcement content</p>">
+                        </i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, cupiditate.</p>
+                </div>
+            </div>
+            <div class="card my-3">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">Teachers Name</h5>
+                            <small class="mx-2">May 12, 2025</small>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning"></i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger"></i>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, cupiditate.</p>
                 </div>
             </div>
         </div>
@@ -95,21 +123,4 @@
             <p>Grade</p>
         </div>
     </div>
-@endsection
-
-@section('scripts')
-    <script>
-        var quill = new Quill('#editor', {
-            modules: {
-                toolbar: '#toolbar'
-            },
-            theme: 'snow'
-        });
-
-        let announce_btn = $('.announce_btn');
-        let announce_form_controller = $('.announce_form_container');
-        announce_btn.on('click', function() {
-            announce_form_controller.toggleClass('d-none');
-        });
-    </script>
 @endsection

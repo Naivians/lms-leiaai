@@ -26,4 +26,8 @@ class ClassController extends Controller
     {
         return view('pages.classes.grade');
     }
+    function Announcements()
+    {
+        return view('pages.classes.announcement');
+    }
 }

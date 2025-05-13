@@ -129,3 +129,24 @@ footer p {
     background-color: var(--primary-color);
     color: var(--white-color);
 }
+
+.announcement_header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.announcement_img_container{
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(219, 220, 221, 0.6);
+}
+.announcement_img_container img{
+    width: 100%;
+    height: auto;
+}
