@@ -45,7 +45,8 @@
             </select>
         </div>
 
-        <input type="submit" value="Register" class="btn btn-primary w-25">
+        <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+        <input type="submit" value="Register" class="btn btn-primary">
     </form>
 
 

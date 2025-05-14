@@ -72,11 +72,6 @@
         <main class="my-2 mx-3 p-3 white-bg">
             @yield('content')
         </main>
-
-        <footer class="my-2">
-            <p>&copy; {{ date('Y') }} LEIAAI LMS. All rights reserved.
-            </p>
-        </footer>
     </div>
 
 

@@ -45,6 +45,19 @@ nav a:hover {
     /* style="width: 250px; position: fixed;" */
 }
 
+#sidebar .footer_container{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    text-align: center;
+    color: var(--dark-color);
+    align-self: center;
+    justify-self: center;
+}
+/* #sidebar .footer_container p{
+    color: var(--dark-color);
+} */
+
 #sidebar img {
     width: 100%;
     height: auto;
@@ -69,17 +82,6 @@ nav a:hover {
     position: relative;
 }
 
-footer {
-    position: fixed;
-    bottom: 0;
-    padding: 0;
-    margin: 0;
-}
-
-footer p {
-    padding: 0;
-    margin: 0;
-}
 
 .class_grid_container {
     display: grid;
@@ -147,6 +149,19 @@ footer p {
     border: 1px solid rgba(219, 220, 221, 0.6);
 }
 .announcement_img_container img{
+    width: 100%;
+    height: auto;
+}
+
+/* View User */
+.view_img_container{
+    width: 300px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.view_img_container img{
     width: 100%;
     height: auto;
 }

@@ -23,6 +23,7 @@ Route::get('/', function () {
 // users
 Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
 Route::get('/add', [UserController::class, 'AddUsers'])->name('user.Store');
+Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');
 
 // class
 Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
