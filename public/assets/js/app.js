@@ -18,7 +18,7 @@ announce_btn.on('click', function () {
     announce_form_controller.toggleClass('d-none');
 });
 
-function edit_announcement(id){
+function edit_announcement(id) {
     let announce_modal = $('#announcementForm');
     announce_modal.modal('sho')
 }
@@ -41,5 +41,40 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+// users
+let enable_inputs = document.querySelectorAll('.enable_input');
+let user_update_btn = $('#user_update_btn').hide();
+let edit_info_btn = $('#edit_info');
+
+$('#edit_info').on('click', () => {
+    // Check current state based on button text (Edit or Back)
+    if (edit_info_btn.text().trim().toLowerCase() === 'edit') {
+        // Enable inputs
+        enable_inputs.forEach(input => input.disabled = false);
+
+        // Show update button
+        user_update_btn.show();
+
+        // Change button to "Back" and danger style
+        edit_info_btn
+            .removeClass()
+            .addClass('btn btn-secondary')
+            .text('Back');
+    } else {
+        // Disable inputs
+        enable_inputs.forEach(input => input.disabled = true);
+
+        // Hide update button
+        user_update_btn.hide();
+
+        // Change button to "Edit" and warning style
+        edit_info_btn
+            .removeClass()
+            .addClass('btn btn-secondary')
+            .text('Edit');
+    }
+});
+
 
 

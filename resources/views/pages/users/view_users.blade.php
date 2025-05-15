@@ -8,17 +8,54 @@
 
 @section('content')
     <div class="card mb-5">
-        <div class="card-body d-flex align-items-start gap-1">
-            <div class="view_img_container border border-1 p-1">
-                <img src="{{ asset('assets/img/sample.jpg') }}" alt="User Image">
-            </div>
-            <div class="view_content border border-1 w-100 p-2">
-                <p class="fs-5">First Name: <span class="fw-bold">John</span></p>
-                <p class="fs-5">Last Name: <span class="fw-bold">Doe</span></p>
-                <p class="fs-5">Middle Name: <span class="fw-bold">Manases</span></p>
-            </div>
+        <div class="card-body">
+            <form class="userEditForm">
+                <div class="d-flex align-items-start gap-1">
+                    <div class="card">
+                        <img src="{{ asset('assets/img/sample.jpg') }}" class="card-img-top" alt="...">
+                        <div class="card-body">
+                            <input type="file" name="user_img" id="user_img" class="form-control enable_input" disabled>
+                        </div>
+                    </div>
+                    <div class="view_content border border-1 w-100 p-2">
+                        <div class="row">
+                            <div class="mb-3 col-md-4">
+                                <label for="fname" class="form-label text-secondary">First Name</label>
+                                <input type="text" name="fname" id="fname" class="form-control enable_input" disabled placeholder="John"
+                                    value="John">
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="lname" class="form-label text-secondary">Last Name</label>
+                                <input type="text" name="lname" id="lname" class="form-control enable_input" disabled placeholder="Doe"
+                                    value="Doe">
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="mname" class="form-label text-secondary">Middle Name</label>
+                                <input type="text" name="mname" id="mname" class="form-control enable_input" disabled
+                                    placeholder="Manases" value="Manases">
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="suffix" class="form-label text-secondary">Extension Name</label>
+                                <input type="text" name="suffix" id="suffix" class="form-control enable_input" disabled
+                                    placeholder="Jr, I, II, III, etc.. " value="Jr">
+                            </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="email" class="form-label text-secondary">Email Address</label>
+                                <input type="text" name="email" id="email" class="form-control enable_input" disabled
+                                    placeholder="manasesjohn@gmail.com" value="manasesjohn@gmail.com">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="float-end">
+                    <button type="submit" class="btn btn-secondary" id="user_update_btn">Update</button>
+                    <button type="button" class="btn btn-secondary" id="edit_info">Edit</button>
+                </div>
+            </form>
         </div>
     </div>
+
+
     <div class="card my-2">
         <div class="card-header d-flex align-items-center">
             <i class="fa-solid fa-graduation-cap fs-1 me-2"></i>
