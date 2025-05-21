@@ -21,26 +21,3 @@
         </thead>
     </table>
 @endsection
-
-@section('scripts')
-    <script>
-    $(document).ready(function () {
-        $('#myTable').DataTable({
-            processing: true,
-            serverSide: true,
-            ajax: '{{ route("user.Home") }}',
-            dom: 'Blfrtip',
-            buttons: ['copy', 'csv', 'print', 'colvis'],
-            columns: [
-                { data: 'id' },
-                { data: 'fname' },
-                { data: 'lname' },
-                { data: 'ext_name' },
-                { data: 'role' },
-                { data: 'email' },
-                { data: 'action', orderable: false, searchable: false }
-            ]
-        });
-    });
-</script>
-@endsection

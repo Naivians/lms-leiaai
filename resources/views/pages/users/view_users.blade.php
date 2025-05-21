@@ -48,8 +48,8 @@
                     </div>
                 </div>
                 <div class="float-end">
-                    <button type="submit" class="btn btn-secondary" id="user_update_btn">Update</button>
-                    <button type="button" class="btn btn-secondary" id="edit_info">Edit</button>
+                    <button type="submit" class="btn btn-outline-primary" id="user_update_btn">Update</button>
+                    <button type="button" class="btn btn-outline-primary" id="edit_info">Edit</button>
                 </div>
             </form>
         </div>
@@ -97,42 +97,4 @@
             </tr>
         </thead>
     </table>
-@endsection
-
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            $('#view_user_progress').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('user.Home') }}',
-                dom: 'Blfrtip',
-                buttons: ['copy', 'csv', 'print', 'colvis'],
-                columns: [{
-                        data: 'id'
-                    },
-                    {
-                        data: 'fname'
-                    },
-                    {
-                        data: 'lname'
-                    },
-                    {
-                        data: 'ext_name'
-                    },
-                    {
-                        data: 'role'
-                    },
-                    {
-                        data: 'email'
-                    },
-                    {
-                        data: 'action',
-                        orderable: false,
-                        searchable: false
-                    }
-                ]
-            });
-        });
-    </script>
 @endsection

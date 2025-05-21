@@ -11,6 +11,7 @@ $(".sidebar-toggle").on("click", function () {
     $(".main-content").toggleClass("expanded");
 });
 
+
 // announcements
 let announce_btn = $('.announce_btn');
 let announce_form_controller = $('.announce_form_container');
@@ -48,31 +49,14 @@ let user_update_btn = $('#user_update_btn').hide();
 let edit_info_btn = $('#edit_info');
 
 $('#edit_info').on('click', () => {
-    // Check current state based on button text (Edit or Back)
     if (edit_info_btn.text().trim().toLowerCase() === 'edit') {
-        // Enable inputs
         enable_inputs.forEach(input => input.disabled = false);
-
-        // Show update button
+        edit_info_btn.text('Back')
         user_update_btn.show();
-
-        // Change button to "Back" and danger style
-        edit_info_btn
-            .removeClass()
-            .addClass('btn btn-secondary')
-            .text('Back');
     } else {
-        // Disable inputs
         enable_inputs.forEach(input => input.disabled = true);
-
-        // Hide update button
         user_update_btn.hide();
-
-        // Change button to "Edit" and warning style
-        edit_info_btn
-            .removeClass()
-            .addClass('btn btn-secondary')
-            .text('Edit');
+        edit_info_btn.text('Edit')
     }
 });
 

@@ -97,6 +97,79 @@
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
 
     @yield('scripts')
+
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("user.Home") }}',
+                dom: 'Blfrtip',
+                buttons: ['copy', 'csv', 'print', 'colvis'],
+                columns: [
+                    { data: 'id' },
+                    { data: 'fname' },
+                    { data: 'lname' },
+                    { data: 'ext_name' },
+                    { data: 'role' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
+
+            // LessonsTable
+            $('#classwork_lessons_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("user.Home") }}',
+                columns: [
+                    { data: 'id' },
+                    { data: 'fname' },
+                    { data: 'lname' },
+                    { data: 'ext_name' },
+                    { data: 'role' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
+
+            // LessonsTable
+            $('#classwork_quiz_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("user.Home") }}',
+                columns: [
+                    { data: 'id' },
+                    { data: 'fname' },
+                    { data: 'lname' },
+                    { data: 'ext_name' },
+                    { data: 'role' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
+
+            // progress
+            $('#view_user_progress').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('user.Home') }}',
+                dom: 'Blfrtip',
+                buttons: ['copy', 'csv', 'print', 'colvis'],
+                columns: [
+                    { data: 'id' },
+                    { data: 'fname' },
+                    { data: 'lname' },
+                    { data: 'ext_name' },
+                    { data: 'role' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
+        });
+
+
+    </script>
 </body>
 
 </html>

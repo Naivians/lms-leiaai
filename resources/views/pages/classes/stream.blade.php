@@ -102,7 +102,39 @@
             </div>
         </div>
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
-            <p>Classwork</p>
+            <div class="my-3 p-3">
+                <h2 class="text-secondary mb-3 bg-light p-3 rounded">Lessons</h2>
+                <table id="classwork_lessons_table" class="display w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Suffix</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+
+            <div class="p-3">
+                <h2 class="text-secondary mb-3 bg-light p-3 rounded">Quizses / Exams</h2>
+                <table id="classwork_quiz_table" class="display w-100">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Suffix</th>
+                            <th>Role</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
         </div>
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
             <div class="d-flex justify-content-between align-items-center">
