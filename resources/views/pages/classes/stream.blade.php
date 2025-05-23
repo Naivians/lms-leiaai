@@ -35,6 +35,7 @@
     </ul>
 
     <div class="tab-content mt-3">
+        {{-- streams --}}
         <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="streams">
             <a href="{{ route('class.announcement') }}" class="text-decoration-none">
                 <div class="announce_form-controller my-3">
@@ -44,7 +45,7 @@
                                 <div class="d-flex align-items-center">
                                     <div class="announcement_header">
                                         <div class="announcement_img_container">
-                                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
                                         </div>
                                     </div>
                                     <div>
@@ -61,7 +62,7 @@
                 <div class="card-header announcement_header">
                     <div class="announcement_header">
                         <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
                         </div>
                         <div>
                             <h5 class="mx-2 my-0">Teachers Name</h5>
@@ -84,7 +85,7 @@
                 <div class="card-header announcement_header">
                     <div class="announcement_header">
                         <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
                         </div>
                         <div>
                             <h5 class="mx-2 my-0">Teachers Name</h5>
@@ -101,6 +102,7 @@
                 </div>
             </div>
         </div>
+        {{-- classwork --}}
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
             <div class="my-3 p-3">
                 <h2 class="text-secondary mb-3 bg-light p-3 rounded">Lessons</h2>
@@ -136,21 +138,86 @@
                 </table>
             </div>
         </div>
+        {{-- people --}}
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
-            <div class="d-flex justify-content-between align-items-center">
-                <h2>Teacher</h2>
-                <div class="rounded-circle add-teacher-btn" data-bs-toggle="modal">
-                    <i class="fa-solid fa-user-plus"></i>
+            <h2 class="text-secondary mb-3">FLIGHT INSTRUCTOR</h2>
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
+                            data-id="123" data-content="<p>This is your announcement content</p>">
+                        </i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
+                    </div>
                 </div>
             </div>
-            <hr class="my-2">
-            <div class="d-flex align-items-center">
-                <img src="{{ asset('assets/img/leiaai_logo.png') }}" alt="" class="rounded-circle me-2"
-                    style="width: 50px; height: 50px;">
-                <h5 class="m-0">John Doe</h5>
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">John Kramer</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
+                            data-id="123" data-content="<p>This is your announcement content</p>">
+                        </i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
+                    </div>
+                </div>
             </div>
-            <hr>
+
+            <h2 class="text-secondary my-3">STUDENTS <small class="text-danger" style="font-size: 12px"> replace the the title with Classmate if student is Auth</small></h2>
+
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/student-female.jpg') }}" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">Mary Grace Lopo</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
+                            data-id="123" data-content="<p>This is your announcement content</p>">
+                        </i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">Jose Marie Chan</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
+                            data-id="123" data-content="<p>This is your announcement content</p>">
+                        </i>
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
+                    </div>
+                </div>
+            </div>
         </div>
+        {{-- grades --}}
         <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
             <p>Grade</p>
         </div>

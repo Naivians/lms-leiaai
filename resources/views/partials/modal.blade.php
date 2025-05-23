@@ -51,29 +51,31 @@
      </div>
  @endif
 
- {{-- announcement Add --}}
- {{-- <div class="modal fade" id="announcementForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-     <div class="modal-dialog modal-lg">
-         <div class="modal-content">
-             <div class="modal-header">
-                 <h1 class="modal-title fs-5" id="exampleModalLabel">Announce something to your class</h1>
-                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-             </div>
-             <div class="modal-body">
 
-
-                 <div id="toolbar" class="w-100">
-                     <button class="ql-bold"></button>
-                     <button class="ql-italic"></button>
-                     <button class="ql-underline"></button>
-                     <button class="ql-list" value="bullet"></button>
-                     <button class="ql-clean"></button>
+ @if (isset($title) && $title == 'Instructor')
+     <div class="modal fade" id="instructor_modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+         <div class="modal-dialog">
+             <div class="modal-content">
+                 <div class="modal-header">
+                     <h1 class="modal-title fs-5" id="exampleModalLabel">Assign Instructor</h1>
+                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                  </div>
-                 <div id="editor" style="height: 400px; width: 100%;" class="mb-2"></div>
-                 <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-bullhorn"></i> Announce
-                 </button>
-             </div>
+                 <div class="modal-body">
+                     <form id="assing_fi_form">
+                     <select name="" id="" multiple>
+                        <option value="1">1</option>
+                        <option value="2">3</option>
+                        <option value="3">2</option>
+                     </select>
+                 </div>
+                 <div class="modal-footer">
 
+                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                     <button type="button" class="btn btn-primary">Save changes</button>
+                     </form>
+                 </div>
+             </div>
          </div>
      </div>
- </div> --}}
+ @endif

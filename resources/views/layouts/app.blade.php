@@ -33,15 +33,10 @@
     <div class="main-content">
 
         <header>
-            {{-- header title --}}
-            {{-- @if (isset($title) && $title != 'Streams')
-
-            @endif --}}
             <div class="card my-2 mx-3 {{ isset($title) && $title === 'Streams' ? 'd-none' : '' }}">
                 <div class="card-header header_container  white-bg d-flex align-item-center justify-content-between">
                     <h1 class="fs-3 m-0 ">@yield('header_title')</h1>
                     @switch($title)
-                        {{-- add other pages here --}}
                         @case('User')
                             <div class="card-tools">
                                 <a href="{{ route('user.Store') }}" class="btn btn-primary btn-sm"><i
@@ -52,7 +47,6 @@
 
                         @case('Classes')
                             <div class="card-tools">
-                                {{-- {{ route('user.Store') }} --}}
                                 <div class="card-tools">
                                     <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal"><i class="fa-solid fa-plus me-2"></i> Create Class
@@ -60,7 +54,6 @@
                                 </div>
                             </div>
                         @break
-
                         @default
                     @endswitch
                 </div>
@@ -135,6 +128,22 @@
 
             // LessonsTable
             $('#classwork_quiz_table').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route("user.Home") }}',
+                columns: [
+                    { data: 'id' },
+                    { data: 'fname' },
+                    { data: 'lname' },
+                    { data: 'ext_name' },
+                    { data: 'role' },
+                    { data: 'email' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
+
+            // LessonsTable
+            $('#classwork_fi_table').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route("user.Home") }}',

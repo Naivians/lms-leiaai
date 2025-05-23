@@ -14,9 +14,9 @@ class ClassController extends Controller
     {
         return view('pages.classes.stream');
     }
-    function People()
+    function Instructor()
     {
-        return view('pages.classes.people');
+        return view('pages.classes.instructor');
     }
     function Classwork()
     {

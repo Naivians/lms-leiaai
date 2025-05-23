@@ -29,5 +29,5 @@ Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('u
 Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
 Route::get('/class/stream', [ClassController::class, 'Stream'])->name('class.stream');
 Route::get('/class/Announcement', [ClassController::class, 'Announcements'])->name('class.announcement');
-Route::get('/class/people', [ClassController::class, 'People'])->name('class.people');
+Route::get('/class/instructor', [ClassController::class, 'Instructor'])->name('class.instructor');
 Route::get('/class/grade', [ClassController::class, 'Grade'])->name('class.grade');
