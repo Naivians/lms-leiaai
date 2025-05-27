@@ -10,12 +10,14 @@
     <table id="myTable" class="display w-100">
         <thead>
             <tr>
-                <th>ID</th>
+                <th>Image</th>
                 <th>First Name</th>
                 <th>Last Name</th>
+                <th>Middle Name</th>
                 <th>Suffix</th>
-                <th>Role</th>
                 <th>Email</th>
+                <th>Role</th>
+                <th>Phone</th>
                 <th>Action</th>
             </tr>
         </thead>

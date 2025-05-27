@@ -5,6 +5,23 @@ var quill = new Quill('#editor', {
     theme: 'snow'
 });
 
+(() => {
+  'use strict'
+
+  const forms = document.querySelectorAll('.needs-validation')
+
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+
 $(".sidebar-toggle").on("click", function () {
     $("#sidebar").toggleClass("sidebar-collapsed");
     $(".nav_container").toggleClass("expanded");
@@ -60,5 +77,21 @@ $('#edit_info').on('click', () => {
     }
 });
 
+// people
+$('#enroll_fi_container').on('click', () => {
+    $('#enroll_fi_form').removeClass('d-none');
+    $('#enroll_fi_container').addClass('d-none');
+})
+$('#close_enroll_btn').on('click', () => {
+    $('#enroll_fi_container').removeClass('d-none');
+    $('#enroll_fi_form').addClass('d-none');
+})
 
-
+$('#enroll_student_container').on('click', () => {
+    $('#enroll_student_form').removeClass('d-none');
+    $('#enroll_student_container').addClass('d-none');
+})
+$('#close_enroll_student_btn').on('click', () => {
+    $('#enroll_student_container').removeClass('d-none');
+    $('#enroll_student_form').addClass('d-none');
+})

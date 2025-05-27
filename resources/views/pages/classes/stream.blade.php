@@ -140,7 +140,27 @@
         </div>
         {{-- people --}}
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
-            <h2 class="text-secondary mb-3">FLIGHT INSTRUCTOR</h2>
+            <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container">
+                <div class="google-classroom-announce announce_btn">
+                    <div class="announce-text w-100">
+                        <div class="d-flex align-items-center">
+                            <div class="announcement_header">
+                                <div class="announcement_img_container">
+                                    <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class=" mx-2 my-0">Enroll Flight Instructor</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3 d-none" id="enroll_fi_form">
+                <input type="text" class="form-control" placeholder="Search Flight Instructor"
+                    aria-label="Enroll Flight Instructor" aria-describedby="basic-addon1">
+                <button type="button" class="btn btn-outline-danger" id="close_enroll_btn">Close</button>
+            </div>
             <div class="card mb-2">
                 <div class="card-header announcement_header">
                     <div class="announcement_header">
@@ -152,9 +172,6 @@
                         </div>
                     </div>
                     <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
-                            data-id="123" data-content="<p>This is your announcement content</p>">
-                        </i>
                         <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
                     </div>
                 </div>
@@ -170,15 +187,30 @@
                         </div>
                     </div>
                     <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
-                            data-id="123" data-content="<p>This is your announcement content</p>">
-                        </i>
                         <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
                     </div>
                 </div>
             </div>
 
-            <h2 class="text-secondary my-3">STUDENTS <small class="text-danger" style="font-size: 12px"> replace the the title with Classmate if student is Auth</small></h2>
+            <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container">
+                <div class="google-classroom-announce announce_btn">
+                    <div class="announce-text w-100">
+                        <div class="d-flex align-items-center">
+                            <div class="announcement_img_container">
+                                <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
+                            </div>
+                            <div>
+                                <h2 class=" mx-2 my-0">Enroll Student</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="input-group mb-3 d-none my-3" id="enroll_student_form">
+                <input type="text" class="form-control" placeholder="Search Students" aria-label="Insert Students"
+                    aria-describedby="basic-addon1">
+                <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn">Close</button>
+            </div>
 
             <div class="card mb-2">
                 <div class="card-header announcement_header">
@@ -191,9 +223,6 @@
                         </div>
                     </div>
                     <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
-                            data-id="123" data-content="<p>This is your announcement content</p>">
-                        </i>
                         <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
                     </div>
                 </div>
@@ -209,9 +238,6 @@
                         </div>
                     </div>
                     <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
-                            data-id="123" data-content="<p>This is your announcement content</p>">
-                        </i>
                         <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
                     </div>
                 </div>

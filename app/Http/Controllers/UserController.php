@@ -14,16 +14,25 @@ class UserController extends Controller
     public function Index(Request $request)
     {
     if ($request->ajax()) {
-            $data = User::query();
+            $data = User::where('role', '!=', 4)->get();
 
             return DataTables::of($data)
-                ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) .' " class="btn btn-sm btn-warning"><i class="fa-solid fa-eye"></i></a>';
-                    $editBtn = '<button  class="btn btn-sm btn-primary" id=" ' . $row->id . ' "><i class="fa-solid fa-pen-to-square"></i></button>';
-                    $deleteBtn = '<button  class="btn btn-sm btn-danger" id=" ' . $row->id . ' "><i class="fa-solid fa-trash"></i></button>';
-                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                ->addColumn('role_name', function($row){
+                    $roles = [
+                        0 => 'Students',
+                        1 => 'FI',
+                        2 => 'CGI',
+                        3 => 'Admin',
+                        4 => 'Super Admin',
+                    ];
+                    return $roles[$row->role ?? 'Unknown'];
+
                 })
-                ->rawColumns(['action']) // Important to render HTML
+                ->addColumn('action', function ($row) {
+                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) .' " class="btn btn-sm btn-primary w-100"><i class="fa-solid fa-eye"></i></a>';
+                    return $viewBtn;
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 

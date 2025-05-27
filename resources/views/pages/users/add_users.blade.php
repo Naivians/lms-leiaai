@@ -5,48 +5,67 @@
 @section('header_title', 'Register Users')
 @section('content')
 
+    <form class="row g-3 needs-validation" novalidate>
 
-    <form action="" id="addForm">
-        @csrf
-
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="fname" placeholder="First Name" required autocomplete="off">
-            <label for="fname">First Name <span class="text-danger">*</span></label>
+        <div class="col-md-6">
+            <label for="validationCustom01" class="form-label">First name</label>
+            <input type="text" class="form-control" id="validationCustom01" name="fname" placeholder="Juan" required>
+            <div class="invalid-feedback">
+                First Name field is required
+            </div>
         </div>
 
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="lname" placeholder="Last Name" required autocomplete="off">
-            <label for="lname">Last Name <span class="text-danger">*</span></label>
+        <div class="col-md-6">
+            <label for="validationCustom02" class="form-label">Last name</label>
+            <input type="text" class="form-control" id="validationCustom02" name="lname" placeholder="Manuel" required>
+            <div class="invalid-feedback">
+                Last Name field is required
+            </div>
         </div>
 
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="ext_name" placeholder="Extention Name (if available)">
-            <label for="ext_name">Ext. Name (if available)</label>
+        <div class="col-md-6">
+            <label for="mname" class="form-label">Middle Name</label>
+            <input type="text" class="form-control" id="mname" name="mname" placeholder="Marquez (optional)">
         </div>
 
-        <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" required autocomplete="off">
-            <label for="floatingInput">Email address <span class="text-danger">*</span></label>
+        <div class="col-md-6">
+            <label for="suffix" class="form-label">Entension Name</label>
+            <input type="text" class="form-control" id="suffix" name="suffix" placeholder="I, II, III, Jr. etc. (Optional)">
         </div>
 
-        <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="floatingInput" placeholder="Password" required autocomplete="off">
-            <label for="floatingInput">Password <span class="text-danger">*</span></label>
+        <div class="col-md-6">
+            <label for="validationCustom03" class="form-label">Last name</label>
+            <input type="email" class="form-control" id="validationCustom03" name="lname" placeholder="juandelacruz@gmail.com" required>
+            <div class="invalid-feedback">
+                Email field is required
+            </div>
         </div>
 
-        <div class="mt-3">
-            <label for="" >Select Role <span class="text-danger">*</span></label>
-            <select class="form-select mb-3" required autocomplete="off">
-                <option value="0">Students</option>
-                <option value="1">CGI</option>
-                <option value="2">Admin</option>
-                {{-- for devs only --}}
-                <option value="3">Super Admin</option>
+
+        <div class="col-md-6">
+            <label for="validationCustom04" class="form-label">Select Role</label>
+            <select class="form-select" id="validationCustom04" required>
+                <option selected disabled value="">Choose...</option>
+                <option value="0">Student</option>
+                <option value="1">Flight Instructor</option>
+                <option value="2">CGI</option>
+                <option value="3">Registrar</option>
+                <option value="4">Super Admin</option>
             </select>
+            <div class="invalid-feedback">
+                Please select a valid role.
+            </div>
         </div>
 
-        <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
-        <input type="submit" value="Register" class="btn btn-primary">
+        <div class="col-md-6">
+            <label for="img" class="form-label">Select Image</label>
+            <input type="file" name="img" id="img" class="form-control">
+        </div>
+
+        <div class="col-md-12">
+            <a href="{{ route('user.Home') }}" class="btn btn-outline-danger float-end">Back</a>
+            <button class="btn btn-primary float-end me-2" type="submit">Register</button>
+        </div>
     </form>
 
 

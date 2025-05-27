@@ -24,12 +24,17 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => $this->faker->firstName .'0000' . Str::random(10),
             'fname' => $this->faker->firstName,
             'lname' => $this->faker->lastName,
-            'ext_name' => $this->faker->optional()->suffix,
+            'mname' => $this->faker->firstName, // ✅ no middleName in default Faker, fallback to firstName
+            'suffix' => $this->faker->optional()->suffix,
             'email' => $this->faker->unique()->safeEmail,
-            'password' => bcrypt('password'),
-            'role' => $this->faker->numberBetween(0, 2), // adjust range as needed
+            'isVerified' => $this->faker->boolean, // ✅ more semantic than numberBetween(0, 1)
+            'password' => bcrypt('password'), // ✅ you could also use Hash::make
+            'contact' => $this->faker->numerify('09#########'), // ✅ realistic PH phone number
+            'img' => 'https://i.pravatar.cc/150?u=' . $this->faker->unique()->email(),
+            'role' => $this->faker->randomElement([0, 4]), // ✅ ensures only valid role values
             'remember_token' => Str::random(10),
         ];
     }

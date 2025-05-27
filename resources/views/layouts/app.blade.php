@@ -93,6 +93,7 @@
 
     <script>
         $(document).ready(function () {
+            // users
             $('#myTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -100,12 +101,19 @@
                 dom: 'Blfrtip',
                 buttons: ['copy', 'csv', 'print', 'colvis'],
                 columns: [
-                    { data: 'id' },
+                    {
+                        data: 'img',
+                        render: function(data, type, row) {
+                            return `<img src="${data}" width="50" height="50" style="border-radius:50%;">`;
+                        }
+                    },
                     { data: 'fname' },
                     { data: 'lname' },
-                    { data: 'ext_name' },
-                    { data: 'role' },
+                    { data: 'mname' },
+                    { data: 'suffix' },
                     { data: 'email' },
+                    { data: 'role_name' },
+                    { data: 'contact' },
                     { data: 'action', orderable: false, searchable: false }
                 ]
             });
