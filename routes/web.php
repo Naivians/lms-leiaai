@@ -22,8 +22,9 @@ Route::get('/', function () {
 // Auth Controllers
 // users
 Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
-Route::get('/add', [UserController::class, 'AddUsers'])->name('user.Store');
+Route::get('/add', [UserController::class, 'Register'])->name('user.Register');
 Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');
+Route::post('/user/register', [UserController::class, 'Store'])->name('user.Store');
 
 // class
 Route::get('/class', [ClassController::class, 'Index'])->name('class.index');

@@ -23,7 +23,8 @@ return new class extends Migration
             $table->string('password');
             $table->string('contact');
             $table->string('img');
-            $table->tinyInteger('role');
+            $table->tinyInteger('role')->default(0);
+            $table->tinyInteger('gender')->default(0);
             $table->rememberToken();
             $table->timestamps();
         });

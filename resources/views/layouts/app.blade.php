@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'LEIAAI LMS | ' . $title)</title>
     <link rel="icon" type="image/png" href="{{ asset('assets/img/logo.jpg') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css') }}">
@@ -15,7 +16,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
-
+    <script src="https://unpkg.com/libphonenumber-js@1.10.25/bundle/libphonenumber-js.min.js"></script>
 </head>
 
 <body style="background-color: #F4F5F7">
@@ -39,7 +40,7 @@
                     @switch($title)
                         @case('User')
                             <div class="card-tools">
-                                <a href="{{ route('user.Store') }}" class="btn btn-primary btn-sm"><i
+                                <a href="{{ route('user.Register') }}" class="btn btn-primary btn-sm"><i
                                         class="fa-solid fa-plus me-2"></i> Add
                                     Users</a>
                             </div>
@@ -51,6 +52,15 @@
                                     <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal"><i class="fa-solid fa-plus me-2"></i> Create Class
                                     </button>
+                                </div>
+                            </div>
+                        @break
+                        @case('User Detailes')
+                            <div class="card-tools">
+                                <div class="card-tools">
+                                    <a href="{{ route('user.Home') }}" class="btn btn-danger btn-sm"
+                                        ><i class="fa-solid fa-arrow-left me-2"></i></i> Back
+                                    </a>
                                 </div>
                             </div>
                         @break
@@ -88,29 +98,34 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
+    <script src="https://unpkg.com/libphonenumber-js@1.10.22/bundle/libphonenumber-max.js"></script>
 
     @yield('scripts')
 
     <script>
         $(document).ready(function () {
             // users
-            $('#myTable').DataTable({
+            $('#userTable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route("user.Home") }}',
                 dom: 'Blfrtip',
                 buttons: ['copy', 'csv', 'print', 'colvis'],
+                language: {
+                    emptyTable: "No Users found. Please add new users"
+                },
                 columns: [
                     {
                         data: 'img',
                         render: function(data, type, row) {
-                            return `<img src="${data}" width="50" height="50" style="border-radius:50%;">`;
+                            return `
+                            <div class="d-flex align-item-center justify-content-center">
+                            <img  src="${data}" width="50" height="50" style="border-radius:50%;">
+                            </div>
+                            `;
                         }
                     },
-                    { data: 'fname' },
-                    { data: 'lname' },
-                    { data: 'mname' },
-                    { data: 'suffix' },
+                    { data: 'student_name' },
                     { data: 'email' },
                     { data: 'role_name' },
                     { data: 'contact' },
@@ -118,71 +133,71 @@
                 ]
             });
 
-            // LessonsTable
-            $('#classwork_lessons_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route("user.Home") }}',
-                columns: [
-                    { data: 'id' },
-                    { data: 'fname' },
-                    { data: 'lname' },
-                    { data: 'ext_name' },
-                    { data: 'role' },
-                    { data: 'email' },
-                    { data: 'action', orderable: false, searchable: false }
-                ]
-            });
+            // // LessonsTable
+            // $('#classwork_lessons_table').DataTable({
+            //     processing: true,
+            //     serverSide: true,
+            //     ajax: '{{ route("user.Home") }}',
+            //     columns: [
+            //         { data: 'id' },
+            //         { data: 'fname' },
+            //         { data: 'lname' },
+            //         { data: 'ext_name' },
+            //         { data: 'role' },
+            //         { data: 'email' },
+            //         { data: 'action', orderable: false, searchable: false }
+            //     ]
+            // });
 
-            // LessonsTable
-            $('#classwork_quiz_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route("user.Home") }}',
-                columns: [
-                    { data: 'id' },
-                    { data: 'fname' },
-                    { data: 'lname' },
-                    { data: 'ext_name' },
-                    { data: 'role' },
-                    { data: 'email' },
-                    { data: 'action', orderable: false, searchable: false }
-                ]
-            });
+            // // LessonsTable
+            // $('#classwork_quiz_table').DataTable({
+            //     processing: true,
+            //     serverSide: true,
+            //     ajax: '{{ route("user.Home") }}',
+            //     columns: [
+            //         { data: 'id' },
+            //         { data: 'fname' },
+            //         { data: 'lname' },
+            //         { data: 'ext_name' },
+            //         { data: 'role' },
+            //         { data: 'email' },
+            //         { data: 'action', orderable: false, searchable: false }
+            //     ]
+            // });
 
-            // LessonsTable
-            $('#classwork_fi_table').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route("user.Home") }}',
-                columns: [
-                    { data: 'id' },
-                    { data: 'fname' },
-                    { data: 'lname' },
-                    { data: 'ext_name' },
-                    { data: 'role' },
-                    { data: 'email' },
-                    { data: 'action', orderable: false, searchable: false }
-                ]
-            });
+            // // LessonsTable
+            // $('#classwork_fi_table').DataTable({
+            //     processing: true,
+            //     serverSide: true,
+            //     ajax: '{{ route("user.Home") }}',
+            //     columns: [
+            //         { data: 'id' },
+            //         { data: 'fname' },
+            //         { data: 'lname' },
+            //         { data: 'ext_name' },
+            //         { data: 'role' },
+            //         { data: 'email' },
+            //         { data: 'action', orderable: false, searchable: false }
+            //     ]
+            // });
 
-            // progress
-            $('#view_user_progress').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: '{{ route('user.Home') }}',
-                dom: 'Blfrtip',
-                buttons: ['copy', 'csv', 'print', 'colvis'],
-                columns: [
-                    { data: 'id' },
-                    { data: 'fname' },
-                    { data: 'lname' },
-                    { data: 'ext_name' },
-                    { data: 'role' },
-                    { data: 'email' },
-                    { data: 'action', orderable: false, searchable: false }
-                ]
-            });
+            // // progress
+            // $('#view_user_progress').DataTable({
+            //     processing: true,
+            //     serverSide: true,
+            //     ajax: '{{ route('user.Home') }}',
+            //     dom: 'Blfrtip',
+            //     buttons: ['copy', 'csv', 'print', 'colvis'],
+            //     columns: [
+            //         { data: 'id' },
+            //         { data: 'fname' },
+            //         { data: 'lname' },
+            //         { data: 'ext_name' },
+            //         { data: 'role' },
+            //         { data: 'email' },
+            //         { data: 'action', orderable: false, searchable: false }
+            //     ]
+            // });
         });
 
 

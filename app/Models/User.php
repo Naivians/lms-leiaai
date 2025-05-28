@@ -24,9 +24,19 @@ class User extends Authenticatable
         'suffix',
         'email',
         'password',
+        'contact',
+        'img',
+        'role',
+        'gender',
+        'isVerified',
     ];
 
+
+
     /**
+     *
+     *
+     *
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
