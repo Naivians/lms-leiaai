@@ -24,6 +24,7 @@ Route::get('/', function () {
 Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
 Route::get('/add', [UserController::class, 'Register'])->name('user.Register');
 Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');
+Route::get('/user/edit/{userId}', [UserController::class, 'EditUser'])->name('user.Edit');
 Route::post('/user/register', [UserController::class, 'Store'])->name('user.Store');
 
 // class

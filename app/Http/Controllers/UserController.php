@@ -35,8 +35,9 @@ class UserController extends Controller
                     return $student_name;
                 })
                 ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100"><i class="fa-solid fa-eye"></i></a>';
-                    return $viewBtn;
+                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100 mb-2"><i class="fa-solid fa-eye"></i></a>';
+                    $editBtn = '<a href= " ' . route('user.Edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100"><i class="fa-solid fa-user-pen"></i></a>';
+                    return $viewBtn . ' ' . $editBtn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -67,7 +68,7 @@ class UserController extends Controller
             'lname' => 'required|string|max:255',
             'mname' => 'required|string|max:255',
             'suffix' => 'required|string|max:50',
-            'contact' => 'required|string',
+            'contact' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
             'email' => 'required|string|unique:users,email',
             'password' => 'required|confirmed|min:8',
             'role' => 'required|in:0,1,2,3,4',
@@ -110,5 +111,28 @@ class UserController extends Controller
             'success' => true,
             'message' => 'User registered successfully.',
         ]);
+    }
+
+
+    public function EditUser($userId)
+    {
+        $user = User::find($userId);
+
+        $roles = [
+            0 => 'Students',
+            1 => 'FI',
+            2 => 'CGI',
+            3 => 'Registrar',
+            4 => 'Admin',
+            5 => 'Super Admin',
+        ];
+        $gender = [
+            0 => 'Male',
+            1 => 'Female',
+            2 => 'Rather not say',
+        ];
+
+
+        return view('pages.users.add_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
     }
 }
