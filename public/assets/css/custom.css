@@ -155,8 +155,8 @@ nav a:hover {
 
 /* View User */
 .view_img_container{
-    width: 300px;
-    height: 250px;
+    width: 450px;
+    height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;

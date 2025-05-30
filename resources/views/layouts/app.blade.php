@@ -125,10 +125,13 @@
                             `;
                         }
                     },
+                    { data: 'id_number' },
                     { data: 'student_name' },
-                    { data: 'email' },
                     { data: 'role_name' },
+                    { data: 'email' },
                     { data: 'contact' },
+                    { data: 'isVerified' },
+                    { data: 'login_status' },
                     { data: 'action', orderable: false, searchable: false }
                 ]
             });

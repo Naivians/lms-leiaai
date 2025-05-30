@@ -92,32 +92,18 @@ $('#registerForm').on('submit', function (e) {
     let allowed_types = ['image/jpg', 'image/jpeg', 'image/png'];
     let files = imgInput[0].files[0];
 
-    // if (password.val().length < 8) {
-    //     error_message('Password must be at least 8 characters long.');
-    //     return;
-    // }
+    if (imgInput[0].files.length > 0) {
+        if (files.size >= MB) {
+            error_message('The selected image is too large. Please choose an image smaller than 1MB.');
+            return;
+        }
 
-    // if (password.val() !== confirmPassword.val()) {
-    //     error_message('Passwords do not match. Please confirm your password.');
-    //     return;
-    // }
+        if (!allowed_types.includes(files.type)) {
+            error_message('Invalid image type. Only JPG or PNG files are allowed.');
+            return;
+        }
+    }
 
-    // if (!validate_phone_number()) {
-    //     error_message('The phone number entered is invalid. Please enter a valid Philippine number.');
-    //     return;
-    // }
-
-    // if (imgInput[0].files.length > 0) {
-    //     if (files.size >= MB) {
-    //         error_message('The selected image is too large. Please choose an image smaller than 1MB.');
-    //         return;
-    //     }
-
-    //     if (!allowed_types.includes(files.type)) {
-    //         error_message('Invalid image type. Only JPG or PNG files are allowed.');
-    //         return;
-    //     }
-    // }
     // test
     // form.forEach(e => {
     //     console.log(e);
@@ -137,17 +123,30 @@ $('#registerForm').on('submit', function (e) {
                 error_message('Failed to register user')
                 return
             }
-
             success_message(response.message);
             $("#registerForm")[0].reset();
-
         },
         error: (xhr, status, error) => {
             try {
                 const response = JSON.parse(xhr.responseText);
-                error_message(response.message || 'An error occurred');
+                $('#errorList').empty();
+
+                if (response.errors) {
+                    $('#errors').removeClass('d-none');
+                    Object.values(response.errors).flat().forEach(msg => {
+                        $('#errorList').append(`<li class="text-danger">${msg}</li>`);
+                    });
+                } else if (response.message) {
+                    $('#errors').removeClass('d-none');
+                    $('#errorList').append(`<li class="text-danger">${response.message}</li>`);
+                } else {
+                    $('#errors').removeClass('d-none');
+                    $('#errorList').append(`<li class="text-danger">An unknown error occurred.</li>`);
+                }
             } catch (e) {
-                error_message('An unexpected error occurred');
+                console.error('An unexpected error occurred', e);
+                $('#errors').removeClass('d-none');
+                $('#errorList').html('<li class="text-danger">An unexpected error occurred</li>');
             }
         }
     });

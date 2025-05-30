@@ -6,12 +6,22 @@
 @section('content')
 
     @if (!isset($users))
+
+        <div class="m-0 alert alert-warning d-none" id="errors">
+            <ul class="px-3 m-0" id="errorList"></ul>
+        </div>
+
         <form class="row g-3" id="registerForm">
+
+            <div class="col-md-12">
+                <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but needed)</span></label>
+                <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007">
+            </div>
+
             <div class="col-md-6">
                 <label for="fname" class="form-label">First name</label>
                 <input type="text" class="form-control" id="fname" name="fname" placeholder="Juan" required>
             </div>
-
 
             <div class="col-md-6">
                 <label for="lname" class="form-label">Last name</label>
@@ -31,11 +41,10 @@
 
             <div class="col-md-6">
                 <label for="contact" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="contact" name="contact" placeholder="+639923237899"
-                    maxlength="13" oninput="validatePhoneInput(this)" required>
-                <div class="invalid-feedback">
-                    Please insert a valid phone number.
-                </div>
+                <input type="tel" class="form-control" id="contact" name="contact"
+                    placeholder="Always starts with country code with '+' sign eg. +63" maxlength="15"
+                    oninput="validatePhoneInput(this)" required>
+
             </div>
 
             <div class="col-md-6">
@@ -93,90 +102,104 @@
                 <input type="file" name="img" accept="image/png, image/jpeg" id="img"
                     class="form-control">
             </div>
-
             <div class="col-md-12">
                 <a href="{{ route('user.Home') }}" class="btn btn-outline-danger float-end">Back</a>
                 <button class="btn btn-primary float-end me-2" type="submit">Register</button>
             </div>
         </form>
     @else
-        <form class="row g-3" id="updateForm">
-            <div class="col-md-6">
-                <label for="fname" class="form-label">First name</label>
-                <input type="text" class="form-control" id="fname" name="fname" placeholder="Juan"
-                    value="{{ $users->fname ?? '' }}" required>
-            </div>
-
-            <div class="col-md-6">
-                <label for="lname" class="form-label">Last name</label>
-                <input type="text" class="form-control" id="lname" name="lname" placeholder="Manuel"
-                    value="{{ $users->lname ?? '' }}" required>
-            </div>
-
-            <div class="col-md-6">
-                <label for="mname" class="form-label">Middle Name</label>
-                <input type="text" class="form-control" id="mname" name="mname"
-                    value="{{ $users->mname ?? '' }}" placeholder="Marquez (optional)">
-            </div>
-
-            <div class="col-md-6">
-                <label for="suffix" class="form-label">Suffix</label>
-                <input type="text" class="form-control" id="suffix" name="suffix"
-                    placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix ?? '' }}">
-            </div>
-
-            <div class="col-md-6">
-                <label for="contact" class="form-label">Phone Number</label>
-                <input type="tel" class="form-control" id="contact" name="contact" placeholder="+639923237899"
-                    value="{{ $users->contact ?? '' }}" maxlength="13" oninput="validatePhoneInput(this)" required>
-                <div class="invalid-feedback">
-                    Please insert a valid phone number.
+        {{-- new form --}}
+        <form>
+            <div class="d-flex align-items-start gap-1">
+                <div class="card view_img_container p-3">
+                    <img src="{{ asset($users->img) }}">
+                    <input type="file" name="img" id="img" class="form-control mt-3">
                 </div>
-            </div>
+                <div class="view_content border border-1 w-100 p-2">
+                    <div class="row">
+                        <div class="mb-3 col-md-4">
+                            <label for="fname" class="form-label text-secondary">First Name</label>
+                            <input type="text" name="fname" id="fname" class="form-control enable_input"
+                                placeholder="John" value="{{ $users->fname }}">
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label for="lname" class="form-label text-secondary">Last Name</label>
+                            <input type="text" name="lname" id="lname" class="form-control enable_input"
+                                placeholder="Doe" value="{{ $users->lname . ' ' . strtoupper($users->suffix) }}">
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label for="mname" class="form-label text-secondary">Middle Name</label>
+                            <input type="text" name="mname" id="mname" class="form-control enable_input"
+                                placeholder="Manases" value="{{ $users->mname }}">
+                        </div>
 
-            <div class="col-md-6">
-                <label for="validationCustom03" class="form-label">Email</label>
-                <input type="email" class="form-control" id="validationCustom03" name="email"
-                    placeholder="juandelacruz@gmail.com" value="{{ $users->email ?? '' }}" required>
-                <div class="invalid-feedback">
-                    Email field is required
+                        <div class="col-md-4">
+                            <label for="suffix" class="form-label">Suffix</label>
+                            <input type="text" class="form-control" id="suffix" name="suffix"
+                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix ?? '' }}">
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label for="contact" class="form-label text-secondary">Phone Number</label>
+                            <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                placeholder="Manases" value="{{ $users->contact }}" disabled>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label for="email" class="form-label text-secondary">Email Address</label>
+                            <input type="text" name="email" id="email" class="form-control enable_input"
+                                placeholder="manasesjohn@gmail.com" value="{{ $users->email }}" disabled>
+                        </div>
+
+
+                        {{-- if student --}}
+                        <div class="mb-3 col-md-4">
+                            <label for="contact" class="form-label text-secondary">Gender</label>
+                            <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                placeholder="Manases" value="{{ $gender }}" disabled>
+                        </div>
+
+                        <div class="mb-3 col-md-4">
+                            <label for="contact" class="form-label text-secondary">Role</label>
+                            <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                placeholder="Manases" value="{{ $roles }}" disabled>
+                        </div>
+
+                        {{-- if admin --}}
+                        {{-- <div class="col-md-4">
+                            <label for="gender" class="form-label">Select Gender</label>
+                            <select class="form-select" id="gender" name="gender" required>
+                                <option selected disabled value="{{ $users->gender ?? '' }}">{{ $gender ?? 'Choose...' }}
+                                </option>
+                                <option value="0">Male</option>
+                                <option value="1">Female</option>
+                                <option value="2">Rather not say</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="validationCustom04" class="form-label">Select Role</label>
+                            <select class="form-select" id="validationCustom04" name="role" required>
+                                <option selected disabled value="{{ $users->role ?? '' }}">{{ $roles ?? 'Choose..' }}
+                                </option>
+                                <option value="0">Student</option>
+                                <option value="1">Flight Instructor</option>
+                                <option value="2">CGI</option>
+                                <option value="3">Registrar</option>
+                                <option value="4">Admin</option>
+                                <option value="5">Super Admin</option>
+                            </select>
+                        </div>
+                    </div> --}}
+                        <div class="col-md-12 mt-3">
+                            <button class="btn btn-primary"
+                                type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
+                            <a href="{{ route('user.Home') }}" class="btn btn-outline-primary mx-1">Change password</a>
+                            <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+                        </div>
+                    </div>
+
                 </div>
-            </div>
-
-            <div class="col-md-3">
-                <label for="gender" class="form-label">Select Gender</label>
-                <select class="form-select" id="gender" name="gender" required>
-                    <option selected disabled value="{{ $users->gender ?? '' }}">{{ $gender ?? 'Choose...' }}</option>
-                    <option value="0">Male</option>
-                    <option value="1">Female</option>
-                    <option value="2">Rather not say</option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label for="validationCustom04" class="form-label">Select Role</label>
-                <select class="form-select" id="validationCustom04" name="role" required>
-                    <option selected disabled value="{{ $users->role ?? '' }}">{{ $roles ?? 'Choose..' }}</option>
-                    <option value="0">Student</option>
-                    <option value="1">Flight Instructor</option>
-                    <option value="2">CGI</option>
-                    <option value="3">Registrar</option>
-                    <option value="4">Admin</option>
-                    <option value="5">Super Admin</option>
-                </select>
-            </div>
-
-            <div class="col-md-6">
-                <label for="img" class="form-label">Choose Image </label>
-                <input type="file" name="img" accept="image/png, image/jpeg" id="img"
-                    class="form-control">
-            </div>
-
-            <div class="col-md-12">
-                <a href="{{ route('user.Home') }}" class="btn btn-outline-danger float-end">Back</a>
-                <button class="btn btn-primary float-end me-2"
-                    type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
-            </div>
         </form>
     @endif
 

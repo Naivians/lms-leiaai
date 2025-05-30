@@ -20,44 +20,52 @@
                             <div class="mb-3 col-md-4">
                                 <label for="fname" class="form-label text-secondary">First Name</label>
                                 <input type="text" name="fname" id="fname" class="form-control enable_input"
-                                    disabled placeholder="John" value="{{ $users->fname }}">
+                                    disabled value="{{ $users->fname }}">
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="lname" class="form-label text-secondary">Last Name</label>
                                 <input type="text" name="lname" id="lname" class="form-control enable_input"
-                                    disabled placeholder="Doe"
-                                    value="{{ $users->lname . ' ' . strtoupper($users->suffix) }}">
+                                    disabled value="{{ $users->lname . ' ' . strtoupper($users->suffix) }}">
                             </div>
                             <div class="mb-3 col-md-4">
                                 <label for="mname" class="form-label text-secondary">Middle Name</label>
                                 <input type="text" name="mname" id="mname" class="form-control enable_input"
-                                    disabled placeholder="Manases" value="{{ $users->mname }}">
+                                    disabled value="{{ $users->mname }}">
                             </div>
+
+                            <div class="col-md-4">
+                                <label for="suffix" class="form-label">Suffix</label>
+                                <input type="text" class="form-control" id="suffix" name="suffix"
+                                    value="{{ $users->suffix ?? '' }}" disabled>
+                            </div>
+
                             <div class="mb-3 col-md-4">
                                 <label for="contact" class="form-label text-secondary">Phone Number</label>
                                 <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                    disabled placeholder="Manases" value="{{ $users->contact }}">
+                                    disabled value="{{ $users->contact }}">
                             </div>
-
-                            @php
-                                $gender = [
-                                    0 => 'Male',
-                                    1 => 'Female',
-                                    2 => 'Rather not say',
-                                ];
-                            @endphp
+                            <div class="mb-3 col-md-4">
+                                <label for="email" class="form-label text-secondary">Email Address</label>
+                                <input type="text" name="email" id="email" class="form-control enable_input"
+                                    disabled value="{{ $users->email }}">
+                            </div>
 
                             <div class="mb-3 col-md-4">
                                 <label for="contact" class="form-label text-secondary">Gender</label>
                                 <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                    disabled placeholder="Manases"
-                                    value="{{ $gender[$users->gender] }}">
+                                    value="{{ $gender }}" disabled>
                             </div>
 
                             <div class="mb-3 col-md-4">
-                                <label for="email" class="form-label text-secondary">Email Address</label>
-                                <input type="text" name="email" id="email" class="form-control enable_input"
-                                    disabled placeholder="manasesjohn@gmail.com" value="{{ $users->email }}">
+                                <label for="contact" class="form-label text-secondary">Role</label>
+                                <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                    value="{{ $roles }}" disabled>
+                            </div>
+
+                            <div class="mb-3 col-md-4">
+                                <label for="contact" class="form-label text-secondary">ID Number</label>
+                                <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                    value="{{ $users->id_number }}" disabled>
                             </div>
                         </div>
                     </div>
@@ -81,7 +89,8 @@
                         <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="...">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">CPL Class Batch - 2025</h5>
-                            <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem, corporis!
+                            <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem,
+                                corporis!
                             </p>
                         </div>
                     </div>

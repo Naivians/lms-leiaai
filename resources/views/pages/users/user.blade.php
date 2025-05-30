@@ -11,10 +11,13 @@
         <thead>
             <tr>
                 <th>Image</th>
+                <th>ID Number</th>
                 <th>Student Name</th>
-                <th>Email</th>
                 <th>Role</th>
+                <th>Email</th>
                 <th>Phone</th>
+                <th>Verification Staus</th>
+                <th>Login Status</th>
                 <th>Action</th>
             </tr>
         </thead>

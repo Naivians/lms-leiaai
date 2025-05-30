@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+
 class UserController extends Controller
 {
     /**
@@ -15,8 +17,8 @@ class UserController extends Controller
     {
         if ($request->ajax()) {
             $data = User::where('role', '!=', 5)
-            ->orderBy('created_at', 'desc')
-            ->get();
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return DataTables::of($data)
                 ->addColumn('role_name', function ($row) {
@@ -27,10 +29,9 @@ class UserController extends Controller
                         3 => 'Registrar',
                         4 => 'Admin',
                     ];
-
                     return $roles[$row->role ?? 'Unknown'];
                 })
-                ->addColumn('student_name', function($row) {
+                ->addColumn('student_name', function ($row) {
                     $student_name = ucfirst($row->lname) . ' ' . strtoupper($row->suffix) . ', ' . ucfirst($row->fname) . ', ' . ucfirst($row->mname);
                     return $student_name;
                 })
@@ -57,13 +58,27 @@ class UserController extends Controller
     public function ViewUsers($userId)
     {
         $user = User::find($userId);
-        return view('pages.users.view_users', ['users' => $user]);
+
+        $roles = [
+            0 => 'Students',
+            1 => 'FI',
+            2 => 'CGI',
+            3 => 'Registrar',
+            4 => 'Admin',
+            5 => 'Super Admin',
+        ];
+        $gender = [
+            0 => 'Male',
+            1 => 'Female',
+            2 => 'Rather not say',
+        ];
+
+        return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
     }
 
     public function Store(Request $request)
     {
-        // return response()->json(['data' => $request->all()]);
-        $validated = $request->validate([
+        $validator = Validator::make($request->all(), [
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'mname' => 'required|string|max:255',
@@ -75,6 +90,13 @@ class UserController extends Controller
             'gender' => 'required|in:0,1,2',
             'img' => 'image|mimes:jpeg,jpg,png|max:1024',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(), // First error message
+                'errors' => $validator->errors(),           // All error messages
+            ], 422);
+        }
 
         $gender_img = [
             0 => asset('assets/img/student-male.png'),
@@ -88,7 +110,7 @@ class UserController extends Controller
             $img->move(public_path('uploads/users'), $img_name);
             $img_path = 'uploads/users/' . $img_name;
         } else {
-            if($request->role == 1 || $request->role == 2){
+            if ($request->role == 1 || $request->role == 2) {
                 $img_path = asset('assets/img/pilot.png');
             }
             $img_path = $gender_img[$request->gender];
@@ -106,6 +128,8 @@ class UserController extends Controller
             'gender' => $request->gender,
             'img' => $img_path ?? null,
         ]);
+
+
 
         return response()->json([
             'success' => true,
@@ -131,8 +155,58 @@ class UserController extends Controller
             1 => 'Female',
             2 => 'Rather not say',
         ];
-
-
         return view('pages.users.add_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
+    }
+
+
+    public function UpdateUser(Request $request)
+    {
+        $validated = $request->validate([
+            'fname' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'mname' => 'required|string|max:255',
+            'suffix' => 'required|string|max:50',
+            'contact' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
+            'email' => 'required|string|unique:users,email',
+            'role' => 'required|in:0,1,2,3,4',
+            'gender' => 'required|in:0,1,2',
+            'img' => 'image|mimes:jpeg,jpg,png|max:1024',
+        ]);
+
+        $gender_img = [
+            0 => asset('assets/img/student-male.png'),
+            1 => asset('assets/img/student-female.jpg'),
+            2 => asset('assets/img/logo.jpg'),
+        ];
+
+        if ($request->hasFile('img')) {
+            $img = $request->file('img');
+            $img_name = time() . '_' . $img->getClientOriginalName();
+            $img->move(public_path('uploads/users'), $img_name);
+            $img_path = 'uploads/users/' . $img_name;
+        } else {
+            if ($request->role == 1 || $request->role == 2) {
+                $img_path = asset('assets/img/pilot.png');
+            }
+            $img_path = $gender_img[$request->gender];
+        }
+
+        $user = User::update([
+            'fname' => $request->fname,
+            'lname' => $request->lname,
+            'mname' => $request->mname ?? null,
+            'suffix' => $request->suffix ?? null,
+            'contact' => $request->contact,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+            'gender' => $request->gender,
+            'img' => $img_path ?? null,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User registered successfully.',
+        ]);
     }
 }
