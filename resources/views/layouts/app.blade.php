@@ -23,16 +23,11 @@
     {{-- modals --}}
     @include('partials.modal')
 
-    {{-- header --}}
-
-
-
     {{-- Navigations (Navbar) --}}
     <div class="nav_container">
         @include('partials.navbar')
     </div>
     <div class="main-content">
-
         <header>
             <div class="card my-2 mx-3 {{ isset($title) && $title === 'Streams' ? 'd-none' : '' }}">
                 <div class="card-header header_container  white-bg d-flex align-item-center justify-content-between">
@@ -69,17 +64,15 @@
                 </div>
             </div>
         </header>
-
-
         {{-- main content --}}
         <main class="my-2 mx-3 p-3 white-bg">
             @yield('content')
         </main>
     </div>
-
-
     {{-- sidebar --}}
     @include('partials.sidebar')
+
+    .
 
     {{-- scripts --}}
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

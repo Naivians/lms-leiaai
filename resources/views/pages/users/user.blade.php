@@ -7,6 +7,8 @@
 @section('header_title', 'User Management')
 
 @section('content')
+
+
     <table id="userTable" class="display w-100">
         <thead>
             <tr>
@@ -16,8 +18,8 @@
                 <th>Role</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Verification Staus</th>
-                <th>Login Status</th>
+                <th>IsVerified</th>
+                <th>Login</th>
                 <th>Action</th>
             </tr>
         </thead>

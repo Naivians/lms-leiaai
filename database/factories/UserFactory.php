@@ -32,7 +32,7 @@ class UserFactory extends Factory
             'contact' => $this->faker->numerify('09#########'),
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'),
-            'role' => $this->faker->randomElement([0, 5]),
+            'role' => $this->faker->randomElement([0, 4]),
             'isVerified' => $this->faker->boolean,
             'login_status' => $this->faker->boolean,
             'img' => 'https://i.pravatar.cc/150?u=' . $this->faker->unique()->email(),

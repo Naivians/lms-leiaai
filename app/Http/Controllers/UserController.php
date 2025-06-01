@@ -7,6 +7,8 @@ use App\Models\User;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -15,6 +17,13 @@ class UserController extends Controller
      */
     public function Index(Request $request)
     {
+
+        if (Auth::user()->role != 3 && Auth::user()->role != 4 && Auth::user()->role != 5) {
+            return redirect()->route('user.Dashboard')->withErrors([
+                'access' => 'You do not have permission to access this page.'
+            ]);
+        }
+
         if ($request->ajax()) {
             $data = User::where('role', '!=', 5)
                 ->orderBy('created_at', 'desc')
@@ -52,7 +61,18 @@ class UserController extends Controller
      */
     public function Register()
     {
-        return view('pages.users.add_users');
+        if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5) {
+            return view('pages.users.add_users');
+        }
+
+        return redirect()->route('user.Dashboard')->withErrors([
+            'access' => 'You do not have permission to access this page.'
+        ]);
+    }
+
+    public function Dashboard()
+    {
+        return view('Dashboard');
     }
 
     public function ViewUsers($userId)
@@ -79,10 +99,11 @@ class UserController extends Controller
     public function Store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'id_number' => 'string|unique:users,id_number',
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
-            'mname' => 'required|string|max:255',
-            'suffix' => 'required|string|max:50',
+            'mname' => 'string|max:255',
+            'suffix' => 'nullable|string|max:50',
             'contact' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
             'email' => 'required|string|unique:users,email',
             'password' => 'required|confirmed|min:8',
@@ -117,6 +138,7 @@ class UserController extends Controller
         }
 
         $user = User::create([
+            'id_number' => $request->id_number ?? null,
             'fname' => $request->fname,
             'lname' => $request->lname,
             'mname' => $request->mname ?? null,
@@ -161,52 +183,71 @@ class UserController extends Controller
 
     public function UpdateUser(Request $request)
     {
-        $validated = $request->validate([
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
-            'mname' => 'required|string|max:255',
-            'suffix' => 'required|string|max:50',
-            'contact' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
-            'email' => 'required|string|unique:users,email',
-            'role' => 'required|in:0,1,2,3,4',
-            'gender' => 'required|in:0,1,2',
+        $user = User::find($request->id);
+        $validator = Validator::make($request->all(), [
+            'id_number' => 'string|nullable',
+            'fname' => 'string|max:255',
+            'lname' => 'string|max:255',
+            'mname' => 'string|max:255',
+            'suffix' => 'nullable|string|max:50',
+            'contact' => ['string', 'regex:/^\+\d{10,15}$/'],
+            'email' => 'string|nullable',
+            'role' => 'in:0,1,2,3,4',
+            'gender' => 'in:0,1,2',
             'img' => 'image|mimes:jpeg,jpg,png|max:1024',
         ]);
 
-        $gender_img = [
-            0 => asset('assets/img/student-male.png'),
-            1 => asset('assets/img/student-female.jpg'),
-            2 => asset('assets/img/logo.jpg'),
-        ];
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(), // First error message
+                'errors' => $validator->errors(),           // All error messages
+            ], 422);
+        }
+
+        if ($user->id_number == null) {
+            $exists = User::where('id_number', $user->id_number)
+                ->orWhere('email', $user->email)
+                ->exists();
+
+            if ($exists) {
+                if ($user->id_number == $request->id_number) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'ID number or Email already exists.',
+                    ], 404);
+                }
+            }
+        }
+
 
         if ($request->hasFile('img')) {
+            if (!empty($user->img) && File::exists(public_path($user->img))) {
+                File::delete(public_path($user->img));
+            }
             $img = $request->file('img');
             $img_name = time() . '_' . $img->getClientOriginalName();
             $img->move(public_path('uploads/users'), $img_name);
             $img_path = 'uploads/users/' . $img_name;
         } else {
-            if ($request->role == 1 || $request->role == 2) {
-                $img_path = asset('assets/img/pilot.png');
-            }
-            $img_path = $gender_img[$request->gender];
+            $img_path = $user->img;
         }
 
-        $user = User::update([
+        $user->update([
             'fname' => $request->fname,
             'lname' => $request->lname,
             'mname' => $request->mname ?? null,
             'suffix' => $request->suffix ?? null,
             'contact' => $request->contact,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
             'role' => $request->role,
             'gender' => $request->gender,
-            'img' => $img_path ?? null,
+            'img' => $img_path,
         ]);
+
+
 
         return response()->json([
             'success' => true,
-            'message' => 'User registered successfully.',
+            'message' => 'User update successfully.',
         ]);
     }
 }

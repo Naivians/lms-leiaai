@@ -44,42 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// users
-let enable_inputs = document.querySelectorAll('.enable_input');
-let user_update_btn = $('#user_update_btn').hide();
-let edit_info_btn = $('#edit_info');
-
-$('#edit_info').on('click', () => {
-    if (edit_info_btn.text().trim().toLowerCase() === 'edit') {
-        enable_inputs.forEach(input => input.disabled = false);
-        edit_info_btn.text('Back')
-        user_update_btn.show();
-    } else {
-        enable_inputs.forEach(input => input.disabled = true);
-        user_update_btn.hide();
-        edit_info_btn.text('Edit')
-    }
-});
-
-// people
-$('#enroll_fi_container').on('click', () => {
-    $('#enroll_fi_form').removeClass('d-none');
-    $('#enroll_fi_container').addClass('d-none');
-})
-$('#close_enroll_btn').on('click', () => {
-    $('#enroll_fi_container').removeClass('d-none');
-    $('#enroll_fi_form').addClass('d-none');
-})
-
-$('#enroll_student_container').on('click', () => {
-    $('#enroll_student_form').removeClass('d-none');
-    $('#enroll_student_container').addClass('d-none');
-})
-$('#close_enroll_student_btn').on('click', () => {
-    $('#enroll_student_container').removeClass('d-none');
-    $('#enroll_student_form').addClass('d-none');
-})
-
 
 $('#registerForm').on('submit', function (e) {
     e.preventDefault();
@@ -87,8 +51,75 @@ $('#registerForm').on('submit', function (e) {
     let form = new FormData(this);
     const imgInput = $('#img');
     const MB = 1024 * 1024;
-    const password = $('#validationCustom06');
-    const confirmPassword = $('#validationCustom05');
+    let allowed_types = ['image/jpg', 'image/jpeg', 'image/png'];
+    let files = imgInput[0].files[0];
+
+    if (imgInput[0].files.length > 0) {
+        if (files.size >= MB) {
+            error_message('The selected image is too large. Please choose an image smaller than 1MB.');
+            return;
+        }
+
+        if (!allowed_types.includes(files.type)) {
+            error_message('Invalid image type. Only JPG or PNG files are allowed.');
+            return;
+        }
+    }
+
+    // test
+    form.forEach(e => {
+        console.log(e);
+    })
+
+    $.ajax({
+        url: '/user/register',
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        contentType: false,
+        processData: false,
+        data: form,
+        success: (response) => {
+            if (!response.success) {
+                error_message('Failed to update user')
+                return
+            }
+            success_message(response.message);
+            $("#registerForm")[0].reset();
+            $('#errors').hide();
+        },
+        error: (xhr, status, error) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+                $('#errors').show();
+                $('#errorList').empty();
+
+                if (response.errors) {
+                    $('#errors').removeClass('d-none');
+                    Object.values(response.errors).flat().forEach(msg => {
+                        $('#errorList').append(`<li class="text-danger">${msg}</li>`);
+                    });
+                } else if (response.message) {
+                    $('#errors').removeClass('d-none');
+                    $('#errorList').append(`<li class="text-danger">${response.message}</li>`);
+                } else {
+                    $('#errors').removeClass('d-none');
+                    $('#errorList').append(`<li class="text-danger">An unknown error occurred.</li>`);
+                }
+            } catch (e) {
+                console.error('An unexpected error occurred', e);
+                $('#errors').removeClass('d-none');
+                $('#errorList').html('<li class="text-danger">An unexpected error occurred</li>');
+            }
+        }
+    });
+});
+$('#updateForm').on('submit', function (e) {
+    e.preventDefault();
+    let form = new FormData(this);
+    const imgInput = $('#img');
+    const MB = 1024 * 1024;
     let allowed_types = ['image/jpg', 'image/jpeg', 'image/png'];
     let files = imgInput[0].files[0];
 
@@ -110,7 +141,7 @@ $('#registerForm').on('submit', function (e) {
     // })
 
     $.ajax({
-        url: '/user/register',
+        url: '/user/update',
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -124,11 +155,12 @@ $('#registerForm').on('submit', function (e) {
                 return
             }
             success_message(response.message);
-            $("#registerForm")[0].reset();
+            $('#errors').hide();
         },
         error: (xhr, status, error) => {
             try {
                 const response = JSON.parse(xhr.responseText);
+                $('#errors').show();
                 $('#errorList').empty();
 
                 if (response.errors) {

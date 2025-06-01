@@ -176,3 +176,35 @@ nav a:hover {
   border-color: #28a745 !important; /* bootstrap green */
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
+
+
+/* login design */
+.login_container{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100vh;
+}
+
+.video_container{
+    width: 100%;
+    height: 100%;
+}
+
+.login_form_container{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#status_alert{
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    width: 400px;
+    transition: opacity 0.3s ease-in-out;
+}
+

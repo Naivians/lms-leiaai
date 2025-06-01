@@ -4,17 +4,15 @@
 @extends('layouts.app')
 @section('header_title', 'Register Users')
 @section('content')
-
+    <div class="m-0 alert alert-warning d-none" id="errors">
+        <ul class="px-3 m-0" id="errorList"></ul>
+    </div>
     @if (!isset($users))
-
-        <div class="m-0 alert alert-warning d-none" id="errors">
-            <ul class="px-3 m-0" id="errorList"></ul>
-        </div>
-
         <form class="row g-3" id="registerForm">
 
             <div class="col-md-12">
-                <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but needed)</span></label>
+                <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
+                        needed)</span></label>
                 <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007">
             </div>
 
@@ -108,14 +106,20 @@
             </div>
         </form>
     @else
-        {{-- new form --}}
-        <form>
+        <form id="updateForm" enctype="multipart/form-data">
+            <input type="hidden" name="id" value="{{ $users->id }}">
             <div class="d-flex align-items-start gap-1">
                 <div class="card view_img_container p-3">
                     <img src="{{ asset($users->img) }}">
                     <input type="file" name="img" id="img" class="form-control mt-3">
                 </div>
                 <div class="view_content border border-1 w-100 p-2">
+                    <div class="col-md-12">
+                        <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
+                                needed)</span></label>
+                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007"
+                            value="{{ $users->id_number }}">
+                    </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <label for="fname" class="form-label text-secondary">First Name</label>
@@ -136,70 +140,73 @@
                         <div class="col-md-4">
                             <label for="suffix" class="form-label">Suffix</label>
                             <input type="text" class="form-control" id="suffix" name="suffix"
-                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix ?? '' }}">
+                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix}}">
                         </div>
 
                         <div class="mb-3 col-md-4">
                             <label for="contact" class="form-label text-secondary">Phone Number</label>
                             <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                placeholder="Manases" value="{{ $users->contact }}" disabled>
+                                placeholder="Manases" value="{{ $users->contact }}"
+                                {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
                         </div>
 
                         <div class="mb-3 col-md-4">
                             <label for="email" class="form-label text-secondary">Email Address</label>
                             <input type="text" name="email" id="email" class="form-control enable_input"
-                                placeholder="manasesjohn@gmail.com" value="{{ $users->email }}" disabled>
+                                placeholder="manasesjohn@gmail.com" value="{{ $users->email }}"
+                                {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
                         </div>
 
+                        @if (Auth::user()->role !== 3 || Auth::user()->role !== 4 || Auth::user()->role !== 5)
+                            <div class="col-md-4">
+                                <label for="gender" class="form-label">Select Gender</label>
+                                <select class="form-select" id="gender" name="gender" required>
+                                    <option selected value="{{ $users->gender ?? '' }}">
+                                        {{ $gender ?? 'Choose...' }}
+                                    </option>
+                                    <option value="0">Male</option>
+                                    <option value="1">Female</option>
+                                    <option value="2">Rather not say</option>
+                                </select>
+                            </div>
 
-                        {{-- if student --}}
-                        <div class="mb-3 col-md-4">
-                            <label for="contact" class="form-label text-secondary">Gender</label>
-                            <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                placeholder="Manases" value="{{ $gender }}" disabled>
-                        </div>
+                            <div class="col-md-4">
+                                <label for="validationCustom04" class="form-label">Select Role</label>
+                                <select class="form-select" id="validationCustom04" name="role" required>
+                                    <option selected value="{{ $users->role ?? '' }}">{{ $roles ?? 'Choose..' }}
+                                    </option>
+                                    <option value="0">Student</option>
+                                    <option value="1">Flight Instructor</option>
+                                    <option value="2">CGI</option>
+                                    <option value="3">Registrar</option>
+                                    <option value="4">Admin</option>
+                                    <option value="5">Super Admin</option>
+                                </select>
+                            </div>
+                        @else
+                            <div class="mb-3 col-md-4">
+                                <label for="gender" class="form-label text-secondary">Gender</label>
+                                <input type="text" name="gender" id="gender" class="form-control enable_input"
+                                    value="{{ $gender }}" disabled>
+                            </div>
 
-                        <div class="mb-3 col-md-4">
-                            <label for="contact" class="form-label text-secondary">Role</label>
-                            <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                placeholder="Manases" value="{{ $roles }}" disabled>
-                        </div>
+                            <div class="mb-3 col-md-4">
+                                <label for="role" class="form-label text-secondary">Role</label>
+                                <input type="text" name="role" id="role" class="form-control enable_input"
+                                    value="{{ $roles }}" disabled>
+                            </div>
+                        @endif
 
-                        {{-- if admin --}}
-                        {{-- <div class="col-md-4">
-                            <label for="gender" class="form-label">Select Gender</label>
-                            <select class="form-select" id="gender" name="gender" required>
-                                <option selected disabled value="{{ $users->gender ?? '' }}">{{ $gender ?? 'Choose...' }}
-                                </option>
-                                <option value="0">Male</option>
-                                <option value="1">Female</option>
-                                <option value="2">Rather not say</option>
-                            </select>
-                        </div>
 
-                        <div class="col-md-4">
-                            <label for="validationCustom04" class="form-label">Select Role</label>
-                            <select class="form-select" id="validationCustom04" name="role" required>
-                                <option selected disabled value="{{ $users->role ?? '' }}">{{ $roles ?? 'Choose..' }}
-                                </option>
-                                <option value="0">Student</option>
-                                <option value="1">Flight Instructor</option>
-                                <option value="2">CGI</option>
-                                <option value="3">Registrar</option>
-                                <option value="4">Admin</option>
-                                <option value="5">Super Admin</option>
-                            </select>
-                        </div>
-                    </div> --}}
-                        <div class="col-md-12 mt-3">
-                            <button class="btn btn-primary"
-                                type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
-                            <a href="{{ route('user.Home') }}" class="btn btn-outline-primary mx-1">Change password</a>
-                            <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
-                        </div>
+
                     </div>
-
+                    <div class="col-md-12 mt-3">
+                        <button class="btn btn-primary" type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
+                        <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+                    </div>
                 </div>
+
+            </div>
         </form>
     @endif
 
