@@ -98,8 +98,10 @@ class UserController extends Controller
 
     public function Store(Request $request)
     {
+
+
         $validator = Validator::make($request->all(), [
-            'id_number' => 'string|unique:users,id_number',
+            'id_number' => 'nullable|string|unique:users,id_number',
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'mname' => 'string|max:255',
@@ -184,11 +186,12 @@ class UserController extends Controller
     public function UpdateUser(Request $request)
     {
         $user = User::find($request->id);
+        $new_id_number = $request->id_number;
         $validator = Validator::make($request->all(), [
-            'id_number' => 'string|nullable',
+            'id_number' => 'nullable|string',
             'fname' => 'string|max:255',
             'lname' => 'string|max:255',
-            'mname' => 'string|max:255',
+            'mname' => 'nullable|string|max:255',
             'suffix' => 'nullable|string|max:50',
             'contact' => ['string', 'regex:/^\+\d{10,15}$/'],
             'email' => 'string|nullable',
@@ -199,26 +202,22 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => $validator->errors()->first(), // First error message
-                'errors' => $validator->errors(),           // All error messages
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
             ], 422);
         }
 
-        if ($user->id_number == null) {
-            $exists = User::where('id_number', $user->id_number)
-                ->orWhere('email', $user->email)
-                ->exists();
-
+        if (!empty($request->id_number) && $request->id_number != $user->id_number) {
+            $exists = User::where('id_number', $request->id_number)->exists();
             if ($exists) {
-                if ($user->id_number == $request->id_number) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'ID number or Email already exists.',
-                    ], 404);
-                }
+                return response()->json([
+                    'success' => false,
+                    'message' => 'ID Number already Exists',
+                ], 404);
             }
+        } else {
+            $new_id_number = $user->id_number;
         }
-
 
         if ($request->hasFile('img')) {
             if (!empty($user->img) && File::exists(public_path($user->img))) {
@@ -229,21 +228,27 @@ class UserController extends Controller
             $img->move(public_path('uploads/users'), $img_name);
             $img_path = 'uploads/users/' . $img_name;
         } else {
-            $img_path = $user->img;
+
+            $gender_img = [
+                0 => asset('assets/img/student-male.png'),
+                1 => asset('assets/img/student-female.jpg'),
+                2 => asset('assets/img/logo.jpg'),
+            ];
+
+            $img_path = $gender_img[$request->gender];
         }
 
         $user->update([
+            'id_number' => $new_id_number,
             'fname' => $request->fname,
             'lname' => $request->lname,
             'mname' => $request->mname ?? null,
             'suffix' => $request->suffix ?? null,
-            'contact' => $request->contact,
-            'role' => $request->role,
-            'gender' => $request->gender,
+            'contact' => $request->contact ?? $user->contact,
+            'role' => $request->role ?? $user->role,
+            'gender' => $request->gender ?? $user->gender,
             'img' => $img_path,
         ]);
-
-
 
         return response()->json([
             'success' => true,

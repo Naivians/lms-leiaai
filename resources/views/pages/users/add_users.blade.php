@@ -106,6 +106,18 @@
             </div>
         </form>
     @else
+        @if (Auth::user()->role == 0 || Auth::user()->role == 1 || Auth::user()->role == 2)
+            <div class="alert alert-warning">
+                <p>Ask Registrar if you want to change the following:</p>
+                <ol>
+                    <li>Gender</li>
+                    <li>ID number</li>
+                    <li>Phone Number</li>
+                    <li>Email Address</li>
+                </ol>
+            </div>
+        @endif
+
         <form id="updateForm" enctype="multipart/form-data">
             <input type="hidden" name="id" value="{{ $users->id }}">
             <div class="d-flex align-items-start gap-1">
@@ -117,8 +129,9 @@
                     <div class="col-md-12">
                         <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
                                 needed)</span></label>
-                        <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007"
-                            value="{{ $users->id_number }}">
+                        <input type="text" class="form-control" id="id_number" name="id_number"
+                            value="{{ $users->id_number }}"
+                            {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
@@ -129,7 +142,7 @@
                         <div class="mb-3 col-md-4">
                             <label for="lname" class="form-label text-secondary">Last Name</label>
                             <input type="text" name="lname" id="lname" class="form-control enable_input"
-                                placeholder="Doe" value="{{ $users->lname . ' ' . strtoupper($users->suffix) }}">
+                                placeholder="Doe" value="{{ $users->lname }}">
                         </div>
                         <div class="mb-3 col-md-4">
                             <label for="mname" class="form-label text-secondary">Middle Name</label>
@@ -140,7 +153,7 @@
                         <div class="col-md-4">
                             <label for="suffix" class="form-label">Suffix</label>
                             <input type="text" class="form-control" id="suffix" name="suffix"
-                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix}}">
+                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix }}">
                         </div>
 
                         <div class="mb-3 col-md-4">
@@ -157,7 +170,7 @@
                                 {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
                         </div>
 
-                        @if (Auth::user()->role !== 3 || Auth::user()->role !== 4 || Auth::user()->role !== 5)
+                        @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
                             <div class="col-md-4">
                                 <label for="gender" class="form-label">Select Gender</label>
                                 <select class="form-select" id="gender" name="gender" required>
@@ -202,7 +215,11 @@
                     </div>
                     <div class="col-md-12 mt-3">
                         <button class="btn btn-primary" type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
-                        <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+                        @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
+                            <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+                        @else
+                            <a href="{{ route('user.Dashboard') }}" class="btn btn-outline-danger">Back</a>
+                        @endif
                     </div>
                 </div>
 

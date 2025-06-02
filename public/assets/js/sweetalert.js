@@ -16,23 +16,22 @@ function error_message(message) {
     });
 }
 
-function comfirm_delete_message(message, callback) {
+function confirm_message(message, callback) {
     Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "Ooopsss?",
+        text: message,
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Confirm"
     }).then((result) => {
-        // place call back here
         if (result.isConfirmed) {
-            Swal.fire({
-                title: "Deleted!",
-                text: "Your file has been deleted.",
-                icon: "success"
-            });
+            success_message('Logout Successfully')
+            setInterval(() => {
+                callback();
+            }, 1500)
+
         }
     });
 }

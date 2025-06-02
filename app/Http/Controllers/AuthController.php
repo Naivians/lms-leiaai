@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,12 +34,12 @@ class AuthController extends Controller
     public function Logout()
     {
         Auth::logout();
-        return redirect('/')->with('status', 'You have been logged out successfully.');
+        return response()->json(['location' => '/']);
     }
 
     public function Index()
     {
-        if(Auth::check()){
+        if (Auth::check()) {
             return redirect()->route('user.Home');
         }
         return view('pages.auth.login');

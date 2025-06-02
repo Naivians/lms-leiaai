@@ -20,8 +20,8 @@ Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
 
 Route::middleware(['auth'])->group(function () {
     // users
-    Route::get('/Dashboard', [UserController::class, 'Dashboard'])->name('user.Dashboard');
     Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
+    Route::get('/Dashboard', [UserController::class, 'Dashboard'])->name('user.Dashboard');
     Route::get('/add', [UserController::class, 'Register'])->name('user.Register');
     Route::post('/user/update', [UserController::class, 'UpdateUser'])->name('user.Update');
     Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');

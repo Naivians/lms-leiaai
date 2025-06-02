@@ -28,11 +28,7 @@
             <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-book me-2"></i> Contents</a>
             <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-bookmark me-2"></i> Assessments</a>
         @endif
-
         <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-chart-line me-2"></i> Progress</a>
-
-        <form action="{{ route('auth.logout') }}" method="POST">@csrf<input type="submit"
-                class="ms-2 btn btn-outline-primary w-75" value="Logout"></form>
     </nav>
     <div class="footer_container">
         <p class="m-0 mt-3 border border-1">&copy; {{ date('Y') }} LEIAAI LMS. All rights reserved. </p>

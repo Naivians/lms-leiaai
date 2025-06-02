@@ -12,6 +12,26 @@ $(".sidebar-toggle").on("click", function () {
     $(".main-content").toggleClass("expanded");
 });
 
+$('#logoutBtn').on('click', (e) => {
+    e.preventDefault()
+
+    confirm_message('Are you sure you want to logout?', () => {
+        $.ajax({
+            url: '/logout',
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: (res) => {
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                error_message('Logout failed: ' + error);
+            }
+        });
+    })
+})
+
 
 // announcements
 let announce_btn = $('.announce_btn');
@@ -43,6 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+
+
 
 
 $('#registerForm').on('submit', function (e) {
@@ -150,12 +172,18 @@ $('#updateForm').on('submit', function (e) {
         processData: false,
         data: form,
         success: (response) => {
-            if (!response.success) {
-                error_message('Failed to register user')
-                return
-            }
-            success_message(response.message);
-            $('#errors').hide();
+
+            setInterval(() => {
+                if (!response.success) {
+                    error_message('Failed to register user')
+                    return
+                }
+                success_message(response.message);
+                $('#errors').hide();
+            }, 1500)
+
+            window.location.reload();
+
         },
         error: (xhr, status, error) => {
             try {

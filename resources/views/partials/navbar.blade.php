@@ -3,11 +3,25 @@
         <div class="burger_menu">
             <i class="fa-solid fa-bars fs-5 cursor text-primary sidebar-toggle"></i>
         </div>
-        <div class="account_container">
-            <span class="fw-bold me-2 text-primary">Admin</span>
-            <i class="fa-regular fa-bell fs-5 cursor text-primary" ></i>
-            <i class="fa-regular fa-user fs-5 mx-2 cursor text-primary" ></i>
-            <i class="fa-solid fa-chevron-down cursor text-primary"  id="account_dropdown"></i>
+        <div class="account_container d-flex align-items-center justify-content-between gap-2">
+            <span class="fw-bold me-2 text-primary"></span>
+            <i class="fa-regular fa-bell fs-4 cursor text-primary"></i>
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
+                    aria-expanded="false">Her
+                    {{ Auth::user()->fname }}!
+                </button>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="{{ route('user.Edit', ['userId' => Auth::id()]) }}" class="dropdown-item">
+                            <i class="fa-solid fa-user me-2"></i> Profile
+                        </a>
+                    </li>
+                    <a href="#" id="logoutBtn" class="dropdown-item"><i class="fa-solid fa-right-from-bracket me-2"></i> Logout</a>
+                    {{-- <form action="{{ route('auth.logout') }}" method="POST">@csrf<input type="submit"
+                            class="ms-2 btn btn-outline-primary w-75" value="Logout"></form> --}}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
