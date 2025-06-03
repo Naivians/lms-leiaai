@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
     <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
@@ -50,15 +51,17 @@
                                 </div>
                             </div>
                         @break
+
                         @case('User Detailes')
                             <div class="card-tools">
                                 <div class="card-tools">
-                                    <a href="{{ route('user.Home') }}" class="btn btn-danger btn-sm"
-                                        ><i class="fa-solid fa-arrow-left me-2"></i></i> Back
+                                    <a href="{{ route('user.Home') }}" class="btn btn-danger btn-sm"><i
+                                            class="fa-solid fa-arrow-left me-2"></i></i> Back
                                     </a>
                                 </div>
                             </div>
                         @break
+
                         @default
                     @endswitch
                 </div>
@@ -85,7 +88,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous">
+        integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous">
     </script>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -96,19 +99,25 @@
     @yield('scripts')
 
     <script>
-        $(document).ready(function () {
+        var quill = new Quill('#editor', {
+            modules: {
+                toolbar: '#toolbar'
+            },
+            theme: 'snow'
+        });
+
+        $(document).ready(function() {
             // users
             $('#userTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route("user.Home") }}',
+                ajax: '{{ route('user.Home') }}',
                 dom: 'Blfrtip',
                 buttons: ['copy', 'csv', 'print', 'colvis'],
                 language: {
                     emptyTable: "No Users found. Please add new users"
                 },
-                columns: [
-                    {
+                columns: [{
                         data: 'img',
                         render: function(data, type, row) {
                             return `
@@ -118,14 +127,32 @@
                             `;
                         }
                     },
-                    { data: 'id_number' },
-                    { data: 'student_name' },
-                    { data: 'role_name' },
-                    { data: 'email' },
-                    { data: 'contact' },
-                    { data: 'isVerified' },
-                    { data: 'login_status' },
-                    { data: 'action', orderable: false, searchable: false }
+                    {
+                        data: 'id_number'
+                    },
+                    {
+                        data: 'student_name'
+                    },
+                    {
+                        data: 'role_name'
+                    },
+                    {
+                        data: 'email'
+                    },
+                    {
+                        data: 'contact'
+                    },
+                    {
+                        data: 'isVerified'
+                    },
+                    {
+                        data: 'login_status'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
                 ]
             });
 
@@ -133,7 +160,7 @@
             // $('#classwork_lessons_table').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route("user.Home") }}',
+            //     ajax: '{{ route('user.Home') }}',
             //     columns: [
             //         { data: 'id' },
             //         { data: 'fname' },
@@ -149,7 +176,7 @@
             // $('#classwork_quiz_table').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route("user.Home") }}',
+            //     ajax: '{{ route('user.Home') }}',
             //     columns: [
             //         { data: 'id' },
             //         { data: 'fname' },
@@ -165,7 +192,7 @@
             // $('#classwork_fi_table').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route("user.Home") }}',
+            //     ajax: '{{ route('user.Home') }}',
             //     columns: [
             //         { data: 'id' },
             //         { data: 'fname' },
@@ -195,8 +222,6 @@
             //     ]
             // });
         });
-
-
     </script>
 </body>
 

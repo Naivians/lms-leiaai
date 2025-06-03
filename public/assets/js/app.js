@@ -1,9 +1,4 @@
-var quill = new Quill('#editor', {
-    modules: {
-        toolbar: '#toolbar'
-    },
-    theme: 'snow'
-});
+
 
 
 $(".sidebar-toggle").on("click", function () {
@@ -132,7 +127,7 @@ $('#registerForm').on('submit', function (e) {
             } catch (e) {
                 console.error('An unexpected error occurred', e);
                 $('#errors').removeClass('d-none');
-                $('#errorList').html('<li class="text-danger">An unexpected error occurred</li>');
+                $('#errorList').html(`<li class="text-danger">${e}</li>`);
             }
         }
     });

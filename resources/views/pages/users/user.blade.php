@@ -7,8 +7,6 @@
 @section('header_title', 'User Management')
 
 @section('content')
-
-
     <table id="userTable" class="display w-100">
         <thead>
             <tr>

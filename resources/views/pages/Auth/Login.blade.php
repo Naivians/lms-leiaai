@@ -7,11 +7,6 @@
 @section('content')
     @include('partials.messages', ['title' => "Login Error"])
 
-    @if (session('status'))
-        <div class="alert alert-success" role="alert" id="status_alert">
-            {{ session('status') }}
-        </div>
-    @endif
     <div class="login_container">
         <div class="video_container" style="background-color: #000">
             <video src="{{ asset('assets/video/video_bg.mp4') }}" width="100%" height="100%" autoplay muted loop></video>

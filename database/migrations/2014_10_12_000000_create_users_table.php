@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('password');
             $table->string('img');
             $table->tinyInteger('role')->default(0);
+            $table->string('verification_token')->nullable()->unique();
             $table->tinyInteger('isVerified')->default(0);
             $table->tinyInteger('login_status')->default(0);
             $table->rememberToken();

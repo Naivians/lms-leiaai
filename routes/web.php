@@ -14,8 +14,12 @@ use App\Http\Controllers\AuthController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
+
+Route::get('/login/verification/{token}', [AuthController::class, 'VerifyEmail'])
+    ->name('auth.email.verify');
 
 
 Route::middleware(['auth'])->group(function () {
