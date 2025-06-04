@@ -17,55 +17,40 @@
                     </div>
                     <div class="view_content border border-1 w-100 p-2">
                         <div class="row">
-                            <div class="mb-3 col-md-4">
-                                <label for="fname" class="form-label text-secondary">First Name</label>
+
+                            <div class="mb-3 col-md-6">
+                                <label for="contact" class="form-label text-secondary">ID Number</label>
+                                <input type="text" name="contact" id="contact" class="form-control enable_input"
+                                    value="{{ $users->id_number }}" disabled>
+                            </div>
+
+                            <div class="mb-3 col-md-6">
+                                <label for="fname" class="form-label text-secondary">Name</label>
                                 <input type="text" name="fname" id="fname" class="form-control enable_input"
-                                    disabled value="{{ $users->fname }}">
-                            </div>
-                            <div class="mb-3 col-md-4">
-                                <label for="lname" class="form-label text-secondary">Last Name</label>
-                                <input type="text" name="lname" id="lname" class="form-control enable_input"
-                                    disabled value="{{ $users->lname . ' ' . strtoupper($users->suffix) }}">
-                            </div>
-                            <div class="mb-3 col-md-4">
-                                <label for="mname" class="form-label text-secondary">Middle Name</label>
-                                <input type="text" name="mname" id="mname" class="form-control enable_input"
-                                    disabled value="{{ $users->mname }}">
+                                    disabled value="{{ $users->name }}">
                             </div>
 
-                            <div class="col-md-4">
-                                <label for="suffix" class="form-label">Suffix</label>
-                                <input type="text" class="form-control" id="suffix" name="suffix"
-                                    value="{{ $users->suffix ?? '' }}" disabled>
-                            </div>
-
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 <label for="contact" class="form-label text-secondary">Phone Number</label>
                                 <input type="text" name="contact" id="contact" class="form-control enable_input"
                                     disabled value="{{ $users->contact }}">
                             </div>
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 <label for="email" class="form-label text-secondary">Email Address</label>
                                 <input type="text" name="email" id="email" class="form-control enable_input"
                                     disabled value="{{ $users->email }}">
                             </div>
 
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 <label for="contact" class="form-label text-secondary">Gender</label>
                                 <input type="text" name="contact" id="contact" class="form-control enable_input"
                                     value="{{ $gender }}" disabled>
                             </div>
 
-                            <div class="mb-3 col-md-4">
+                            <div class="mb-3 col-md-6">
                                 <label for="contact" class="form-label text-secondary">Role</label>
                                 <input type="text" name="contact" id="contact" class="form-control enable_input"
                                     value="{{ $roles }}" disabled>
-                            </div>
-
-                            <div class="mb-3 col-md-4">
-                                <label for="contact" class="form-label text-secondary">ID Number</label>
-                                <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                    value="{{ $users->id_number }}" disabled>
                             </div>
                         </div>
                     </div>

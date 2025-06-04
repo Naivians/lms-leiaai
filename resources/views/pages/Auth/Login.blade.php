@@ -39,7 +39,8 @@
                 </div>
             </form>
             <div class="text-center mt-3">
-                <a href="#" class="text-decoration-none small text-muted">Forgot password?</a>
+                <p class="small text-muted">No Account yet? <a href="{{ route('auth.Register') }}" class="small text-muted">Sign up here</a></p>
+                <a href="#" class=" small text-muted">Forgot password?</a>
             </div>
         </div>
     @endsection

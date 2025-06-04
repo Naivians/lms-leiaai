@@ -131,7 +131,7 @@
                         data: 'id_number'
                     },
                     {
-                        data: 'student_name'
+                        data: 'name'
                     },
                     {
                         data: 'role_name'
@@ -146,7 +146,7 @@
                         data: 'isVerified'
                     },
                     {
-                        data: 'login_status'
+                        data: 'login_status',
                     },
                     {
                         data: 'action',

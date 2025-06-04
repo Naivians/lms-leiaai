@@ -16,8 +16,8 @@
                 <th>Role</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>IsVerified</th>
-                <th>Login</th>
+                <th style="text-align: center">IsVerified</th>
+                <th class="align-left">Login  Status</th>
                 <th>Action</th>
             </tr>
         </thead>

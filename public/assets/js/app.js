@@ -61,7 +61,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-
 $('#registerForm').on('submit', function (e) {
     e.preventDefault();
 
@@ -83,11 +82,6 @@ $('#registerForm').on('submit', function (e) {
         }
     }
 
-    // test
-    form.forEach(e => {
-        console.log(e);
-    })
-
     $.ajax({
         url: '/user/register',
         method: 'POST',
@@ -97,14 +91,25 @@ $('#registerForm').on('submit', function (e) {
         contentType: false,
         processData: false,
         data: form,
+        beforeSend() {
+            setTimeout(() => {
+                pre_loader()
+            })
+        },
         success: (response) => {
             if (!response.success) {
                 error_message('Failed to update user')
                 return
             }
+
+
             success_message(response.message);
+            setTimeout(() => {
+                window.location.href = `${response.redirect}`;
+            }, 1500)
             $("#registerForm")[0].reset();
             $('#errors').hide();
+
         },
         error: (xhr, status, error) => {
             try {
@@ -265,4 +270,52 @@ function showPassword() {
         }
     });
 }
+
+
 showPassword()
+
+
+function login_status(selectElement, userId) {
+    const selectedValue = selectElement.value;
+
+    $.ajax({
+        url: 'update/login_status',
+        type: "POST",
+        data: {
+            id: userId,
+            login_status: selectedValue,
+        },
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        beforeSend() {
+            pre_loader()
+        },
+        success: function (response) {
+            if (!response.success) {
+                error_message(response.message)
+                return
+            }
+            success_message(response.message);
+
+            let table = $('#userTable').DataTable();
+            table.ajax.reload(null, false);
+        },
+        error: (xhr, status, error) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    $('#errors').removeClass('d-none');
+                    Object.values(response.errors).flat().forEach(msg => {
+                        console.log(msg);
+                    });
+                } else if (response.message) {
+                    error_message(response.message);
+                }
+            } catch (e) {
+                console.error('An unexpected error occurred', e);
+            }
+        }
+    });
+}

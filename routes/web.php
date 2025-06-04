@@ -17,20 +17,24 @@ use App\Http\Controllers\AuthController;
 
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
+Route::get('/user/register', [AuthController::class, 'RegisterPage'])->name('auth.Register');
+Route::post('/user/register', [UserController::class, 'Store'])->name('user.Store');
 
 Route::get('/login/verification/{token}', [AuthController::class, 'VerifyEmail'])
-    ->name('auth.email.verify');
-
+->name('auth.email.verify');
 
 Route::middleware(['auth'])->group(function () {
+
+    // Auth
+    Route::post('update/login_status', [AuthController::class, 'LoginStatus'])->name('auth.Login.Status');
+
     // users
+    Route::get('/Register', [UserController::class, 'Register'])->name('user.Register');
     Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
     Route::get('/Dashboard', [UserController::class, 'Dashboard'])->name('user.Dashboard');
-    Route::get('/add', [UserController::class, 'Register'])->name('user.Register');
     Route::post('/user/update', [UserController::class, 'UpdateUser'])->name('user.Update');
     Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');
     Route::get('/user/edit/{userId}', [UserController::class, 'EditUser'])->name('user.Edit');
-    Route::post('/user/register', [UserController::class, 'Store'])->name('user.Store');
 
     // class
     Route::get('/class', [ClassController::class, 'Index'])->name('class.index');

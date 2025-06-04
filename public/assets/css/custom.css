@@ -58,6 +58,12 @@ nav a:hover {
     color: var(--dark-color);
 } */
 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 #sidebar img {
     width: 100%;
     height: auto;

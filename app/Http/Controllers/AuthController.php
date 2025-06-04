@@ -64,6 +64,11 @@ class AuthController extends Controller
         return view('pages.auth.login');
     }
 
+    public function RegisterPage()
+    {
+        return view('pages.Auth.Register');
+    }
+
     public function VerifyEmail($token)
     {
         $user = User::where('verification_token', $token)->first();
@@ -77,6 +82,42 @@ class AuthController extends Controller
             'verification_token' => null,
         ]);
 
-        return view('pages.Auth.email_verification');
+        return view('emails.email_verification');
+    }
+
+    public function LoginStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+            'login_status' => 'required|in:0,1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = User::find($request->id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ]);
+        }
+
+        $user->login_status = $request->login_status;
+        $user->save();
+
+        $message = $request->login_status == 1
+            ? "Account successfully activated"
+            : "Account successfully deactivated";
+
+        return response()->json([
+            'success' => true,
+            'message' => $message
+        ]);
     }
 }

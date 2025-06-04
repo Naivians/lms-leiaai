@@ -13,6 +13,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use App\Services\EmailService;
 use Illuminate\Support\Str;
+use App\Mail\VerifyEmail;
+use Illuminate\Support\Facades\Mail;
+
 
 class UserController extends Controller
 {
@@ -34,6 +37,33 @@ class UserController extends Controller
                 ->get();
 
             return DataTables::of($data)
+                ->addColumn('login_status', function ($row) {
+
+                    $class = $row->login_status == 0 ? "badge bg-danger" : "badge bg-success";
+                    $name = $row->login_status == 0 ? "deactivated" : "activated";
+
+                    $alternate_name =  $row->login_status == 0 ?  'activated' : 'deactivated';
+                    $alternate_value =  $row->login_status == 0 ? 1 : 0;
+
+                    $select_options = '<select name="login_status"   onchange="login_status(this, ' . $row->id . ')" class="form-select ' . $class . '" style="cursor: pointer;">
+                            <option value="'. $row->login_status .'" selected>' . $name . '</option>
+                            <option value="'. $alternate_value .'">' . $alternate_name . '</option>
+                        </select>';
+
+                    return $select_options;
+                })
+
+                ->addColumn('isVerified', function ($row) {
+                    if ($row->isVerified) {
+                        $icon = '<i class="fa-solid fa-circle-check text-success"></i>';
+                        $class = "badge bg-success";
+                    } else {
+                        $icon = '<i class="fa-solid fa-circle-xmark text-danger"></i>';
+                        $class = "badge bg-success";
+                    }
+                    return '<div class="text-center"><span class="text-center">' . $icon . '</span></div>';
+                })
+
                 ->addColumn('role_name', function ($row) {
                     $roles = [
                         0 => 'Students',
@@ -44,16 +74,12 @@ class UserController extends Controller
                     ];
                     return $roles[$row->role ?? 'Unknown'];
                 })
-                ->addColumn('student_name', function ($row) {
-                    $student_name = ucfirst($row->lname) . ' ' . strtoupper($row->suffix) . ', ' . ucfirst($row->fname) . ', ' . ucfirst($row->mname);
-                    return $student_name;
-                })
                 ->addColumn('action', function ($row) {
                     $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100 mb-2"><i class="fa-solid fa-eye"></i></a>';
                     $editBtn = '<a href= " ' . route('user.Edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100"><i class="fa-solid fa-user-pen"></i></a>';
                     return $viewBtn . ' ' . $editBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'login_status', 'isVerified'])
                 ->make(true);
         }
 
@@ -66,7 +92,7 @@ class UserController extends Controller
     public function Register()
     {
         if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5) {
-            return view('pages.users.add_users');
+            return view('pages.users.edit_users');
         }
 
         return redirect()->route('user.Dashboard')->withErrors([
@@ -102,17 +128,12 @@ class UserController extends Controller
 
     public function Store(Request $request, EmailService $emailService)
     {
-
         $validator = Validator::make($request->all(), [
             'id_number' => 'nullable|string|unique:users,id_number',
-            'fname' => 'required|string|max:255',
-            'lname' => 'required|string|max:255',
-            'mname' => 'string|max:255',
-            'suffix' => 'nullable|string|max:50',
+            'name' => 'required|string|max:255',
             'contact' => ['required', 'string', 'regex:/^\+\d{10,15}$/'],
             'email' => 'required|string|unique:users,email',
             'password' => 'required|confirmed|min:8',
-            'role' => 'required|in:0,1,2,3,4',
             'gender' => 'required|in:0,1,2',
             'img' => 'image|mimes:jpeg,jpg,png|max:1024',
         ]);
@@ -144,31 +165,22 @@ class UserController extends Controller
 
         $user = User::create([
             'id_number' => $request->id_number ?? null,
-            'fname' => $request->fname,
-            'lname' => $request->lname,
-            'mname' => $request->mname ?? null,
-            'suffix' => $request->suffix ?? null,
+            'name' => $request->name,
             'contact' => $request->contact,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
+            'role' => 0,
             'gender' => $request->gender,
             'img' => $img_path ?? null,
             'verification_token' => Str::uuid(),
         ]);
 
-
-
-        // $verificationLink = route('auth.email.verify', ['token' => $user->verification_token]);
-        $emailService->SendVerificationLink($user, route('auth.email.verify', ['token' => $user->verification_token]));
-
-        // return response()->json([
-        //     'errors' => ,           // All error messages
-        // ], 422);
+        Mail::to($user->email)->queue(new VerifyEmail($user, route('auth.email.verify', ['token' => $user->verification_token])));
 
         return response()->json([
             'success' => true,
             'message' => 'Registration successful. Please verify your email.',
+            'redirect' => url('/'),
         ]);
     }
 
@@ -190,7 +202,7 @@ class UserController extends Controller
             1 => 'Female',
             2 => 'Rather not say',
         ];
-        return view('pages.users.add_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
+        return view('pages.users.edit_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
     }
 
 

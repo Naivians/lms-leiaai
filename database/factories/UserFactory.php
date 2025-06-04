@@ -25,10 +25,7 @@ class UserFactory extends Factory
     {
         return [
             'id_number' => $this->faker->firstName .'0000' . Str::random(10),
-            'fname' => $this->faker->firstName,
-            'lname' => $this->faker->lastName,
-            'mname' => $this->faker->firstName,
-            'suffix' => $this->faker->optional()->suffix,
+            'name' => $this->faker->firstName,
             'contact' => $this->faker->numerify('09#########'),
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'),

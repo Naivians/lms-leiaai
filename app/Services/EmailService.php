@@ -27,7 +27,7 @@ class EmailService
           </tr>
           <tr>
             <td style="padding: 30px;">
-              <p style="font-size: 16px; color: #333;">Hi ' . $user->fname . ' ,</p>
+              <p style="font-size: 16px; color: #333;">Hi ' . $user->name . ' ,</p>
               <p style="font-size: 16px; color: #555;">
                 Thank you for signing up. Please verify your email address by clicking the button below. This helps us make sure we’ve got the right address.
               </p>

@@ -35,3 +35,13 @@ function confirm_message(message, callback) {
         }
     });
 }
+function pre_loader() {
+    Swal.fire({
+        title: 'Redirecting...',
+        text: 'Please wait while we take you there.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}

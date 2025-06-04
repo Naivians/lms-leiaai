@@ -8,33 +8,17 @@
         <ul class="px-3 m-0" id="errorList"></ul>
     </div>
     @if (!isset($users))
-        <form class="row g-3" id="registerForm">
-
-            <div class="col-md-12">
+        <form class="row g-3 p-3" id="registerForm">
+            <div class="col-md-6">
                 <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
                         needed)</span></label>
                 <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007">
             </div>
 
             <div class="col-md-6">
-                <label for="fname" class="form-label">First name</label>
-                <input type="text" class="form-control" id="fname" name="fname" placeholder="Juan" required>
-            </div>
-
-            <div class="col-md-6">
-                <label for="lname" class="form-label">Last name</label>
-                <input type="text" class="form-control" id="lname" name="lname" placeholder="Manuel" required>
-            </div>
-
-            <div class="col-md-6">
-                <label for="mname" class="form-label">Middle Name</label>
-                <input type="text" class="form-control" id="mname" name="mname" placeholder="Marquez (optional)">
-            </div>
-
-            <div class="col-md-6">
-                <label for="suffix" class="form-label">Suffix</label>
-                <input type="text" class="form-control" id="suffix" name="suffix"
-                    placeholder="I, II, III, Jr. etc. (Optional)">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name" name="name"
+                    placeholder="Last Name, First Name MI." required>
             </div>
 
             <div class="col-md-6">
@@ -72,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-md-3">
+            <div class="col-md-6">
                 <label for="gender" class="form-label">Select Gender</label>
                 <select class="form-select" id="gender" name="gender" required>
                     <option selected disabled value="">Choose...</option>
@@ -82,23 +66,9 @@
                 </select>
             </div>
 
-            <div class="col-md-3">
-                <label for="validationCustom04" class="form-label">Select Role</label>
-                <select class="form-select" id="validationCustom04" name="role" required>
-                    <option selected disabled value="">Choose...</option>
-                    <option value="0">Student</option>
-                    <option value="1">Flight Instructor</option>
-                    <option value="2">CGI</option>
-                    <option value="3">Registrar</option>
-                    <option value="4">Admin</option>
-                    <option value="5">Super Admin</option>
-                </select>
-            </div>
-
             <div class="col-md-6">
                 <label for="img" class="form-label">Choose Image</label>
-                <input type="file" name="img" accept="image/png, image/jpeg" id="img"
-                    class="form-control">
+                <input type="file" name="img" accept="image/png, image/jpeg" id="img" class="form-control">
             </div>
             <div class="col-md-12">
                 <a href="{{ route('user.Home') }}" class="btn btn-outline-danger float-end">Back</a>
@@ -127,7 +97,8 @@
                 </div>
                 <div class="view_content border border-1 w-100 p-2">
                     <div class="col-md-12">
-                        <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
+                        <label for="id_number" class="form-label">ID Number <span class="text-warning small"> (optional
+                                but
                                 needed)</span></label>
                         <input type="text" class="form-control" id="id_number" name="id_number"
                             value="{{ $users->id_number }}"
@@ -135,25 +106,9 @@
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
-                            <label for="fname" class="form-label text-secondary">First Name</label>
+                            <label for="fname" class="form-label text-secondary">Name</label>
                             <input type="text" name="fname" id="fname" class="form-control enable_input"
-                                placeholder="John" value="{{ $users->fname }}">
-                        </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="lname" class="form-label text-secondary">Last Name</label>
-                            <input type="text" name="lname" id="lname" class="form-control enable_input"
-                                placeholder="Doe" value="{{ $users->lname }}">
-                        </div>
-                        <div class="mb-3 col-md-4">
-                            <label for="mname" class="form-label text-secondary">Middle Name</label>
-                            <input type="text" name="mname" id="mname" class="form-control enable_input"
-                                placeholder="Manases" value="{{ $users->mname }}">
-                        </div>
-
-                        <div class="col-md-4">
-                            <label for="suffix" class="form-label">Suffix</label>
-                            <input type="text" class="form-control" id="suffix" name="suffix"
-                                placeholder="I, II, III, Jr. etc. (Optional)" value="{{ $users->suffix }}">
+                                placeholder="John" value="{{ $users->name }}">
                         </div>
 
                         <div class="mb-3 col-md-4">
