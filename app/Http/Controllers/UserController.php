@@ -46,8 +46,8 @@ class UserController extends Controller
                     $alternate_value =  $row->login_status == 0 ? 1 : 0;
 
                     $select_options = '<select name="login_status"   onchange="login_status(this, ' . $row->id . ')" class="form-select ' . $class . '" style="cursor: pointer;">
-                            <option value="'. $row->login_status .'" selected>' . $name . '</option>
-                            <option value="'. $alternate_value .'">' . $alternate_name . '</option>
+                            <option value="' . $row->login_status . '" selected>' . $name . '</option>
+                            <option value="' . $alternate_value . '">' . $alternate_name . '</option>
                         </select>';
 
                     return $select_options;
@@ -208,15 +208,18 @@ class UserController extends Controller
 
     public function UpdateUser(Request $request)
     {
+
+        // return response()->json([
+        //     'success' => true,
+        //     'message' => $request->all(),
+        // ]);
+
         $user = User::find($request->id);
         $new_id_number = $request->id_number;
         $validator = Validator::make($request->all(), [
             'id_number' => 'nullable|string',
-            'fname' => 'string|max:255',
-            'lname' => 'string|max:255',
-            'mname' => 'nullable|string|max:255',
-            'suffix' => 'nullable|string|max:50',
-            'contact' => ['string', 'regex:/^\+\d{10,15}$/'],
+            'name' => 'string|max:255',
+            'contact' => ['string', 'regex:/^(?:\+?\d{10,15}|0\d{10})$/'],
             'email' => 'string|nullable',
             'role' => 'in:0,1,2,3,4',
             'gender' => 'in:0,1,2',
@@ -263,10 +266,7 @@ class UserController extends Controller
 
         $user->update([
             'id_number' => $new_id_number,
-            'fname' => $request->fname,
-            'lname' => $request->lname,
-            'mname' => $request->mname ?? null,
-            'suffix' => $request->suffix ?? null,
+            'name' => $request->name ?? $user->name,
             'contact' => $request->contact ?? $user->contact,
             'role' => $request->role ?? $user->role,
             'gender' => $request->gender ?? $user->gender,

@@ -157,9 +157,8 @@ $('#updateForm').on('submit', function (e) {
         }
     }
 
-    // test
-    // form.forEach(e => {
-    //     console.log(e);
+    // form.forEach((value, key)=> {
+    //     console.log(`${key}: ${value}`);
     // })
 
     $.ajax({
@@ -173,17 +172,16 @@ $('#updateForm').on('submit', function (e) {
         data: form,
         success: (response) => {
 
+            if (!response.success) {
+                error_message('Failed to register user')
+                return
+            }
+
+            success_message(response.message);
+            $('#errors').hide();
             setInterval(() => {
-                if (!response.success) {
-                    error_message('Failed to register user')
-                    return
-                }
-                success_message(response.message);
-                $('#errors').hide();
+                window.location.reload();
             }, 1500)
-
-            window.location.reload();
-
         },
         error: (xhr, status, error) => {
             try {
@@ -270,11 +268,7 @@ function showPassword() {
         }
     });
 }
-
-
 showPassword()
-
-
 function login_status(selectElement, userId) {
     const selectedValue = selectElement.value;
 

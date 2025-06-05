@@ -2,7 +2,8 @@
     $title = 'User Management';
 @endphp
 @extends('layouts.app')
-@section('header_title', 'Register Users')
+
+@section('header_title', (isset($users)) ? 'Update Users' :'Register Users')
 @section('content')
     <div class="m-0 alert alert-warning d-none" id="errors">
         <ul class="px-3 m-0" id="errorList"></ul>
@@ -106,15 +107,15 @@
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
-                            <label for="fname" class="form-label text-secondary">Name</label>
-                            <input type="text" name="fname" id="fname" class="form-control enable_input"
+                            <label for="name" class="form-label text-secondary">Name</label>
+                            <input type="text" name="name" id="name" class="form-control enable_input"
                                 placeholder="John" value="{{ $users->name }}">
                         </div>
 
                         <div class="mb-3 col-md-4">
                             <label for="contact" class="form-label text-secondary">Phone Number</label>
                             <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                placeholder="Manases" value="{{ $users->contact }}"
+                                 value="{{ $users->contact }}"
                                 {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
                         </div>
 

@@ -4,16 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\AuthController;
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use Illuminate\Support\Facades\Password;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+
 
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
@@ -22,6 +17,23 @@ Route::post('/user/register', [UserController::class, 'Store'])->name('user.Stor
 
 Route::get('/login/verification/{token}', [AuthController::class, 'VerifyEmail'])
 ->name('auth.email.verify');
+
+Route::post('user/forgot-password', [AuthController::class, 'ForgotVerifyEmail'])->name('password.email');
+Route::get('/reset-password', [AuthController::class, 'PasswordResetForm'])->name('password.reset');
+Route::post('/reset-password', [AuthController::class, 'PasswordReset'])->name('password.update');
+
+Route::get('/forgot-password', function () {
+    return view('pages.Auth.forgot-password');
+})->name('auth.password.request');
+
+// Route::get('/reset-password', function (Request $request) {
+//     return view('pages.Auth.password_reset', ['request' => $request]);
+// })->name('password.reset');
+
+// Handle Reset Password form submission
+// Route::post('/reset-password', function (Request $request) {
+
+// })->name('password.update');
 
 Route::middleware(['auth'])->group(function () {
 
