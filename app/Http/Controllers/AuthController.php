@@ -57,7 +57,7 @@ class AuthController extends Controller
     public function Index()
     {
         if (Auth::check()) {
-            return redirect()->route('user.Home');
+            return redirect()->route('user.index');
         }
 
         // dd(Hash::make("admin12345"));

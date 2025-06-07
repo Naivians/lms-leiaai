@@ -4,11 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClassController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-
-
+use App\Http\Controllers\CourseModelController;
 
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
@@ -26,27 +22,19 @@ Route::get('/forgot-password', function () {
     return view('pages.Auth.forgot-password');
 })->name('auth.password.request');
 
-// Route::get('/reset-password', function (Request $request) {
-//     return view('pages.Auth.password_reset', ['request' => $request]);
-// })->name('password.reset');
-
-// Handle Reset Password form submission
-// Route::post('/reset-password', function (Request $request) {
-
-// })->name('password.update');
-
 Route::middleware(['auth'])->group(function () {
-
     // Auth
     Route::post('update/login_status', [AuthController::class, 'LoginStatus'])->name('auth.Login.Status');
 
     // users
-    Route::get('/Register', [UserController::class, 'Register'])->name('user.Register');
-    Route::get('/userHome', [UserController::class, 'Index'])->name('user.Home');
-    Route::get('/Dashboard', [UserController::class, 'Dashboard'])->name('user.Dashboard');
-    Route::post('/user/update', [UserController::class, 'UpdateUser'])->name('user.Update');
-    Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('user.view');
-    Route::get('/user/edit/{userId}', [UserController::class, 'EditUser'])->name('user.Edit');
+    Route::prefix('user')->name('user.')->group(function (){
+        Route::get('/', [UserController::class, 'Index'])->name('index');
+        Route::get('/Register', [UserController::class, 'Register'])->name('register');
+        Route::get('/Dashboard', [UserController::class, 'Dashboard'])->name('dashboard');
+        Route::post('/update', [UserController::class, 'UpdateUser'])->name('update');
+        Route::get('/view-user/{userId}', [UserController::class, 'ViewUsers'])->name('view');
+        Route::get('/edit/{userId}', [UserController::class, 'EditUser'])->name('edit');
+    });
 
     // class
     Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
@@ -54,6 +42,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/class/Announcement', [ClassController::class, 'Announcements'])->name('class.announcement');
     Route::get('/class/instructor', [ClassController::class, 'Instructor'])->name('class.instructor');
     Route::get('/class/grade', [ClassController::class, 'Grade'])->name('class.grade');
+
+    // course models
+    Route::prefix('course')->name('course.')->group(function(){
+        Route::get('/', [CourseModelController::class, 'Index'])->name('index');
+        Route::post('/create', [CourseModelController::class, 'Create'])->name('create');
+        Route::post('/show', [CourseModelController::class, 'Show'])->name('view');
+        Route::get('/edit/{courseId}', [CourseModelController::class, 'Edit'])->name('edit');
+        Route::post('/update', [CourseModelController::class, 'Update'])->name('update');
+        Route::post('/delete/{courseId}', [CourseModelController::class, 'Destroy'])->name('delete');
+    });
 
     // logout
     Route::post('/logout', [AuthController::class, 'Logout'])->name('auth.logout');

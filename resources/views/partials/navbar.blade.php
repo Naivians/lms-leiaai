@@ -13,7 +13,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="{{ route('user.Edit', ['userId' => Auth::id()]) }}" class="dropdown-item">
+                        <a href="{{ route('user.edit', ['userId' => Auth::id()]) }}" class="dropdown-item">
                             <i class="fa-solid fa-user me-2"></i> Profile
                         </a>
                     </li>

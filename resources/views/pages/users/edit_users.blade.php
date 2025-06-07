@@ -72,7 +72,7 @@
                 <input type="file" name="img" accept="image/png, image/jpeg" id="img" class="form-control">
             </div>
             <div class="col-md-12">
-                <a href="{{ route('user.Home') }}" class="btn btn-outline-danger float-end">Back</a>
+                <a href="{{ route('user.index') }}" class="btn btn-outline-danger float-end">Back</a>
                 <button class="btn btn-primary float-end me-2" type="submit">Register</button>
             </div>
         </form>
@@ -172,9 +172,9 @@
                     <div class="col-md-12 mt-3">
                         <button class="btn btn-primary" type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
                         @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
-                            <a href="{{ route('user.Home') }}" class="btn btn-outline-danger">Back</a>
+                            <a href="{{ route('user.index') }}" class="btn btn-outline-danger">Back</a>
                         @else
-                            <a href="{{ route('user.Dashboard') }}" class="btn btn-outline-danger">Back</a>
+                            <a href="{{ route('user.dashboard') }}" class="btn btn-outline-danger">Back</a>
                         @endif
                     </div>
                 </div>

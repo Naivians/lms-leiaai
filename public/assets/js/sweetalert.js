@@ -28,10 +28,9 @@ function confirm_message(message, callback) {
     }).then((result) => {
         if (result.isConfirmed) {
             success_message('Logout Successfully')
-            setInterval(() => {
+            setTimeout(() => {
                 callback();
             }, 1500)
-
         }
     });
 }

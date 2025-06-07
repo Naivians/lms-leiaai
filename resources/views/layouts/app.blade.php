@@ -23,6 +23,7 @@
 <body style="background-color: #F4F5F7">
     {{-- modals --}}
     @include('partials.modal')
+    @include('partials.messages', ['title' => 'Login Error'])
 
     {{-- Navigations (Navbar) --}}
     <div class="nav_container">
@@ -36,7 +37,7 @@
                     @switch($title)
                         @case('User')
                             <div class="card-tools">
-                                <a href="{{ route('user.Register') }}" class="btn btn-primary btn-sm"><i
+                                <a href="{{ route('user.register') }}" class="btn btn-primary btn-sm"><i
                                         class="fa-solid fa-plus me-2"></i> Add
                                     Users</a>
                             </div>
@@ -55,7 +56,7 @@
                         @case('User Detailes')
                             <div class="card-tools">
                                 <div class="card-tools">
-                                    <a href="{{ route('user.Home') }}" class="btn btn-danger btn-sm"><i
+                                    <a href="{{ route('user.index') }}" class="btn btn-danger btn-sm"><i
                                             class="fa-solid fa-arrow-left me-2"></i></i> Back
                                     </a>
                                 </div>
@@ -111,7 +112,7 @@
             $('#userTable').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: '{{ route('user.Home') }}',
+                ajax: '{{ route('user.index') }}',
                 dom: 'Blfrtip',
                 buttons: ['copy', 'csv', 'print', 'colvis'],
                 language: {
@@ -156,27 +157,22 @@
                 ]
             });
 
-            // // LessonsTable
-            // $('#classwork_lessons_table').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            //     ajax: '{{ route('user.Home') }}',
-            //     columns: [
-            //         { data: 'id' },
-            //         { data: 'fname' },
-            //         { data: 'lname' },
-            //         { data: 'ext_name' },
-            //         { data: 'role' },
-            //         { data: 'email' },
-            //         { data: 'action', orderable: false, searchable: false }
-            //     ]
-            // });
+            $('#courseTable').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('course.index') }}',
+                columns: [
+                    { data: 'course_name' },
+                    { data: 'course_description' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
 
             // // LessonsTable
             // $('#classwork_quiz_table').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route('user.Home') }}',
+            //     ajax: '{{ route('user.index') }}',
             //     columns: [
             //         { data: 'id' },
             //         { data: 'fname' },
@@ -192,7 +188,7 @@
             // $('#classwork_fi_table').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route('user.Home') }}',
+            //     ajax: '{{ route('user.index') }}',
             //     columns: [
             //         { data: 'id' },
             //         { data: 'fname' },
@@ -208,7 +204,7 @@
             // $('#view_user_progress').DataTable({
             //     processing: true,
             //     serverSide: true,
-            //     ajax: '{{ route('user.Home') }}',
+            //     ajax: '{{ route('user.index') }}',
             //     dom: 'Blfrtip',
             //     buttons: ['copy', 'csv', 'print', 'colvis'],
             //     columns: [

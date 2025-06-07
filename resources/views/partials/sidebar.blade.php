@@ -7,11 +7,11 @@
 
     <nav class="nav flex-column">
 
-        <a href="{{ route('user.Dashboard') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-house me-2"></i>
+        <a href="{{ route('user.dashboard') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-house me-2"></i>
             Dashboard</a>
 
         @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
-            <a href="{{ route('user.Home') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-user me-2"></i>
+            <a href="{{ route('user.index') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-user me-2"></i>
                 Users</a>
         @endif
 
@@ -23,8 +23,9 @@
         <a href="{{ route('class.index') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-users me-2"></i>
             Classes</a>
 
-        @if (Auth::user()->role === 2 || Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
-            <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-award me-2"></i> Courses</a>
+            {{-- Auth::user()->role === 2 || Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 --}}
+        @if (Auth::user()->role != 0 && Auth::user()->role != 1)
+            <a href="{{ route('course.index') }}" class="nav-link text-dark mb-2"><i class="fa-solid fa-award me-2"></i> Courses</a>
             <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-book me-2"></i> Contents</a>
             <a href="#" class="nav-link text-dark mb-2"><i class="fa-solid fa-bookmark me-2"></i> Assessments</a>
         @endif

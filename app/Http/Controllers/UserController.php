@@ -26,7 +26,7 @@ class UserController extends Controller
     {
 
         if (Auth::user()->role != 3 && Auth::user()->role != 4 && Auth::user()->role != 5) {
-            return redirect()->route('user.Dashboard')->withErrors([
+            return redirect()->route('user.dashboard')->withErrors([
                 'access' => 'You do not have permission to access this page.'
             ]);
         }
@@ -76,7 +76,7 @@ class UserController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100 mb-2"><i class="fa-solid fa-eye"></i></a>';
-                    $editBtn = '<a href= " ' . route('user.Edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100"><i class="fa-solid fa-user-pen"></i></a>';
+                    $editBtn = '<a href= " ' . route('user.edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100"><i class="fa-solid fa-user-pen"></i></a>';
                     return $viewBtn . ' ' . $editBtn;
                 })
                 ->rawColumns(['action', 'login_status', 'isVerified'])
@@ -95,7 +95,7 @@ class UserController extends Controller
             return view('pages.users.edit_users');
         }
 
-        return redirect()->route('user.Dashboard')->withErrors([
+        return redirect()->route('user.dashboard')->withErrors([
             'access' => 'You do not have permission to access this page.'
         ]);
     }
