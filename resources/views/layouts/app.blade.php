@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
     <script src="https://unpkg.com/libphonenumber-js@1.10.25/bundle/libphonenumber-js.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body style="background-color: #F4F5F7">
@@ -44,13 +45,15 @@
                         @break
 
                         @case('Classes')
-                            <div class="card-tools">
+                            @if (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5)
                                 <div class="card-tools">
-                                    <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal"><i class="fa-solid fa-plus me-2"></i> Create Class
-                                    </button>
+                                    <div class="card-tools">
+                                        <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#addClassModal"><i class="fa-solid fa-plus me-2"></i> Create Class
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                         @break
 
                         @case('User Detailes')
@@ -76,10 +79,9 @@
     {{-- sidebar --}}
     @include('partials.sidebar')
 
-    .
 
     {{-- scripts --}}
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
@@ -100,12 +102,102 @@
     @yield('scripts')
 
     <script>
-        var quill = new Quill('#editor', {
-            modules: {
-                toolbar: '#toolbar'
-            },
-            theme: 'snow'
+        $("#createClassForm").on("submit", (e) => {
+            e.preventDefault();
+            let form = new FormData(e.target);
+            const imgInput = $("#class_image");
+            const MB = 1024 * 1024;
+            let allowed_types = ["image/jpg", "image/jpeg", "image/png"];
+            let files = imgInput[0].files[0];
+
+            if (imgInput[0].files.length > 0) {
+                if (files.size >= MB) {
+                    error_message(
+                        "The selected image is too large. Please choose an image smaller than 1MB."
+                    );
+                    return;
+                }
+
+                if (!allowed_types.includes(files.type)) {
+                    error_message(
+                        "Invalid image type. Only JPG or PNG files are allowed."
+                    );
+                    return;
+                }
+            }
+
+            $.ajax({
+                url: "/class/create",
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                },
+                contentType: false,
+                processData: false,
+                data: form,
+                success: (response) => {
+                    if (!response.success) {
+                        error_message("Failed to update user");
+                        return;
+                    }
+                    success_message(response.message);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                    $("#createClassForm")[0].reset();
+
+                    // console.log(response);
+                    $("#errors").hide();
+
+                },
+                error: (xhr, status, error) => {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+                        $("#errors").show();
+                        $("#errorList").empty();
+
+                        if (response.errors) {
+                            $("#errors").removeClass("d-none");
+                            Object.values(response.errors)
+                                .flat()
+                                .forEach((msg) => {
+                                    $("#errorList").append(
+                                        `<li class="text-danger">${msg}</li>`
+                                    );
+                                });
+                        } else if (response.message) {
+                            $("#errors").removeClass("d-none");
+                            $("#errorList").append(
+                                `<li class="text-danger">${response.message}</li>`
+                            );
+                        } else {
+                            $("#errors").removeClass("d-none");
+                            $("#errorList").append(
+                                `<li class="text-danger">An unknown error occurred.</li>`
+                            );
+                        }
+                    } catch (e) {
+                        console.error("An unexpected error occurred", e);
+                        $("#errors").removeClass("d-none");
+                        $("#errorList").html(
+                            '<li class="text-danger">An unexpected error occurred</li>'
+                        );
+                    }
+                },
+            });
         });
+
+
+        const editorEl = document.querySelector('#editor');
+        if (editorEl) {
+            const quill = new Quill(editorEl, {
+                modules: {
+                    toolbar: '#toolbar'
+                },
+                theme: 'snow'
+            });
+        }
+
 
         $(document).ready(function() {
             // users
@@ -161,10 +253,17 @@
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('course.index') }}',
-                columns: [
-                    { data: 'course_name' },
-                    { data: 'course_description' },
-                    { data: 'action', orderable: false, searchable: false }
+                columns: [{
+                        data: 'course_name'
+                    },
+                    {
+                        data: 'course_description'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
                 ]
             });
 

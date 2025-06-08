@@ -136,6 +136,7 @@ class UserController extends Controller
             'password' => 'required|confirmed|min:8',
             'gender' => 'required|in:0,1,2',
             'img' => 'image|mimes:jpeg,jpg,png|max:1024',
+            'role' => 'sometimes|in:0,1,2,3,4,5',
         ]);
 
         if ($validator->fails()) {

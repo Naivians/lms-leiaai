@@ -139,11 +139,13 @@
                                 </select>
                             </div>
 
+                            {{ $users->role }}
+
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">Select Role</label>
-                                <select class="form-select" id="validationCustom04" name="role" required>
-                                    <option selected value="{{ $users->role ?? '' }}">{{ $roles ?? 'Choose..' }}
-                                    </option>
+                                <select class="form-select" id="validationCustom04" name="role">
+                                    {{-- <option selected value="{{ $users->role }}">{{ $roles }}
+                                    </option> --}}
                                     <option value="0">Student</option>
                                     <option value="1">Flight Instructor</option>
                                     <option value="2">CGI</option>

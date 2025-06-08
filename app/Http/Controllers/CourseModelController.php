@@ -24,10 +24,10 @@ class CourseModelController extends Controller
 
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {
-                    $editBtn = '<a href= " ' . route('course.edit', ['courseId' => $row->id]) . ' " class="btn btn-sm btn-warning"><i class="fa-solid fa-user-pen"></i></a>';
-                    $deleteBtn = '<i class="fa-solid fa-trash btn btn-sm btn-danger" onclick ="deleteCourse('. $row->id .')"></i>';
+                    $editBtn = '<i class="fa-solid fa-user-pen btn btn-warning" onclick ="showCourse(' . $row->id . ')"></i>';
+                    $deleteBtn = '<i class="fa-solid fa-trash btn  btn-danger" onclick ="deleteCourse(' . $row->id . ')"></i>';
 
-                    if (Auth::user()->role === 4 || Auth::user()->role === 5) {
+                    if (Auth::user()->role === 5) {
                         return $editBtn . ' ' . $deleteBtn;
                     }
                 })
@@ -35,6 +35,76 @@ class CourseModelController extends Controller
         }
 
         return view('pages.courses.courses');
+    }
+
+    function Show($courseId)
+    {
+        $course = $this->course->find($courseId);
+
+        if (!$course) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Course not found.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course retrieved successfully.',
+            'data' => $course,
+        ]);
+    }
+
+    function update(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'course_name' => 'required|string',
+            'course_description' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $validator->errors()->first(),
+            ], 422);
+        }
+
+        $exists = $this->course->where('course_name', $request->course_name)->exists();
+
+        if ($exists) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Course name already exists.',
+            ], 422);
+        }
+
+        $course = $this->course->find($request->course_id);
+
+        if (!$course) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Course not found.',
+            ], 500);
+        }
+
+        $course = $course->update([
+            'course_name' => $request->course_name,
+            'course_description' => $request->course_description ?? null,
+        ]);
+
+
+        if (!$course) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update course. Please try again.',
+            ], 500);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course updated successfully.',
+        ]);
     }
 
     public function Create(Request $request)

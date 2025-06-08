@@ -1,5 +1,5 @@
  @if (isset($title) && $title == 'Classes')
-     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+     <div class="modal fade" id="addClassModal" tabindex="-1" aria-labelledby="exampleModalLabel">
          <div class="modal-dialog">
              <div class="modal-content">
                  <div class="modal-header">
@@ -7,32 +7,36 @@
                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                  </div>
                  <div class="modal-body">
-                     <form action="#" method="POST" id="createClassForm">
-                         @csrf
+                     <div class="my-3 alert alert-warning d-none" id="errors">
+                         <ul class="px-3 m-0" id="errorList"></ul>
+                     </div>
+                     <form id="createClassForm">
                          <div class="mb-3">
                              <label for="class_name" class="form-label">Class Name</label>
                              <input type="text" class="form-control" id="class_name" name="class_name"
                                  placeholder="Enter Class Name" required>
                          </div>
                          <div class="mb-3">
-                             <label for="description" class="form-label">Description</label>
-                             <textarea class="form-control" id="description" name="description" rows="5" placeholder="Enter Description"></textarea>
+                             <label for="class_description" class="form-label">Description</label>
+                             <textarea class="form-control" id="class_description" name="class_description" rows="5"
+                                 placeholder="Enter Class Description"></textarea>
                          </div>
-                         <div class="mb-3">
-                             <label for="description" class="form-label">Tag CGI's (<span
-                                     style="font-style:italic">ctrl+click for multi select</span>)</label>
-                             <select class="form-control" id="cgi" name="cgi[]" multiple>
-                                 <option value="CGI 1">CGI 1</option>
-                                 <option value="CGI 2">CGI 2</option>
-                                 <option value="CGI 3">CGI 3</option>
-                                 <option value="CGI 4">CGI 4</option>
-                                 <option value="CGI 4">CGI 4</option>
-                                 <option value="CGI 4">CGI 4</option>
-                                 <option value="CGI 4">CGI 4</option>
-                                 <option value="CGI 4">CGI 4</option>
-                                 <option value="CGI 4">CGI 4</option>
+
+                         @if (isset($courses) && $courses->count() > 0)
+                             <select name="course_id" id="course_id" class="form-select mb-3">
+                                 <option value="" selected disabled>Select Course</option>
+                                 @foreach ($courses as $course)
+                                     {
+                                     <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                                     }
+                                 @endforeach
                              </select>
-                         </div>
+                         @else
+                             <div class="alert alert-warning mt-3" role="alert">
+                                No courses available. Please add a course first.
+                             </div>
+                         @endif
+
                          <div class="mb-3">
                              <label for="description" class="form-label">Class Image (<span
                                      style="font-style:italic">Optional</span>)</label>
@@ -63,11 +67,11 @@
                  </div>
                  <div class="modal-body">
                      <form id="assing_fi_form">
-                     <select name="" id="" multiple>
-                        <option value="1">1</option>
-                        <option value="2">3</option>
-                        <option value="3">2</option>
-                     </select>
+                         <select name="" id="" multiple>
+                             <option value="1">1</option>
+                             <option value="2">3</option>
+                             <option value="3">2</option>
+                         </select>
                  </div>
                  <div class="modal-footer">
 

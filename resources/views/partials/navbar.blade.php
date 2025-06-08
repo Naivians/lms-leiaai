@@ -8,8 +8,8 @@
             <i class="fa-regular fa-bell fs-4 cursor text-primary"></i>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
-                    aria-expanded="false">Her
-                    {{ Auth::user()->fname }}!
+                    aria-expanded="false">
+                    {{ Auth::user()->name }}
                 </button>
                 <ul class="dropdown-menu">
                     <li>

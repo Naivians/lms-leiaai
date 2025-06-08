@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\CourseModel;
+use App\Models\Classes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\CourseModel>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Classes>
  */
 class CourseModelFactory extends Factory
 {

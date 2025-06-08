@@ -37,17 +37,24 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // class
-    Route::get('/class', [ClassController::class, 'Index'])->name('class.index');
-    Route::get('/class/stream', [ClassController::class, 'Stream'])->name('class.stream');
-    Route::get('/class/Announcement', [ClassController::class, 'Announcements'])->name('class.announcement');
-    Route::get('/class/instructor', [ClassController::class, 'Instructor'])->name('class.instructor');
-    Route::get('/class/grade', [ClassController::class, 'Grade'])->name('class.grade');
+    Route::prefix('class')->name('class.')->group(function (){
+        Route::get('/', [ClassController::class, 'Index'])->name('index');
+        Route::get('/Announcement', [ClassController::class, 'Announcements'])->name('announcement');
+        Route::get('/stream/${class_id}', [ClassController::class, 'Stream'])->name('stream');
+        Route::post('/create', [ClassController::class, 'Store'])->name('store');
+        Route::get('/edit/{classId}', [ClassController::class, 'Edit'])->name('edit');
+        Route::post('/update', [ClassController::class, 'Update'])->name('update');
+        Route::post('/delete/{classId}', [ClassController::class, 'Destroy'])->name('delete');
+        Route::get('/instructor', [ClassController::class, 'Instructor'])->name('instructor');
+        Route::get('/grade', [ClassController::class, 'Grade'])->name('grade');
+    });
+
 
     // course models
     Route::prefix('course')->name('course.')->group(function(){
         Route::get('/', [CourseModelController::class, 'Index'])->name('index');
         Route::post('/create', [CourseModelController::class, 'Create'])->name('create');
-        Route::post('/show', [CourseModelController::class, 'Show'])->name('view');
+        Route::get('/show/{courseId}', [CourseModelController::class, 'Show'])->name('view');
         Route::get('/edit/{courseId}', [CourseModelController::class, 'Edit'])->name('edit');
         Route::post('/update', [CourseModelController::class, 'Update'])->name('update');
         Route::post('/delete/{courseId}', [CourseModelController::class, 'Destroy'])->name('delete');

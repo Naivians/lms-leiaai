@@ -44,7 +44,7 @@ class AuthController extends Controller
         }
 
         if (auth()->attempt([$loginField => $loginInput, 'password' => $credentials['password']])) {
-            return redirect()->intended('/Dashboard');
+            return redirect()->intended('/user/Dashboard');
         }
     }
 

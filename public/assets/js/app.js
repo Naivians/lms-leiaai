@@ -289,7 +289,6 @@ function showPassword() {
         }
     });
 }
-showPassword();
 function login_status(selectElement, userId) {
     const selectedValue = selectElement.value;
 
@@ -379,8 +378,6 @@ function AddCourse() {
 }
 
 function deleteCourse(course_id) {
-
-
     Swal.fire({
         title: "Ooopsss?",
         text: "Are you sure you want to delete this course?",
@@ -432,3 +429,103 @@ function deleteCourse(course_id) {
         }
     });
 }
+
+function showCourse(course_id) {
+    $editCourse = $(".editCourse").removeClass("d-none");
+    $addCourse = $(".addCourse").addClass("d-none");
+
+    $.ajax({
+        url: `/course/show/${course_id}`,
+        type: "GET",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        success: function (response) {
+            if (!response.success) {
+                error_message(response.message);
+                return;
+            }
+            $("#course_description").val(response.data.course_description);
+            $("#course_names").val(response.data.course_name);
+            $("#course_id").val(response.data.id);
+        },
+        error: (xhr, status, error) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    $("#errors").removeClass("d-none");
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+}
+
+function backToCourses() {
+    $(".editCourse").addClass("d-none");
+    $(".addCourse").removeClass("d-none");
+    $("#course_description").val("");
+    $("#course_names").val("");
+    $("#course_id").val("");
+}
+
+function EditCourse() {
+    let course_id = $("#course_id").val();
+    let course_name = $("#course_names").val();
+    let course_description = $("#course_description").val();
+
+    $.ajax({
+        url: `/course/update`,
+        type: "POST",
+        data: {
+            course_name: course_name,
+            course_description: course_description,
+            course_id: course_id,
+        },
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+            if (!response.success) {
+                error_message(response.message);
+                return;
+            }
+            success_message(response.message);
+            refreshTable("#courseTable");
+            $(".editCourse").addClass("d-none");
+            $(".addCourse").removeClass("d-none");
+        },
+        error: (xhr, status, error) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    $("#errors").removeClass("d-none");
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+}
+
+

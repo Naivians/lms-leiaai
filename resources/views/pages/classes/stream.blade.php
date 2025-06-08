@@ -5,6 +5,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="classTab" role="tablist">
         <li class="nav-item" role="presentation">
