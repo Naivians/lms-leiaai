@@ -11,11 +11,17 @@ class Classes extends Model
 
     protected $fillable = [
         'class_name',
+        'course_name',
         'class_description',
-        'cgi_id',
-        'course_id',
+        'user_id',
         'active',
         'class_code',
         'file_path',
     ];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'class_users', 'class_id', 'user_id')
+            ->withTimestamps();
+    }
 }

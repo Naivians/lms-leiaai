@@ -24,7 +24,7 @@ class ClassesFactory extends Factory
         return [
             'class_name' => $this->faker->unique()->randomElement($courseNames),
             'class_description' => $this->faker->sentence(),
-            'cgi_id' => $this->faker->numberBetween(1, 10),
+            'user_id' => $this->faker->numberBetween(1, 5),
             'course_id' => $this->faker->numberBetween(1, 10),
             'active' => $this->faker->numberBetween(0, 1),
             'class_code' => $this->faker->unique()->word(),

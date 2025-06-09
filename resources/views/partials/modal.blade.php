@@ -22,12 +22,15 @@
                                  placeholder="Enter Class Description"></textarea>
                          </div>
 
+
+
                          @if (isset($courses) && $courses->count() > 0)
-                             <select name="course_id" id="course_id" class="form-select mb-3">
+
+                             <select name="course_name" id="course_name" class="form-select mb-3">
                                  <option value="" selected disabled>Select Course</option>
                                  @foreach ($courses as $course)
                                      {
-                                     <option value="{{ $course->id }}">{{ $course->course_name }}</option>
+                                     <option value="{{ $course->course_name }}">{{ $course->course_name }}</option>
                                      }
                                  @endforeach
                              </select>
@@ -36,14 +39,6 @@
                                 No courses available. Please add a course first.
                              </div>
                          @endif
-
-                         <div class="mb-3">
-                             <label for="description" class="form-label">Class Image (<span
-                                     style="font-style:italic">Optional</span>)</label>
-                             <input type="file" class="form-control" id="class_image" name="class_image"
-                                 accept="image/*">
-                         </div>
-
                  </div>
                  <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

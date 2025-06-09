@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Str;
+use App\Models\Classes;
 
 class User extends Authenticatable
 {
@@ -57,10 +58,9 @@ class User extends Authenticatable
     ];
 
 
-    // protected static function booted()
-    // {
-    //     static::creating(function ($user) {
-    //         $user->verification_token = Str::uuid();
-    //     });
-    // }
+    public function classes()
+    {
+        return $this->belongsToMany(Classes::class, 'class_users', 'user_id', 'class_id')
+            ->withTimestamps();
+    }
 }

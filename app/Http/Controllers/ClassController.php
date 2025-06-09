@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Classes;
 use App\Models\CourseModel;
+use App\Models\ClassUser;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -15,10 +16,12 @@ class ClassController extends Controller
     private $classModel;
     private $courseModel;
     private $userModel;
-    public function __construct(Classes $classModel, CourseModel $courseModel)
+    private $enrollment;
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
+        $this->enrollment = $enrollment;
     }
     /**
      * Display a listing of the resource.
@@ -27,10 +30,9 @@ class ClassController extends Controller
      */
     function Index()
     {
-        $classes = (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5) ? $this->classModel->all() : $this->classModel->where('cgi_id', Auth::user()->role)->get();
+        $classes = (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5) ? $this->classModel->all() : Auth::user()->classes;
         $courses = $this->courseModel->all();
-
-
+        // $classes = Auth::user()->classes;
 
         return view('pages.classes.index', [
             'classes' => $classes,
@@ -63,7 +65,7 @@ class ClassController extends Controller
         $validator = Validator::make($request->all(), [
             'class_name' => 'required|string|max:255',
             'class_description' => 'required|string|max:255',
-            'course_id' => 'required',
+            'course_name' => 'required|string',
             'class_image' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
 
@@ -74,26 +76,21 @@ class ClassController extends Controller
             ], 422);
         }
 
-        if ($request->hasFile('class_image')) {
-            $image = $request->file('class_image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $file_path = 'uploads/classes/' . $imageName;
-            $image->move(public_path('uploads/classes'), $imageName);
-        } else {
-            $file_path = asset('assets/img/leiaai_logo.png');
-        }
-
-
         $class = $this->classModel->create([
             'class_name' => $request->class_name,
             'class_description' => $request->class_description,
-            'course_id' => $request->course_id,
-            'file_path' => $file_path,
-            'cgi_id' => 2,
-            'class_code' => strtoupper(uniqid('CLASS_')),
+            'course_name' => $request->course_name,
+            'user_id' => 3,
+            'class_code' => strtoupper(uniqid( $request->course_name . '_')),
         ]);
 
-        if (!$class) {
+        $enrollment = $this->enrollment->create([
+            'user_id' => 3,
+            'class_id' => $class->id
+        ]);
+
+
+        if (!$class && !$enrollment) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create class',

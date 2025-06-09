@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Classes;
+use App\Models\ClassUser;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,9 +18,20 @@ use Illuminate\Support\Str;
 use App\Mail\VerifyEmail;
 use Illuminate\Support\Facades\Mail;
 
-
 class UserController extends Controller
 {
+
+    private $user;
+    private $class;
+    private $enrollment;
+
+    public function __construct(User $user, Classes $class, ClassUser $enrollment)
+    {
+        $this->user = $user;
+        $this->class = $class;
+        $this->enrollment = $enrollment;
+    }
+
     /**
      * Display the users DataTable view.
      */
@@ -107,7 +120,9 @@ class UserController extends Controller
 
     public function ViewUsers($userId)
     {
-        $user = User::find($userId);
+        $user = $this->user->find($userId);
+        $classIds = $this->enrollment->where('user_id', $userId)->pluck('class_id')->toArray();
+        $class = $this->class->with('users')->whereIn('id', $classIds)->get();
 
         $roles = [
             0 => 'Students',
@@ -123,7 +138,7 @@ class UserController extends Controller
             2 => 'Rather not say',
         ];
 
-        return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender]]);
+        return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender], 'classes' => $class]);
     }
 
     public function Store(Request $request, EmailService $emailService)

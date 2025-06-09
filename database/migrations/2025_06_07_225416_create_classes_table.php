@@ -16,11 +16,11 @@ return new class extends Migration
             $table->string('class_name');
             $table->string('class_description')->nullable();
             $table->string('class_code')->unique();
-            $table->tinyInteger('course_id')->nullable();
-            $table->tinyInteger('cgi_id')->nullable();
+            $table->string('course_name')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->tinyInteger('active')->default(0);
-            $table->string('file_path');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

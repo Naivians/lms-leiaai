@@ -9,7 +9,6 @@
 @section('content')
     <div class="card mb-5">
         <div class="card-body">
-
             @if ($users)
                 <div class="d-flex align-items-start gap-1">
                     <div class="card view_img_container">
@@ -61,25 +60,24 @@
                         <h2 class="m-0">Class Enrolled</h2>
                     </div>
                 </div>
-                <div class="class_grid_container mb-5">
-                    <div class="card">
-                        <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">ATPL Class Batch - 2025</h5>
-                            <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem, corporis!
-                            </p>
-                        </div>
+                @if (isset($classes) && count($classes) > 0)
+                    <div class="class_grid_container mb-5">
+                        @foreach ($classes as $class)
+                            <div class="card">
+                                <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="...">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">{{ $class->class_name }} - {{ $class->course_name }}
+                                    </h5>
+                                    <p class="card-text">
+                                        {{ $class->class_description }}
+                                    </p>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
-                    <div class="card">
-                        <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="...">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">CPL Class Batch - 2025</h5>
-                            <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quidem,
-                                corporis!
-                            </p>
-                        </div>
-                    </div>
-                </div>
+                @else
+                    <h5 class="text-muted text-center my-4">This user is not enrolled in any classes yet.</h5>
+                @endif
                 <div class="card mb-2">
                     <div class="card-header d-flex align-items-center">
                         <i class="fa-solid fa-bookmark fs-1 me-2"></i>

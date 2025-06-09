@@ -105,26 +105,6 @@
         $("#createClassForm").on("submit", (e) => {
             e.preventDefault();
             let form = new FormData(e.target);
-            const imgInput = $("#class_image");
-            const MB = 1024 * 1024;
-            let allowed_types = ["image/jpg", "image/jpeg", "image/png"];
-            let files = imgInput[0].files[0];
-
-            if (imgInput[0].files.length > 0) {
-                if (files.size >= MB) {
-                    error_message(
-                        "The selected image is too large. Please choose an image smaller than 1MB."
-                    );
-                    return;
-                }
-
-                if (!allowed_types.includes(files.type)) {
-                    error_message(
-                        "Invalid image type. Only JPG or PNG files are allowed."
-                    );
-                    return;
-                }
-            }
 
             $.ajax({
                 url: "/class/create",
