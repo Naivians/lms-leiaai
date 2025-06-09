@@ -1,3 +1,7 @@
+$(document).ready(() => {
+
+})
+
 $(".sidebar-toggle").on("click", function () {
     $("#sidebar").toggleClass("sidebar-collapsed");
     $(".nav_container").toggleClass("expanded");
@@ -23,6 +27,19 @@ $("#logoutBtn").on("click", (e) => {
         });
     });
 });
+
+$enroll_fi_container = $('#enroll_fi_container');
+$enroll_fi_form = $('#enroll_fi_form');
+
+$('#enroll_fi_container').on('click', () => {
+    $('#enroll_fi_form').removeClass('d-none');
+    $('#enroll_fi_container').addClass('d-none');
+})
+
+$('#close_enroll_fi_btn').on('click', () => {
+    $('#enroll_fi_form').addClass('d-none');
+    $('#enroll_fi_container').removeClass('d-none');
+})
 
 function refreshTable(tableName) {
     let table = $(tableName).DataTable();

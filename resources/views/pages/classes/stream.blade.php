@@ -151,17 +151,18 @@
                                 </div>
                             </div>
                             <div>
-                                <h2 class=" mx-2 my-0">Enroll Flight Instructor</h2>
+                                <h5 class=" mx-2 my-0">Enroll FI / CGI</h5>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="input-group mb-3 d-none" id="enroll_fi_form">
-                <input type="text" class="form-control" placeholder="Search Flight Instructor"
-                    aria-label="Enroll Flight Instructor" aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-outline-danger" id="close_enroll_btn">Close</button>
+                <input type="text" class="form-control" placeholder="Search FI or CG"
+                    aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
+                <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
             </div>
+            .
             <div class="card mb-2">
                 <div class="card-header announcement_header">
                     <div class="announcement_header">
@@ -201,7 +202,7 @@
                                 <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
                             </div>
                             <div>
-                                <h2 class=" mx-2 my-0">Enroll Student</h2>
+                                <h5 class=" mx-2 my-0">Enroll Student</h5>
                             </div>
                         </div>
                     </div>

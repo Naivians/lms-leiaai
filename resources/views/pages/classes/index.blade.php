@@ -7,31 +7,25 @@
 @section('header_title', 'Class Management')
 
 @section('content')
-
-    @if (isset($classes) && count($classes) > 0)
-
+    @if (isset($classes))
         <div class="class_grid_container">
             @foreach ($classes as $class)
+                {{ dd($class->file_path) }}
                 <div class="card">
-                    <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="Class Image">
+                    <img src="{{$class->file_path}}" class="card-img-top" alt="...">
                     <div class="card-body">
-                        <h5 class="card-title fw-bold">{{ $class->class_name }} - {{ $class->course_name }}</h5>
+                        <h5 class="card-title fw-bold">{{ $class->class_name }}</h5>
                         <p class="card-text">{{ $class->class_description }}</p>
                     </div>
                     <div class="card-footer">
                         <a href="{{ route('class.stream', ['class_id' => Crypt::encrypt($class->id)]) }}"
-                            class="btn btn-outline-primary"><i class="fa-solid fa-eye"></i></a>
-                        <a href="{{ route('class.stream', ['class_id' => Crypt::encrypt($class->id)]) }}"
-                            class="btn btn-outline-warning"><i class="fa-solid fa-pen-to-square"></i></a>
+                            class="btn btn-outline-primary">View Class</a>
                     </div>
                 </div>
             @endforeach
         </div>
     @else
-        <div class="alert alert-info text-center" role="alert">
-            <h4 class="mb-0">No classes are currently available.</h4>
-            <p class="mb-0">Please check back later or contact the <strong>registrar</strong> for more information.</p>
-        </div>
+    <h2>No class availbale</h2>
     @endif
 
 
@@ -39,5 +33,7 @@
 @endsection
 
 @section('scripts')
-    <script></script>
+    <script>
+
+    </script>
 @endsection

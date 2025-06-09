@@ -118,6 +118,7 @@
                 success: (response) => {
                     if (!response.success) {
                         error_message("Failed to update user");
+                        // console.log(response.message);
                         return;
                     }
                     success_message(response.message);

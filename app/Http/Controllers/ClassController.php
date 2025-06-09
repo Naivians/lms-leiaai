@@ -17,11 +17,12 @@ class ClassController extends Controller
     private $courseModel;
     private $userModel;
     private $enrollment;
-    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment)
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
         $this->enrollment = $enrollment;
+        $this->userModel = $userModel;
     }
     /**
      * Display a listing of the resource.
@@ -81,11 +82,22 @@ class ClassController extends Controller
             'class_description' => $request->class_description,
             'course_name' => $request->course_name,
             'user_id' => 3,
-            'class_code' => strtoupper(uniqid( $request->course_name . '_')),
+            'class_code' => strtoupper(uniqid($request->course_name . '_')),
         ]);
 
+        $getCgi = $this->userModel->select('id')->where('role', 2)->get()->toArray();
+
+        if (count($getCgi) > 0) {
+            foreach ($getCgi as $cgi) {
+                $enrollment = $this->enrollment->create([
+                    'user_id' => $cgi,
+                    'class_id' => $class->id
+                ]);
+            }
+        }
+
         $enrollment = $this->enrollment->create([
-            'user_id' => 3,
+            'user_id' => $cgi,
             'class_id' => $class->id
         ]);
 
@@ -98,8 +110,8 @@ class ClassController extends Controller
         }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Class created successfully',
+            'success' => false,
+            'message' => "Class created successfully",
         ], 200);
     }
 
