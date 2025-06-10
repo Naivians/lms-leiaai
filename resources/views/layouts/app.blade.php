@@ -106,6 +106,11 @@
             e.preventDefault();
             let form = new FormData(e.target);
 
+            if(form.get('course_name') == null || form.get('course_name') == '') {
+                error_message("Please select a course for the class.");
+                return
+            }
+
             $.ajax({
                 url: "/class/create",
                 method: "POST",

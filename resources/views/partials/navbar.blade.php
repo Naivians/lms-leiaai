@@ -1,7 +1,7 @@
 <div id="top_nav_container" style="border-bottom: 1px solid #ccc; background-color: #fff; padding: 20px;">
     <div id="top_nav" class="d-flex align-items-center justify-content-between">
         <div class="burger_menu">
-            <i class="fa-solid fa-bars fs-5 cursor text-primary sidebar-toggle"></i>
+            <i class="fa-solid fa-bars fs-5 cursor text-primary sidebar-toggle" data-bs-toggle="tooltip" title="hide/show sidebar"></i>
         </div>
         <div class="account_container d-flex align-items-center justify-content-between gap-2">
             <span class="fw-bold me-2 text-primary"></span>

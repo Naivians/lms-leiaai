@@ -40,11 +40,12 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('class')->name('class.')->group(function (){
         Route::get('/', [ClassController::class, 'Index'])->name('index');
         Route::get('/Announcement', [ClassController::class, 'Announcements'])->name('announcement');
-        Route::get('/stream/${class_id}', [ClassController::class, 'Stream'])->name('stream');
+        Route::get('/stream/{class_id}', [ClassController::class, 'Stream'])->name('stream');
         Route::post('/create', [ClassController::class, 'Store'])->name('store');
-        Route::get('/edit/{classId}', [ClassController::class, 'Edit'])->name('edit');
+        Route::get('/show/{classId}', [ClassController::class, 'Show'])->name('show');
+        Route::get('/getEnrolledUsers/{class_id}', [ClassController::class, 'getEnrolledUsers'])->name('enrolled');
         Route::post('/update', [ClassController::class, 'Update'])->name('update');
-        Route::post('/delete/{classId}', [ClassController::class, 'Destroy'])->name('delete');
+        Route::post('/archive/{classId}', [ClassController::class, 'ArchiveClass'])->name('archive');
         Route::get('/instructor', [ClassController::class, 'Instructor'])->name('instructor');
         Route::get('/grade', [ClassController::class, 'Grade'])->name('grade');
     });

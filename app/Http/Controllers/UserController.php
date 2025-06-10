@@ -88,8 +88,8 @@ class UserController extends Controller
                     return $roles[$row->role ?? 'Unknown'];
                 })
                 ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100 mb-2"><i class="fa-solid fa-eye"></i></a>';
-                    $editBtn = '<a href= " ' . route('user.edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100"><i class="fa-solid fa-user-pen"></i></a>';
+                    $viewBtn = '<a href= " ' . route('user.view', ['userId' => $row->id]) . ' " class="btn btn-sm btn-primary w-100 mb-2" data-bs-toggle="tooltip" title="View this user"><i class="fa-solid fa-eye"></i></a>';
+                    $editBtn = '<a href= " ' . route('user.edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100" data-bs-toggle="tooltip" title="Edit this user"><i class="fa-solid fa-user-pen"></i></a>';
                     return $viewBtn . ' ' . $editBtn;
                 })
                 ->rawColumns(['action', 'login_status', 'isVerified'])

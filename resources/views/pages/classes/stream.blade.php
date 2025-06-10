@@ -5,7 +5,7 @@
 @extends('layouts.app')
 
 @section('content')
-
+    <input type="hidden" name="encrypted_class_id" id="encrypted_class_id" value="{{ $class_id ?? '' }}">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="classTab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -158,41 +158,31 @@
                 </div>
             </div>
             <div class="input-group mb-3 d-none" id="enroll_fi_form">
-                <input type="text" class="form-control" placeholder="Search FI or CG"
-                    aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
+                <input type="text" class="form-control" placeholder="Search FI or CG" aria-label="Enroll FI or CGI"
+                    aria-describedby="basic-addon1">
                 <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
             </div>
-            .
-            <div class="card mb-2">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+            <div class="searchContainer border border-2 my-2 p-3 d-none">
+                <div class="card mb-2">
+                    <div class="card-header announcement_header">
+                        <div class="announcement_header">
+                            <div class="announcement_img_container">
+                                <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+                            </div>
+                            <div>
+                                <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
+                            </div>
                         </div>
-                        <div>
-                            <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
+                        <div class="edit_btn">
+                            <i class="fa-solid fa-square-plus btn btn-primary"></i>
                         </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
                     </div>
                 </div>
             </div>
-            <div class="card mb-2">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
-                        </div>
-                        <div>
-                            <h5 class="mx-2 my-0">John Kramer</h5>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
-                    </div>
-                </div>
-            </div>
+
+
+            <div id="enrolled_users_container"></div>
+
 
             <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container">
                 <div class="google-classroom-announce announce_btn">
@@ -214,36 +204,7 @@
                 <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn">Close</button>
             </div>
 
-            <div class="card mb-2">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/student-female.jpg') }}" alt="">
-                        </div>
-                        <div>
-                            <h5 class="mx-2 my-0">Mary Grace Lopo</h5>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
-                    </div>
-                </div>
-            </div>
-            <div class="card mb-2">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/student-male.png') }}" alt="">
-                        </div>
-                        <div>
-                            <h5 class="mx-2 my-0">Jose Marie Chan</h5>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
-                    </div>
-                </div>
-            </div>
+            <div id="enrolled_student_container"></div>
         </div>
         {{-- grades --}}
         <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">

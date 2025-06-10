@@ -1,6 +1,278 @@
-$(document).ready(() => {
 
-})
+$(document).ready(function () {
+
+    displayEnrolledUsers();
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
+function displayEnrolledUsers() {
+    let class_id = $('#encrypted_class_id').val();
+    let encryptedId = window.location.pathname.split('/').pop();
+    path = window.location.pathname.split('/')
+
+    if (path[2] === 'stream') {
+        $.ajax({
+            url: `/class/getEnrolledUsers/${encodeURIComponent(encryptedId)}`,
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+
+                const enrolled_fi = response.data1;
+                const enrolled_students = response.data2;
+
+                container = $('#enrolled_users_container');
+                student_container = $('#enrolled_student_container');
+                container.empty();
+                student_container.empty();
+
+                if (enrolled_fi.length === 0) {
+                    container.append('<p class="text-muted">There are currently no faculty instructors or CGI enrolled in this class.</p>');
+                }
+
+                if (enrolled_students.length === 0) {
+                    student_container.append('<p class="text-muted">here are currently no students enrolled in this class.</p>');
+                }
+
+                get_fi_and_cgi(enrolled_fi);
+                get_enrolled_students(enrolled_students);
+            },
+            error: (xhr) => {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.errors) {
+                        $("#errors").removeClass("d-none");
+                        Object.values(response.errors)
+                            .flat()
+                            .forEach((msg) => {
+                                console.log(msg);
+                            });
+                    } else if (response.message) {
+                        error_message(response.message);
+                    }
+                } catch (e) {
+                    console.error("An unexpected error occurred", e);
+                }
+            },
+        })
+    }
+}
+
+function get_fi_and_cgi(enrolled_users) {
+    enrolled_users.forEach((users) => {
+        const card = `
+            <div class="card mb-2">
+                <div class="card-header announcement_header d-flex justify-content-between align-items-center">
+                    <div class="announcement_header d-flex align-items-center">
+                        <div class="announcement_img_container me-2">
+                            <img src="${users.img}" alt="${users.name}" width="50" height="50" class="rounded-circle">
+                        </div>
+                        <div>
+                            <h5 class="my-0">${users.name}</h5>
+                            <small>${users.role_label}</small>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_student(${users.id})"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.append(card);
+    });
+}
+
+function get_enrolled_students(enrolled_users) {
+    enrolled_users.forEach((users) => {
+        const card = `
+            <div class="card mb-2">
+                <div class="card-header announcement_header d-flex justify-content-between align-items-center">
+                    <div class="announcement_header d-flex align-items-center">
+                        <div class="announcement_img_container me-2">
+                            <img src="${users.img}" alt="${users.name}" width="50" height="50" class="rounded-circle">
+                        </div>
+                        <div>
+                            <h5 class="my-0">${users.name}</h5>
+                            <small>${users.role_label}</small>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_student(${users.id})"></i>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.append(card);
+    });
+}
+
+$('#editClassForm').on('submit', function (e) {
+    e.preventDefault();
+    let form = new FormData(this);
+
+    // form.forEach((value, key) => {
+    //     console.log(`${key}: ${value}`);
+    // })
+
+    $.ajax({
+        url: `/class/update`,
+        type: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: form,
+        contentType: false,
+        processData: false,
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+            if (!response.success) {
+                error_message(response.message);
+                return;
+            }
+            success_message(response.message);
+            setTimeout(() => {
+                window.location.href = "/class";
+            }, 1500);
+        },
+        error: (xhr) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    $("#errors").removeClass("d-none");
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+
+
+
+});
+
+document.querySelectorAll('.deleteClassBtn').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+
+        const encryptedId = this.dataset.id;
+
+        Swal.fire({
+            title: "Are you sure?",
+            html: `<strong>Note:</strong> This action will archive the class, not delete it permanently
+           If you need to restore an archived class, please contact the development team.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: `/class/archive/${encodeURIComponent(encryptedId)}`,
+                    type: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    beforeSend() {
+                        pre_loader();
+                    },
+                    success: function (response) {
+                        if (!response.success) {
+                            error_message(response.message);
+                            return;
+                        }
+                        success_message(response.message);
+                        setTimeout(() => {
+                            window.location.href = "/class";
+                        }, 1500);
+                    },
+                    error: (xhr) => {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+
+                            if (response.errors) {
+                                $("#errors").removeClass("d-none");
+                                Object.values(response.errors)
+                                    .flat()
+                                    .forEach((msg) => {
+                                        console.log(msg);
+                                    });
+                            } else if (response.message) {
+                                error_message(response.message);
+                            }
+                        } catch (e) {
+                            console.error("An unexpected error occurred", e);
+                        }
+                    },
+                });
+            }
+        });
+    });
+});
+
+document.querySelectorAll('.editClassBtn').forEach(button => {
+    button.addEventListener('click', function (e) {
+        e.preventDefault();
+        $('#editClassModal').modal('show');
+        const encryptedId = this.dataset.id;
+
+        $.ajax({
+            url: `/class/show/${encodeURIComponent(encryptedId)}`,
+            type: "GET",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                if (!response.success) {
+                    error_message(response.message);
+                    return;
+                }
+
+                $("#edit_class_name").val(response.data.class_name);
+                $("#edit_class_description").val(response.data.class_description);
+                $("#edit_class_id").val(response.data.id);
+                $("#edit_course_name").val(response.data.course_name);
+
+            },
+            error: (xhr) => {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+
+                    if (response.errors) {
+                        $("#errors").removeClass("d-none");
+                        Object.values(response.errors)
+                            .flat()
+                            .forEach((msg) => {
+                                console.log(msg);
+                            });
+                    } else if (response.message) {
+                        error_message(response.message);
+                    }
+                } catch (e) {
+                    console.error("An unexpected error occurred", e);
+                }
+            },
+        });
+    });
+});
 
 $(".sidebar-toggle").on("click", function () {
     $("#sidebar").toggleClass("sidebar-collapsed");
@@ -28,12 +300,10 @@ $("#logoutBtn").on("click", (e) => {
     });
 });
 
-$enroll_fi_container = $('#enroll_fi_container');
-$enroll_fi_form = $('#enroll_fi_form');
-
 $('#enroll_fi_container').on('click', () => {
     $('#enroll_fi_form').removeClass('d-none');
     $('#enroll_fi_container').addClass('d-none');
+
 })
 
 $('#close_enroll_fi_btn').on('click', () => {

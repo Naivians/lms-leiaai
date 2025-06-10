@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class ClassController extends Controller
 {
@@ -17,6 +18,7 @@ class ClassController extends Controller
     private $courseModel;
     private $userModel;
     private $enrollment;
+    public $class_id;
     public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel)
     {
         $this->classModel = $classModel;
@@ -42,7 +44,10 @@ class ClassController extends Controller
     }
     function Stream($class_id)
     {
-        return view('pages.classes.stream');
+        session(['class_id' => $class_id]);
+        return view('pages.classes.stream', [
+            'class_id' => $class_id,
+        ]);
     }
     function Instructor()
     {
@@ -85,24 +90,18 @@ class ClassController extends Controller
             'class_code' => strtoupper(uniqid($request->course_name . '_')),
         ]);
 
-        $getCgi = $this->userModel->select('id')->where('role', 2)->get()->toArray();
+        $getCgi = $this->userModel->select('id')->where('role', 2)->get();
 
         if (count($getCgi) > 0) {
             foreach ($getCgi as $cgi) {
-                $enrollment = $this->enrollment->create([
-                    'user_id' => $cgi,
+                $this->enrollment->create([
+                    'user_id' => $cgi->id,
                     'class_id' => $class->id
                 ]);
             }
         }
 
-        $enrollment = $this->enrollment->create([
-            'user_id' => $cgi,
-            'class_id' => $class->id
-        ]);
-
-
-        if (!$class && !$enrollment) {
+        if (!$class) {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to create class',
@@ -110,21 +109,114 @@ class ClassController extends Controller
         }
 
         return response()->json([
-            'success' => false,
+            'success' => true,
             'message' => "Class created successfully",
         ], 200);
     }
 
-    function Edit($classId)
+    function Show($classId)
     {
-        $class = $this->classModel->findOrFail($classId);
-        $courses = $this->courseModel->all();
+        $decryptedClassId = Crypt::decrypt($classId);
+        $class = $this->classModel->findOrFail($decryptedClassId);
 
-        // return view('pages.classes.edit', [
-        //     'class' => $class,
-        //     'courses' => $courses,
-        // ]);
+        if (!$class) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Class not found',
+            ], 404);
+        }
 
-        return view('pages.classes.announcement');
+        return response()->json([
+            'success' => true,
+            'data' => $class,
+        ], 200);
+    }
+
+    function ArchiveClass($classId)
+    {
+        $decryptedClassId = Crypt::decrypt($classId);
+        $class = $this->classModel->findOrFail($decryptedClassId);
+
+        if (!$class) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Class not found',
+            ], 404);
+        }
+
+        $class->active = true;
+        $class->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Class successfully moved to archive',
+        ], 200);
+    }
+
+    function Update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'edit_class_name' => 'required|string|max:255',
+            'edit_class_description' => 'required|string|max:255',
+            'edit_course_name' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $class = $this->classModel->findOrFail($request->edit_class_id);
+
+        if (!$class) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Class not found',
+            ], 404);
+        }
+
+        $class->update([
+            'class_name' => $request->edit_class_name,
+            'class_description' => $request->edit_class_description,
+            'course_name' => $request->edit_course_name,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Class updated successfully',
+        ], 200);
+    }
+
+    function getEnrolledUsers($class_id)
+    {
+
+        $decryptedClassId = Crypt::decrypt($class_id);
+
+        $isExists = $this->classModel->where('id', $decryptedClassId)->exists();
+
+        if (!$isExists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Class not found',
+            ], 404);
+        }
+
+        $fi = $this->enrollment->get_fi_and_cgi($decryptedClassId);
+        $students = $this->enrollment->get_enrolled_students($decryptedClassId);
+
+        if (!$fi && !$students) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No enrolled users found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data1' => $fi,
+            'data2' => $students,
+        ], 200);
     }
 }
