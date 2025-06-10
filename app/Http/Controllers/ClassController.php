@@ -90,13 +90,15 @@ class ClassController extends Controller
             'class_code' => strtoupper(uniqid($request->course_name . '_')),
         ]);
 
-        $getCgi = $this->userModel->select('id')->where('role', 2)->get();
+        $getCgi = $this->userModel->select('id', 'role')->where('role', 2)->get();
+
 
         if (count($getCgi) > 0) {
             foreach ($getCgi as $cgi) {
                 $this->enrollment->create([
                     'user_id' => $cgi->id,
-                    'class_id' => $class->id
+                    'class_id' => $class->id,
+                    'role_id' => $cgi->role
                 ]);
             }
         }

@@ -1,22 +1,41 @@
-
 $(document).ready(function () {
+    const $searchInput = $("#search_fi");
+
+    if ($searchInput.length) {
+        $searchInput.on(
+            "input",
+            debounce(() => {
+                console.log($searchInput.val());
+            }, 300)
+        );
+    }
 
     displayEnrolledUsers();
 });
 
-document.addEventListener('DOMContentLoaded', function () {
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(tooltipTriggerEl => {
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+    );
+    tooltipTriggerList.forEach((tooltipTriggerEl) => {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
 
 function displayEnrolledUsers() {
-    let class_id = $('#encrypted_class_id').val();
-    let encryptedId = window.location.pathname.split('/').pop();
-    path = window.location.pathname.split('/')
+    let class_id = $("#encrypted_class_id").val();
+    let encryptedId = window.location.pathname.split("/").pop();
+    path = window.location.pathname.split("/");
 
-    if (path[2] === 'stream') {
+    if (path[2] === "stream") {
         $.ajax({
             url: `/class/getEnrolledUsers/${encodeURIComponent(encryptedId)}`,
             type: "GET",
@@ -24,21 +43,24 @@ function displayEnrolledUsers() {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
-
                 const enrolled_fi = response.data1;
                 const enrolled_students = response.data2;
 
-                container = $('#enrolled_users_container');
-                student_container = $('#enrolled_student_container');
+                container = $("#enrolled_users_container");
+                student_container = $("#enrolled_student_container");
                 container.empty();
                 student_container.empty();
 
                 if (enrolled_fi.length === 0) {
-                    container.append('<p class="text-muted">There are currently no faculty instructors or CGI enrolled in this class.</p>');
+                    container.append(
+                        '<p class="text-muted">There are currently no faculty instructors or CGI enrolled in this class.</p>'
+                    );
                 }
 
                 if (enrolled_students.length === 0) {
-                    student_container.append('<p class="text-muted">here are currently no students enrolled in this class.</p>');
+                    student_container.append(
+                        '<p class="text-muted">here are currently no students enrolled in this class.</p>'
+                    );
                 }
 
                 get_fi_and_cgi(enrolled_fi);
@@ -62,7 +84,7 @@ function displayEnrolledUsers() {
                     console.error("An unexpected error occurred", e);
                 }
             },
-        })
+        });
     }
 }
 
@@ -114,7 +136,7 @@ function get_enrolled_students(enrolled_users) {
     });
 }
 
-$('#editClassForm').on('submit', function (e) {
+$("#editClassForm").on("submit", function (e) {
     e.preventDefault();
     let form = new FormData(this);
 
@@ -163,13 +185,10 @@ $('#editClassForm').on('submit', function (e) {
             }
         },
     });
-
-
-
 });
 
-document.querySelectorAll('.deleteClassBtn').forEach(button => {
-    button.addEventListener('click', function (e) {
+document.querySelectorAll(".deleteClassBtn").forEach((button) => {
+    button.addEventListener("click", function (e) {
         e.preventDefault();
 
         const encryptedId = this.dataset.id;
@@ -182,14 +201,16 @@ document.querySelectorAll('.deleteClassBtn').forEach(button => {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Confirm"
+            confirmButtonText: "Confirm",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
                     url: `/class/archive/${encodeURIComponent(encryptedId)}`,
                     type: "POST",
                     headers: {
-                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
                     },
                     beforeSend() {
                         pre_loader();
@@ -228,10 +249,10 @@ document.querySelectorAll('.deleteClassBtn').forEach(button => {
     });
 });
 
-document.querySelectorAll('.editClassBtn').forEach(button => {
-    button.addEventListener('click', function (e) {
+document.querySelectorAll(".editClassBtn").forEach((button) => {
+    button.addEventListener("click", function (e) {
         e.preventDefault();
-        $('#editClassModal').modal('show');
+        $("#editClassModal").modal("show");
         const encryptedId = this.dataset.id;
 
         $.ajax({
@@ -247,10 +268,11 @@ document.querySelectorAll('.editClassBtn').forEach(button => {
                 }
 
                 $("#edit_class_name").val(response.data.class_name);
-                $("#edit_class_description").val(response.data.class_description);
+                $("#edit_class_description").val(
+                    response.data.class_description
+                );
                 $("#edit_class_id").val(response.data.id);
                 $("#edit_course_name").val(response.data.course_name);
-
             },
             error: (xhr) => {
                 try {
@@ -300,16 +322,15 @@ $("#logoutBtn").on("click", (e) => {
     });
 });
 
-$('#enroll_fi_container').on('click', () => {
-    $('#enroll_fi_form').removeClass('d-none');
-    $('#enroll_fi_container').addClass('d-none');
+$("#enroll_fi_container").on("click", () => {
+    $("#enroll_fi_form").removeClass("d-none");
+    $("#enroll_fi_container").addClass("d-none");
+});
 
-})
-
-$('#close_enroll_fi_btn').on('click', () => {
-    $('#enroll_fi_form').addClass('d-none');
-    $('#enroll_fi_container').removeClass('d-none');
-})
+$("#close_enroll_fi_btn").on("click", () => {
+    $("#enroll_fi_form").addClass("d-none");
+    $("#enroll_fi_container").removeClass("d-none");
+});
 
 function refreshTable(tableName) {
     let table = $(tableName).DataTable();
@@ -814,5 +835,3 @@ function EditCourse() {
         },
     });
 }
-
-

@@ -14,7 +14,8 @@ class ClassUser extends Model
 
     protected $fillable = [
         'user_id',
-        'class_id'
+        'class_id',
+        'role_id'
     ];
 
 

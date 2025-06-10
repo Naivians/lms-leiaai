@@ -158,11 +158,11 @@
                 </div>
             </div>
             <div class="input-group mb-3 d-none" id="enroll_fi_form">
-                <input type="text" class="form-control" placeholder="Search FI or CG" aria-label="Enroll FI or CGI"
+                <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG" aria-label="Enroll FI or CGI"
                     aria-describedby="basic-addon1">
                 <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
             </div>
-            <div class="searchContainer border border-2 my-2 p-3 d-none">
+            <div class=" border border-2 my-2 p-3" id="searchContainer">
                 <div class="card mb-2">
                     <div class="card-header announcement_header">
                         <div class="announcement_header">
