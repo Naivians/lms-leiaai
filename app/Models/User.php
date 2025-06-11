@@ -63,4 +63,29 @@ class User extends Authenticatable
         return $this->belongsToMany(Classes::class, 'class_users', 'user_id', 'class_id')
             ->withTimestamps();
     }
+
+    public function activeClasses()
+    {
+        return $this->belongsToMany(Classes::class, 'class_users', 'user_id', 'class_id')
+            ->where('classes.active', 1)
+            ->withTimestamps();
+    }
+
+    public function inactiveClasses()
+    {
+        return $this->belongsToMany(Classes::class, 'class_users', 'user_id', 'class_id')
+            ->where('classes.active', 0)
+            ->withTimestamps();
+    }
+
+    public function not_for_sp_fi()
+    {
+        return $this->role === 2 ||$this->role === 3 ||$this->role === 4 ||$this->role === 5;
+    }
+
+    public function admins()
+    {
+        return $this->role === 3 ||$this->role === 4 ||$this->role === 5;
+    }
+
 }

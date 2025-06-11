@@ -121,8 +121,8 @@ class UserController extends Controller
     public function ViewUsers($userId)
     {
         $user = $this->user->find($userId);
-        $classIds = $this->enrollment->where('user_id', $userId)->pluck('class_id')->toArray();
-        $class = $this->class->with('users')->whereIn('id', $classIds)->get();
+        // $classIds = $this->enrollment->where('user_id', $userId)->pluck('class_id')->toArray();
+        $class = $user->activeClasses;
 
         $roles = [
             0 => 'Students',

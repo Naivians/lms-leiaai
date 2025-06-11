@@ -1,3 +1,13 @@
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = document.querySelectorAll(
+        '[data-bs-toggle="tooltip"]'
+    );
+    tooltipTriggerList.forEach((tooltipTriggerEl) => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
 $(document).ready(function () {
     const $searchInput = $("#search_fi");
 
@@ -21,14 +31,6 @@ function debounce(func, delay) {
     };
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-    const tooltipTriggerList = document.querySelectorAll(
-        '[data-bs-toggle="tooltip"]'
-    );
-    tooltipTriggerList.forEach((tooltipTriggerEl) => {
-        new bootstrap.Tooltip(tooltipTriggerEl);
-    });
-});
 
 function displayEnrolledUsers() {
     let class_id = $("#encrypted_class_id").val();
@@ -192,11 +194,18 @@ document.querySelectorAll(".deleteClassBtn").forEach((button) => {
         e.preventDefault();
 
         const encryptedId = this.dataset.id;
+        var message = `<strong>Note:</strong> This action will archive the class, not delete it permanently
+           If you need to restore an archived class, please contact the development team.`;
+
+        path = window.location.pathname.split("/");
+
+        if (path[2] === "archives") {
+            message = `<strong>Note:</strong> This action will restore the archive classes. When the class is restored, all related data (such as users, assignments, and resources) will be restored as well.`
+        }
 
         Swal.fire({
             title: "Are you sure?",
-            html: `<strong>Note:</strong> This action will archive the class, not delete it permanently
-           If you need to restore an archived class, please contact the development team.`,
+            html: message,
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",

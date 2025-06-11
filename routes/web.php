@@ -39,6 +39,7 @@ Route::middleware(['auth'])->group(function () {
     // class
     Route::prefix('class')->name('class.')->group(function (){
         Route::get('/', [ClassController::class, 'Index'])->name('index');
+        Route::get('/archives', [ClassController::class, 'Archives'])->name('archives');
         Route::get('/Announcement', [ClassController::class, 'Announcements'])->name('announcement');
         Route::get('/stream/{class_id}', [ClassController::class, 'Stream'])->name('stream');
         Route::post('/create', [ClassController::class, 'Store'])->name('store');

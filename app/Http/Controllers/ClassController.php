@@ -33,18 +33,25 @@ class ClassController extends Controller
      */
     function Index()
     {
-        $classes = (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5) ? $this->classModel->all() : Auth::user()->classes;
+        $classes = (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5) ? $this->classModel->where('active', 1)->get() : Auth::user()->activeClasses;
         $courses = $this->courseModel->all();
-        // $classes = Auth::user()->classes;
-
         return view('pages.classes.index', [
             'classes' => $classes,
             'courses' => $courses,
         ]);
     }
+
+    function Archives(){
+        $user = $this->userModel->find(Auth::id());
+        $user =  $user->inactiveClasses;
+        session()->put('archives', count($user));
+        return view('pages.classes.archives.archives', [
+            'archives' => $user,
+        ]);
+    }
+
     function Stream($class_id)
     {
-        session(['class_id' => $class_id]);
         return view('pages.classes.stream', [
             'class_id' => $class_id,
         ]);
@@ -145,10 +152,14 @@ class ClassController extends Controller
                 'message' => 'Class not found',
             ], 404);
         }
+        $status = true;
 
-        $class->active = true;
+        if($class->active){
+            $status = false;
+        }
+
+        $class->active = $status;
         $class->save();
-
         return response()->json([
             'success' => true,
             'message' => 'Class successfully moved to archive',

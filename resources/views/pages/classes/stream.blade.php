@@ -27,12 +27,14 @@
             </button>
         </li>
 
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
-                role="tab" aria-controls="tab4" aria-selected="false">
-                Grade
-            </button>
-        </li>
+        @if (Auth::user()->role === 4 || Auth::user()->role === 5)
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
+                    role="tab" aria-controls="tab4" aria-selected="false">
+                    Grade
+                </button>
+            </li>
+        @endif
     </ul>
 
     <div class="tab-content mt-3">
@@ -141,68 +143,71 @@
         </div>
         {{-- people --}}
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
-            <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container">
-                <div class="google-classroom-announce announce_btn">
-                    <div class="announce-text w-100">
-                        <div class="d-flex align-items-center">
-                            <div class="announcement_header">
-                                <div class="announcement_img_container">
-                                    <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
+
+            @if (Auth::user()->not_for_sp_fi())
+                <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container">
+                    <div class="google-classroom-announce announce_btn">
+                        <div class="announce-text w-100">
+                            <div class="d-flex align-items-center">
+                                <div class="announcement_header">
+                                    <div class="announcement_img_container">
+                                        <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class=" mx-2 my-0">Enroll FI / CGI</h5>
                                 </div>
                             </div>
-                            <div>
-                                <h5 class=" mx-2 my-0">Enroll FI / CGI</h5>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3 d-none" id="enroll_fi_form">
+                    <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG"
+                        aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
+                </div>
+                <div class=" border border-2 my-2 p-3" id="searchContainer">
+                    <div class="card mb-2">
+                        <div class="card-header announcement_header">
+                            <div class="announcement_header">
+                                <div class="announcement_img_container">
+                                    <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+                                </div>
+                                <div>
+                                    <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
+                                </div>
+                            </div>
+                            <div class="edit_btn">
+                                <i class="fa-solid fa-square-plus btn btn-primary"></i>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 d-none" id="enroll_fi_form">
-                <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG" aria-label="Enroll FI or CGI"
-                    aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
-            </div>
-            <div class=" border border-2 my-2 p-3" id="searchContainer">
-                <div class="card mb-2">
-                    <div class="card-header announcement_header">
-                        <div class="announcement_header">
-                            <div class="announcement_img_container">
-                                <img src="{{ asset('assets/img/pilot.png') }}" alt="">
-                            </div>
-                            <div>
-                                <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
-                            </div>
-                        </div>
-                        <div class="edit_btn">
-                            <i class="fa-solid fa-square-plus btn btn-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            @endif
 
             <div id="enrolled_users_container"></div>
 
-
-            <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container">
-                <div class="google-classroom-announce announce_btn">
-                    <div class="announce-text w-100">
-                        <div class="d-flex align-items-center">
-                            <div class="announcement_img_container">
-                                <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
-                            </div>
-                            <div>
-                                <h5 class=" mx-2 my-0">Enroll Student</h5>
+            @if (AAuth::user()->not_for_sp_fi())
+                <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container">
+                    <div class="google-classroom-announce announce_btn">
+                        <div class="announce-text w-100">
+                            <div class="d-flex align-items-center">
+                                <div class="announcement_img_container">
+                                    <img src="{{ asset('assets/img/logo.jpg') }}" alt="leiaai logo">
+                                </div>
+                                <div>
+                                    <h5 class=" mx-2 my-0">Enroll Student</h5>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="input-group mb-3 d-none my-3" id="enroll_student_form">
-                <input type="text" class="form-control" placeholder="Search Students" aria-label="Insert Students"
-                    aria-describedby="basic-addon1">
-                <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn">Close</button>
-            </div>
+                <div class="input-group mb-3 d-none my-3" id="enroll_student_form">
+                    <input type="text" class="form-control" placeholder="Search Students"
+                        aria-label="Insert Students" aria-describedby="basic-addon1">
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn">Close</button>
+                </div>
+            @endif
 
             <div id="enrolled_student_container"></div>
         </div>
