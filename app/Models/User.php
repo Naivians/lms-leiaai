@@ -78,14 +78,5 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-    public function not_for_sp_fi()
-    {
-        return $this->role === 2 ||$this->role === 3 ||$this->role === 4 ||$this->role === 5;
-    }
-
-    public function admins()
-    {
-        return $this->role === 3 ||$this->role === 4 ||$this->role === 5;
-    }
 
 }

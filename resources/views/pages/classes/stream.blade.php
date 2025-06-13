@@ -27,14 +27,14 @@
             </button>
         </li>
 
-        @if (Auth::user()->role === 4 || Auth::user()->role === 5)
+        @can ('admin_lvl1')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
                     role="tab" aria-controls="tab4" aria-selected="false">
                     Grade
                 </button>
             </li>
-        @endif
+        @endcan
     </ul>
 
     <div class="tab-content mt-3">
@@ -73,7 +73,6 @@
                         </div>
                     </div>
                     <div class="edit_btn">
-                        {{-- edit_announcementForm --}}
                         <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
                             data-id="123" data-content="<p>This is your announcement content</p>">
                         </i>
@@ -144,8 +143,8 @@
         {{-- people --}}
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
 
-            @if (Auth::user()->not_for_sp_fi())
-                <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container">
+            @can ('not_for_sp_fi')
+                <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container" data-toggle-form="enroll_fi">
                     <div class="google-classroom-announce announce_btn">
                         <div class="announce-text w-100">
                             <div class="d-flex align-items-center">
@@ -164,31 +163,16 @@
                 <div class="input-group mb-3 d-none" id="enroll_fi_form">
                     <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG"
                         aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
-                    <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn">Close</button>
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn" data-close-form="enroll_fi">Close</button>
                 </div>
-                <div class=" border border-2 my-2 p-3" id="searchContainer">
-                    <div class="card mb-2">
-                        <div class="card-header announcement_header">
-                            <div class="announcement_header">
-                                <div class="announcement_img_container">
-                                    <img src="{{ asset('assets/img/pilot.png') }}" alt="">
-                                </div>
-                                <div>
-                                    <h5 class="mx-2 my-0">Juan Dela Cruz</h5>
-                                </div>
-                            </div>
-                            <div class="edit_btn">
-                                <i class="fa-solid fa-square-plus btn btn-primary"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
 
-            <div id="enrolled_users_container"></div>
+                <div id="fi_search_results"></div>
+            @endcan
+            <h5>Flight Instructor | CGI</h5>
+            <div id="enrolled_fi_cgi_container"></div>
 
-            @if (AAuth::user()->not_for_sp_fi())
-                <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container">
+            @can ('admin_lvl1')
+                <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container" data-toggle-form="enroll_student">
                     <div class="google-classroom-announce announce_btn">
                         <div class="announce-text w-100">
                             <div class="d-flex align-items-center">
@@ -202,13 +186,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3 d-none my-3" id="enroll_student_form">
-                    <input type="text" class="form-control" placeholder="Search Students"
-                        aria-label="Insert Students" aria-describedby="basic-addon1">
-                    <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn">Close</button>
+                <div class="input-group mb-3 my-3 d-none" id="enroll_student_form">
+                    <input type="search" class="form-control" placeholder="Search Students"
+                        aria-label="Enroll Students" aria-describedby="basic-addon1" id="search_student">
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn" data-close-form="enroll_student">Close</button>
                 </div>
-            @endif
 
+                <div id="students_search_results"></div>
+            @endcan
+            <h5>{{ Gate::allows('sp_only') ? 'Classmates' : 'Studentssss' }}</h5>
             <div id="enrolled_student_container"></div>
         </div>
         {{-- grades --}}

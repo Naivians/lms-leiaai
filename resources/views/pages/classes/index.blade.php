@@ -22,14 +22,16 @@
                             data-bs-toggle="tooltip" title="View this class" class="btn btn-outline-primary"><i
                                 class="fa-solid fa-eye"></i></a>
 
-                        <a href="#" data-bs-toggle="tooltip" title="Edit this class"
-                            data-id="{{ Crypt::encrypt($class->id) }}" data-class_name="{{ $class->class_name }}"
-                            class="btn btn-outline-warning editClassBtn"><i class="fa-solid fa-pen-to-square"></i></a>
+                        @can ('admin_lvl1')
+                            <a href="#" data-bs-toggle="tooltip" title="Edit this class"
+                                data-id="{{ Crypt::encrypt($class->id) }}" data-class_name="{{ $class->class_name }}"
+                                class="btn btn-outline-warning editClassBtn"><i class="fa-solid fa-pen-to-square"></i></a>
 
-                        <a href="#" class="deleteClassBtn btn btn-outline-danger" data-bs-toggle="tooltip"
-                            title="Archive this class" data-id="{{ Crypt::encrypt($class->id) }}">
-                            <i class="fa-solid fa-box-archive"></i>
-                        </a>
+                            <a href="#" class="deleteClassBtn btn btn-outline-danger" data-bs-toggle="tooltip"
+                                title="Archive this class" data-id="{{ Crypt::encrypt($class->id) }}">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </a>
+                        @endcan
                     </div>
                 </div>
             @endforeach

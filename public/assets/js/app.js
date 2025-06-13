@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", function () {
     const tooltipTriggerList = document.querySelectorAll(
         '[data-bs-toggle="tooltip"]'
@@ -9,19 +8,123 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 $(document).ready(function () {
-    const $searchInput = $("#search_fi");
+    const fi_searchInput = $("#search_fi");
+    const student_search = $("#search_student");
+    const fi_search_results = $("#fi_search_results");
+    const student_search_results = $("#students_search_results");
 
-    if ($searchInput.length) {
-        $searchInput.on(
+    if (fi_searchInput.length > 0) {
+        fi_searchInput.on(
             "input",
             debounce(() => {
-                console.log($searchInput.val());
+                const searchVal = fi_searchInput.val().trim();
+
+                if (searchVal.length === 0) {
+                    fi_search_results.empty();
+                    return;
+                }
+
+                $.ajax({
+                    url: "/class/search",
+                    method: "GET",
+                    data: {
+                        search: searchVal,
+                        roles: "fi",
+                    },
+                    success: (response) => {
+                        fi_search_results.empty();
+
+                        if (response.html.length === 0) {
+                            fi_search_results.append(
+                                '<h5 class="text-muted text-center">No data found</h5>'
+                            );
+                        } else {
+                            fi_search_results.append(response.html);
+                        }
+                    },
+                    error: () => {
+                        fi_search_results.empty();
+                        fi_search_results.append(
+                            '<h5 class="text-danger text-center">Error retrieving data</h5>'
+                        );
+                    },
+                });
             }, 300)
         );
+    } else {
+        fi_searchInput.val("");
+        fi_search_results.empty().hide();
+    }
+
+    if (student_search.length > 0) {
+        student_search.on(
+            "input",
+            debounce(() => {
+                const searchVal = student_search.val().trim();
+
+                if (searchVal.length === 0) {
+                    student_search_results.empty();
+                    return;
+                }
+
+                $.ajax({
+                    url: "/class/search",
+                    method: "GET",
+                    data: {
+                        search: searchVal,
+                        roles: "students",
+                    },
+                    success: (response) => {
+                        student_search_results.empty();
+
+                        if (response.html.length === 0) {
+                            student_search_results.append(
+                                '<h5 class="text-muted text-center">No data found</h5>'
+                            );
+                        } else {
+                            student_search_results.append(response.html);
+                        }
+                    },
+                    error: () => {
+                        student_search_results.empty();
+                        student_search_results.append(
+                            '<h5 class="text-danger text-center">Error retrieving data</h5>'
+                        );
+                    },
+                });
+            }, 300)
+        );
+    } else {
+        student_search.val("");
+        student_search_results.empty().hide();
     }
 
     displayEnrolledUsers();
 });
+
+function enrollUser(userId, role_id) {
+    let encryptedId = window.location.pathname.split("/").pop();
+    $.ajax({
+        url: "/class/enroll",
+        method: "POST",
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        data: {
+            userId: userId,
+            classId: encryptedId,
+            roleId: role_id,
+        },
+        success: (res) => {
+            if (!res.success) {
+                error_message(res.message);
+                return;
+            }
+
+            displayEnrolledUsers();
+        },
+    });
+}
 
 function debounce(func, delay) {
     let timer;
@@ -31,13 +134,12 @@ function debounce(func, delay) {
     };
 }
 
-
 function displayEnrolledUsers() {
     let class_id = $("#encrypted_class_id").val();
     let encryptedId = window.location.pathname.split("/").pop();
     path = window.location.pathname.split("/");
 
-    if (path[2] === "stream") {
+    if (path[2] === "stream" && class_id != "") {
         $.ajax({
             url: `/class/getEnrolledUsers/${encodeURIComponent(encryptedId)}`,
             type: "GET",
@@ -48,25 +150,25 @@ function displayEnrolledUsers() {
                 const enrolled_fi = response.data1;
                 const enrolled_students = response.data2;
 
-                container = $("#enrolled_users_container");
+                fi_container = $("#enrolled_fi_cgi_container");
                 student_container = $("#enrolled_student_container");
-                container.empty();
+                fi_container.empty();
                 student_container.empty();
 
-                if (enrolled_fi.length === 0) {
-                    container.append(
-                        '<p class="text-muted">There are currently no faculty instructors or CGI enrolled in this class.</p>'
+                if (enrolled_fi == null) {
+                    fi_container.append(
+                        '<p class="text-muted text-center">There are currently no faculty instructors or CGI enrolled in this class.</p>'
                     );
                 }
 
-                if (enrolled_students.length === 0) {
+                if (enrolled_students == null) {
                     student_container.append(
-                        '<p class="text-muted">here are currently no students enrolled in this class.</p>'
+                        '<p class="text-muted text-center">There are currently no students enrolled in this class.</p>'
                     );
                 }
 
-                get_fi_and_cgi(enrolled_fi);
-                get_enrolled_students(enrolled_students);
+                student_container.append(enrolled_students);
+                fi_container.append(enrolled_fi);
             },
             error: (xhr) => {
                 try {
@@ -90,51 +192,49 @@ function displayEnrolledUsers() {
     }
 }
 
-function get_fi_and_cgi(enrolled_users) {
-    enrolled_users.forEach((users) => {
-        const card = `
-            <div class="card mb-2">
-                <div class="card-header announcement_header d-flex justify-content-between align-items-center">
-                    <div class="announcement_header d-flex align-items-center">
-                        <div class="announcement_img_container me-2">
-                            <img src="${users.img}" alt="${users.name}" width="50" height="50" class="rounded-circle">
-                        </div>
-                        <div>
-                            <h5 class="my-0">${users.name}</h5>
-                            <small>${users.role_label}</small>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_student(${users.id})"></i>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.append(card);
-    });
-}
+function removeUserFromCLass(userId, roleLabel) {
+    let message = `<strong>Note:</strong> This action will remove this FI /CGI from this class. `;
 
-function get_enrolled_students(enrolled_users) {
-    enrolled_users.forEach((users) => {
-        const card = `
-            <div class="card mb-2">
-                <div class="card-header announcement_header d-flex justify-content-between align-items-center">
-                    <div class="announcement_header d-flex align-items-center">
-                        <div class="announcement_img_container me-2">
-                            <img src="${users.img}" alt="${users.name}" width="50" height="50" class="rounded-circle">
-                        </div>
-                        <div>
-                            <h5 class="my-0">${users.name}</h5>
-                            <small>${users.role_label}</small>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_student(${users.id})"></i>
-                    </div>
-                </div>
-            </div>
-        `;
-        container.append(card);
+    if (roleLabel === "students") {
+        message = `<strong>Note:</strong> This action will remove this student from this class.`;
+    }
+
+    Swal.fire({
+        title: "Ooopsss?",
+        html: message,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "/class/remove-user-from-cLass",
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                data: {
+                    userId: userId,
+                },
+                success: (res) => {
+                    if (!res.success) {
+                        error_message(res.message);
+                        return;
+                    }
+
+                    success_message(res.message);
+                    setTimeout(() => {
+                        displayEnrolledUsers();
+                    }, 1000);
+
+                    // console.log(res);
+                },
+            });
+        }
     });
 }
 
@@ -200,7 +300,7 @@ document.querySelectorAll(".deleteClassBtn").forEach((button) => {
         path = window.location.pathname.split("/");
 
         if (path[2] === "archives") {
-            message = `<strong>Note:</strong> This action will restore the archive classes. When the class is restored, all related data (such as users, assignments, and resources) will be restored as well.`
+            message = `<strong>Note:</strong> This action will restore the archive classes. When the class is restored, all related data (such as users, assignments, and resources) will be restored as well.`;
         }
 
         Swal.fire({
@@ -311,6 +411,13 @@ $(".sidebar-toggle").on("click", function () {
     $(".main-content").toggleClass("expanded");
 });
 
+function collapseSidebar() {
+    $("#sidebar").addClass("sidebar-collapsed");
+    $(".main-content").removeClass("expanded");
+    $(".nav_container").removeClass("expanded");
+}
+
+
 $("#logoutBtn").on("click", (e) => {
     e.preventDefault();
 
@@ -331,14 +438,16 @@ $("#logoutBtn").on("click", (e) => {
     });
 });
 
-$("#enroll_fi_container").on("click", () => {
-    $("#enroll_fi_form").removeClass("d-none");
-    $("#enroll_fi_container").addClass("d-none");
+$("[data-toggle-form]").on("click", function () {
+    const target = $(this).data("toggle-form");
+    $(`#${target}_form`).removeClass("d-none");
+    $(`#${target}_container`).addClass("d-none");
 });
 
-$("#close_enroll_fi_btn").on("click", () => {
-    $("#enroll_fi_form").addClass("d-none");
-    $("#enroll_fi_container").removeClass("d-none");
+$("[data-close-form]").on("click", function () {
+    const target = $(this).data("close-form");
+    $(`#${target}_form`).addClass("d-none");
+    $(`#${target}_container`).removeClass("d-none");
 });
 
 function refreshTable(tableName) {

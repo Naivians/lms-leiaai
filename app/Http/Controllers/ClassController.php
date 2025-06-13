@@ -10,7 +10,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use App\Services\UserRestrictions;
 
 class ClassController extends Controller
 {
@@ -18,13 +19,16 @@ class ClassController extends Controller
     private $courseModel;
     private $userModel;
     private $enrollment;
-    public $class_id;
-    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel)
+    private $class_id;
+    private $userRestrictions;
+
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
         $this->enrollment = $enrollment;
         $this->userModel = $userModel;
+        $this->userRestrictions = $userRestrictions;
     }
     /**
      * Display a listing of the resource.
@@ -33,17 +37,19 @@ class ClassController extends Controller
      */
     function Index()
     {
-        $classes = (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5) ? $this->classModel->where('active', 1)->get() : Auth::user()->activeClasses;
+        $classes = $this->userRestrictions->canPerformAction('admin_lvl1') ? $this->classModel->where('active', 1)->get() : Auth::user()->activeClasses;
         $courses = $this->courseModel->all();
-        return view('pages.classes.index', [
+        return response()->view('pages.classes.index', [
             'classes' => $classes,
             'courses' => $courses,
         ]);
     }
 
-    function Archives(){
+    function Archives()
+    {
         $user = $this->userModel->find(Auth::id());
-        $user =  $user->inactiveClasses;
+
+        $user = Gate::allows('admin_lvl1') ? $this->classModel->where('active', 0)->get() : $user->inactiveClasses;
         session()->put('archives', count($user));
         return view('pages.classes.archives.archives', [
             'archives' => $user,
@@ -154,7 +160,7 @@ class ClassController extends Controller
         }
         $status = true;
 
-        if($class->active){
+        if ($class->active) {
             $status = false;
         }
 
@@ -216,20 +222,177 @@ class ClassController extends Controller
             ], 404);
         }
 
-        $fi = $this->enrollment->get_fi_and_cgi($decryptedClassId);
-        $students = $this->enrollment->get_enrolled_students($decryptedClassId);
+        $enrolled_fi = $this->enrollment->get_fi_and_cgi($decryptedClassId);
+        $enrolled_students = $this->enrollment->get_enrolled_students($decryptedClassId);
 
-        if (!$fi && !$students) {
+        $fi_html = null;
+        $sp_html = null;
+        $roles = "fi";
+
+
+        if (!$enrolled_fi && !$enrolled_students) {
             return response()->json([
                 'success' => false,
                 'message' => 'No enrolled users found',
             ], 404);
         }
 
+        foreach ($enrolled_fi as $fi) {
+            $img = asset($fi->img);
+            $restriction = $this->userRestrictions->canPerformAction('sp_fi_only') ? '' : '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $fi->id . ', \'fi\')"><i class="fa-solid fa-trash"></i></button>';
+
+            $fi_html .= '
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="' . $img . '" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">' . htmlspecialchars($fi->name) . '</h5>
+                            <small class="mx-2">' . $fi->role_label . '</small>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                    ' . $restriction . '
+                    </div>
+                </div>
+            </div>';
+        }
+
+        foreach ($enrolled_students as $sp) {
+            $img = asset($sp->img);
+            $restriction = $this->userRestrictions->canPerformAction('sp_fi_only') ? '' : '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $sp->id . ', \'students\')"><i class="fa-solid fa-trash"></i></button>';
+
+            $sp_html .= '
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="' . $img . '" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">' . htmlspecialchars($sp->name) . '</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        ' . $restriction . '
+                    </div>
+                </div>
+            </div>';
+        }
+
+
         return response()->json([
             'success' => true,
-            'data1' => $fi,
-            'data2' => $students,
+            'data1' => $fi_html,
+            'data2' => $sp_html,
         ], 200);
+    }
+
+
+    function Search(Request $request)
+    {
+        $search = $request->input('search');
+        $roles = $request->input('roles') == 'fi' ? [1, 2] : [0];
+        $users = $this->userModel->select('name', 'img', 'role', 'id')
+            ->whereIn('role', $roles)
+            ->where('name', 'Like', '%' . $search . '%')->get();
+        $html = '';
+
+        foreach ($users as $user) {
+            $img = asset($user->img);
+
+            $html .= '
+            <div class="card mb-2">
+                <div class="card-header announcement_header">
+                    <div class="announcement_header">
+                        <div class="announcement_img_container">
+                            <img src="' . $img . '" alt="">
+                        </div>
+                        <div>
+                            <h5 class="mx-2 my-0">' . htmlspecialchars($user->name) . '</h5>
+                        </div>
+                    </div>
+                    <div class="edit_btn">
+                        <button class="btn btn-danger" onclick="enrollUser(' . $user->id . ', ' . $user->role . ')"><i class="fa-solid fa-square-plus"></i></button>
+                    </div>
+                </div>
+            </div>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
+    function Enroll(Request $request)
+    {
+        $userId = $request->input('userId');
+        $role_id = $request->input('roleId');
+        $classId = Crypt::decrypt($request->input('classId'));
+
+        $isExists = $this->enrollment->where([
+            ['user_id', '=', $userId],
+            ['class_id', '=', $classId],
+        ])->first();
+
+        if ($isExists) {
+            return response()->json([
+                'success' => false,
+                'message' => "This user already enrolled in this class",
+            ]);
+        }
+
+        $user = $this->userModel->find($userId);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => "this user doesn't exists on our database",
+            ]);
+        }
+
+        $user = $this->enrollment->create([
+            'user_id' => $userId,
+            'class_id' => $classId,
+            'role_id' => $user->role,
+        ]);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to enroll user in this class",
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "User successfully enrolled in this class",
+        ]);
+    }
+
+    function RemoveUserFromClass(Request $request)
+    {
+        $userId = $request->input('userId');
+
+        $isExists = $this->enrollment->where([
+            ['user_id', '=', $userId],
+        ])->first();
+
+        if (!$isExists) {
+            return response()->json([
+                'success' => false,
+                'message' => "This user is not enrolled in this class",
+            ]);
+        }
+
+        $isExists->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => "User successfully removed from this class",
+        ]);
     }
 }

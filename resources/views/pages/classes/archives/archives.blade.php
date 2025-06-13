@@ -17,14 +17,14 @@
                         <h5 class="card-title fw-bold">{{ $class->class_name }} - {{ $class->course_name }}</h5>
                         <p class="card-text">{{ $class->class_description }}</p>
                     </div>
-                    @if (Auth::user()->role === 4 || Auth::user()->role === 5)
+                    @can ('admin_lvl1')
                         <div class="card-footer">
                             <a href="#" class="deleteClassBtn btn btn-primary" data-bs-toggle="tooltip"
                                 title="restore this class" data-id="{{ Crypt::encrypt($class->id) }}">
                                 <i class="fa-solid fa-folder-plus"></i>
                             </a>
                         </div>
-                    @endif
+                    @endcan
                 </div>
             @endforeach
         </div>

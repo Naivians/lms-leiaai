@@ -32,7 +32,7 @@ nav a:hover {
 }
 
 /* sidebar */
-#sidebar {
+/* #sidebar {
     background-color: var(--primary-color);
     width: 250px;
     height: 100vh;
@@ -42,7 +42,6 @@ nav a:hover {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     transition: all 0.3s ease;
-    /* style="width: 250px; position: fixed;" */
 }
 
 #sidebar .footer_container{
@@ -53,10 +52,35 @@ nav a:hover {
     color: var(--dark-color);
     align-self: center;
     justify-self: center;
-}
-/* #sidebar .footer_container p{
-    color: var(--dark-color);
 } */
+
+#sidebar {
+    background-color: var(--primary-color);
+    width: 250px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: all 0.3s ease;
+
+    display: flex;
+    flex-direction: column;
+}
+
+#sidebar nav {
+    flex: 1; /* Takes up available vertical space */
+    overflow-y: auto; /* Optional: adds scroll if nav is too long */
+}
+
+#sidebar .footer_container {
+    text-align: center;
+    padding: 10px;
+    color: var(--dark-color);
+    background-color: rgba(255, 255, 255, 0.1); /* Optional: make footer stand out */
+    font-size: 0.85rem;
+}
 
 *{
     margin: 0;
@@ -67,6 +91,13 @@ nav a:hover {
 #sidebar img {
     width: 100%;
     height: auto;
+}
+
+.nav-link.active {
+    font-weight: bold;
+    color: var(--primary-color);
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
 }
 
 .sidebar-collapsed,

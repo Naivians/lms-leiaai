@@ -39,16 +39,20 @@ Route::middleware(['auth'])->group(function () {
     // class
     Route::prefix('class')->name('class.')->group(function (){
         Route::get('/', [ClassController::class, 'Index'])->name('index');
+        Route::get('/search', [ClassController::class, 'Search'])->name('search');
         Route::get('/archives', [ClassController::class, 'Archives'])->name('archives');
         Route::get('/Announcement', [ClassController::class, 'Announcements'])->name('announcement');
         Route::get('/stream/{class_id}', [ClassController::class, 'Stream'])->name('stream');
-        Route::post('/create', [ClassController::class, 'Store'])->name('store');
         Route::get('/show/{classId}', [ClassController::class, 'Show'])->name('show');
         Route::get('/getEnrolledUsers/{class_id}', [ClassController::class, 'getEnrolledUsers'])->name('enrolled');
-        Route::post('/update', [ClassController::class, 'Update'])->name('update');
-        Route::post('/archive/{classId}', [ClassController::class, 'ArchiveClass'])->name('archive');
         Route::get('/instructor', [ClassController::class, 'Instructor'])->name('instructor');
         Route::get('/grade', [ClassController::class, 'Grade'])->name('grade');
+
+        Route::post('/create', [ClassController::class, 'Store'])->name('store');
+        Route::post('/update', [ClassController::class, 'Update'])->name('update');
+        Route::post('/archive/{classId}', [ClassController::class, 'ArchiveClass'])->name('archive');
+        Route::post('/enroll', [ClassController::class, 'Enroll'])->name('enroll');
+        Route::post('/remove-user-from-cLass', [ClassController::class, 'RemoveUserFromClass'])->name('remove-user');
     });
 
 
