@@ -7,11 +7,16 @@ use App\Models\Classes;
 use App\Models\CourseModel;
 use App\Models\ClassUser;
 use App\Models\User;
+use App\Models\Announcement;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 use App\Services\UserRestrictions;
+use Illuminate\Contracts\Encryption\DecryptException;
+use App\Mail\enrollment_notification;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class ClassController extends Controller
 {
@@ -21,14 +26,16 @@ class ClassController extends Controller
     private $enrollment;
     private $class_id;
     private $userRestrictions;
+    private $announcement;
 
-    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions)
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions, Announcement $announcement)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
         $this->enrollment = $enrollment;
         $this->userModel = $userModel;
         $this->userRestrictions = $userRestrictions;
+        $this->announcement = $announcement;
     }
     /**
      * Display a listing of the resource.
@@ -58,8 +65,22 @@ class ClassController extends Controller
 
     function Stream($class_id)
     {
+        $encryptedClassId = $class_id;
+
+        try {
+            $class_id = Crypt::decrypt($class_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors([
+                'error' => 'Invalid class ID',
+            ]);
+        }
+
+        $announcements = Classes::with(['announcements.user'])->find(id: $class_id);
+        $announcements = $announcements->announcements ?? null;
+
         return view('pages.classes.stream', [
-            'class_id' => $class_id,
+            'class_id' => $encryptedClassId,
+            'announcements' => $announcements ?? null,
         ]);
     }
     function Instructor()
@@ -74,15 +95,12 @@ class ClassController extends Controller
     {
         return view('pages.classes.grade');
     }
-    function Announcements()
-    {
-        return view('pages.classes.announcement');
-    }
 
     function Store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'class_name' => 'required|string|max:255',
+            'start_date' => 'required|string|max:255',
             'class_description' => 'required|string|max:255',
             'course_name' => 'required|string',
             'class_image' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
@@ -101,9 +119,10 @@ class ClassController extends Controller
             'course_name' => $request->course_name,
             'user_id' => 3,
             'class_code' => strtoupper(uniqid($request->course_name . '_')),
+            'created_at' => $request->start_date ?? now(),
         ]);
 
-        $getCgi = $this->userModel->select('id', 'role')->where('role', 2)->get();
+        $getCgi = $this->userModel->select('id', 'role', 'name', 'email')->where('role', 2)->get();
 
 
         if (count($getCgi) > 0) {
@@ -113,6 +132,12 @@ class ClassController extends Controller
                     'class_id' => $class->id,
                     'role_id' => $cgi->role
                 ]);
+
+                try {
+                    Mail::to($cgi->email)->queue(new enrollment_notification($cgi, $class));
+                } catch (\Exception $e) {
+                    Log::error('Failed to send enrollment email to ' . $cgi->email . ': ' . $e->getMessage());
+                }
             }
         }
 
@@ -211,7 +236,14 @@ class ClassController extends Controller
     function getEnrolledUsers($class_id)
     {
 
-        $decryptedClassId = Crypt::decrypt($class_id);
+        try {
+            $decryptedClassId = Crypt::decrypt($class_id);
+        } catch (DecryptException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid class ID',
+            ], 404);
+        }
 
         $isExists = $this->classModel->where('id', $decryptedClassId)->exists();
 
@@ -354,6 +386,8 @@ class ClassController extends Controller
             ]);
         }
 
+        $class = $user->classes();
+
         $user = $this->enrollment->create([
             'user_id' => $userId,
             'class_id' => $classId,
@@ -369,7 +403,8 @@ class ClassController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => "User successfully enrolled in this class",
+            // 'message' => "User successfully enrolled in this class",
+            'data1' => [$user, $class],
         ]);
     }
 

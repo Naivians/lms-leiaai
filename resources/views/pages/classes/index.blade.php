@@ -8,6 +8,7 @@
 
 @section('content')
 
+
     @if (isset($classes) && count($classes) > 0)
         <div class="class_grid_container">
             @foreach ($classes as $class)

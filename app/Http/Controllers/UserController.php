@@ -11,9 +11,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-use App\Services\EmailService;
 use Illuminate\Support\Str;
 use App\Mail\VerifyEmail;
 use Illuminate\Support\Facades\Mail;
@@ -141,7 +138,7 @@ class UserController extends Controller
         return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender], 'classes' => $class]);
     }
 
-    public function Store(Request $request, EmailService $emailService)
+    public function Store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id_number' => 'nullable|string|unique:users,id_number',

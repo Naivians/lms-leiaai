@@ -27,7 +27,7 @@
             </button>
         </li>
 
-        @can ('admin_lvl1')
+        @can('sp_fi_only')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
                     role="tab" aria-controls="tab4" aria-selected="false">
@@ -38,9 +38,10 @@
     </ul>
 
     <div class="tab-content mt-3">
-        {{-- streams --}}
+        {{-- announcement --}}
         <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="streams">
-            <a href="{{ route('class.announcement') }}" class="text-decoration-none">
+            <a href="{{ route('announcement.index', ['class_id' => $class_id ?? null, 'announcement_id' => 0]) }}"
+                class="text-decoration-none">
                 <div class="announce_form-controller my-3">
                     <div class="google-classroom-announce announce_btn">
                         <div class="announce-text w-100">
@@ -54,55 +55,54 @@
                                     <div>
                                         <p class=" mx-2 my-0">Announce something to your class</p>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </a>
-            <div class="card my-3">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+
+
+            {{-- Announcements --}}
+
+            @if (isset($announcements) && $announcements->count() > 0)
+                @foreach ($announcements as $announcement)
+                    <div class="card my-3">
+                        <div class="card-header announcement_header">
+                            <div class="announcement_header">
+                                <div class="announcement_img_container">
+                                    <img src="{{ $announcement->user->img }}" alt="">
+                                </div>
+                                <div>
+                                    <h5 class="mx-2 my-0">{{ $announcement->user->name }}</h5>
+                                    <small class="mx-2">{{ $announcement->user->role_label }}</small>
+                                </div>
+                            </div>
+                            @can('not_for_sp')
+                                <div class="edit_btn">
+                                    <a href="{{ route('announcement.index', ['class_id' => Crypt::encrypt($announcement->class_id), 'announcement_id' => $announcement->id]) }}"
+                                        class="btn btn-outline-warning text-decoration-none">
+                                        <i class="fa-solid fa-pen-to-square ">
+                                        </i>
+                                    </a>
+                                    <i class="fa-solid fa-trash btn btn-outline-danger"
+                                        onclick='delete_announcement({{ $announcement->id }})'></i>
+                                </div>
+                            @endcan
                         </div>
-                        <div>
-                            <h5 class="mx-2 my-0">Teachers Name</h5>
-                            <small class="mx-2">May 13, 2025</small>
+                        <div class="card-body">
+                            {!! $announcement->content !!}
                         </div>
                     </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning" onclick="edit_announcement(this)"
-                            data-id="123" data-content="<p>This is your announcement content</p>">
-                        </i>
-                        <i class="fa-solid fa-trash btn btn-outline-danger" onclick="delete_announcement(2)"></i>
-                    </div>
+                @endforeach
+            @else
+                <div class="text-center text-muted my-5">
+                    <i class="fas fa-bullhorn fa-3x mb-3"></i>
+                    <h4>No Announcements Available</h4>
+                    <p class="text-secondary">Stay tuned — announcements will appear here once posted.</p>
                 </div>
-                <div class="card-body">
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, cupiditate.</p>
-                </div>
-            </div>
-            <div class="card my-3">
-                <div class="card-header announcement_header">
-                    <div class="announcement_header">
-                        <div class="announcement_img_container">
-                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
-                        </div>
-                        <div>
-                            <h5 class="mx-2 my-0">Teachers Name</h5>
-                            <small class="mx-2">May 12, 2025</small>
-                        </div>
-                    </div>
-                    <div class="edit_btn">
-                        <i class="fa-solid fa-pen-to-square btn btn-outline-warning"></i>
-                        <i class="fa-solid fa-trash btn btn-outline-danger"></i>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat, cupiditate.</p>
-                </div>
-            </div>
+            @endif
+
         </div>
         {{-- classwork --}}
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
@@ -143,8 +143,9 @@
         {{-- people --}}
         <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
 
-            @can ('not_for_sp_fi')
-                <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container" data-toggle-form="enroll_fi">
+            @can('not_for_sp_fi')
+                <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container"
+                    data-toggle-form="enroll_fi">
                     <div class="google-classroom-announce announce_btn">
                         <div class="announce-text w-100">
                             <div class="d-flex align-items-center">
@@ -163,7 +164,8 @@
                 <div class="input-group mb-3 d-none" id="enroll_fi_form">
                     <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG"
                         aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
-                    <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn" data-close-form="enroll_fi">Close</button>
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn"
+                        data-close-form="enroll_fi">Close</button>
                 </div>
 
                 <div id="fi_search_results"></div>
@@ -171,8 +173,9 @@
             <h5>Flight Instructor | CGI</h5>
             <div id="enrolled_fi_cgi_container"></div>
 
-            @can ('admin_lvl1')
-                <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container" data-toggle-form="enroll_student">
+            @can('admin_lvl1')
+                <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container"
+                    data-toggle-form="enroll_student">
                     <div class="google-classroom-announce announce_btn">
                         <div class="announce-text w-100">
                             <div class="d-flex align-items-center">
@@ -187,9 +190,10 @@
                     </div>
                 </div>
                 <div class="input-group mb-3 my-3 d-none" id="enroll_student_form">
-                    <input type="search" class="form-control" placeholder="Search Students"
-                        aria-label="Enroll Students" aria-describedby="basic-addon1" id="search_student">
-                    <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn" data-close-form="enroll_student">Close</button>
+                    <input type="search" class="form-control" placeholder="Search Students" aria-label="Enroll Students"
+                        aria-describedby="basic-addon1" id="search_student">
+                    <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn"
+                        data-close-form="enroll_student">Close</button>
                 </div>
 
                 <div id="students_search_results"></div>
@@ -198,8 +202,12 @@
             <div id="enrolled_student_container"></div>
         </div>
         {{-- grades --}}
-        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
-            <p>Grade</p>
-        </div>
+
+        @can('sp_fi_only')
+            <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
+                <p>Grade</p>
+            </div>
+        @endcan
+
     </div>
 @endsection

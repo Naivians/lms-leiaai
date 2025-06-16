@@ -17,6 +17,8 @@ class Classes extends Model
         'active',
         'class_code',
         'file_path',
+        'created_at',
+        'updated_at',
     ];
 
     public function users()
@@ -24,4 +26,11 @@ class Classes extends Model
         return $this->belongsToMany(User::class, 'class_users', 'class_id', 'user_id')
             ->withTimestamps();
     }
+
+
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'class_id');
+    }
+
 }

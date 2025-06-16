@@ -57,6 +57,8 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    protected $appends = ['role_label'];
+
 
     public function classes()
     {
@@ -77,6 +79,20 @@ class User extends Authenticatable
             ->where('classes.active', 0)
             ->withTimestamps();
     }
+
+
+    public function getRoleLabelAttribute()
+{
+    return match ($this->role) {
+        0 => 'Student',
+        1 => 'Flight Instructor',
+        2 => 'Chief Ground Instructor',
+        3 => 'Registrar',
+        4 => 'Admin',
+        5 => 'Super Admin',
+        default => 'Unknown',
+    };
+}
 
 
 }

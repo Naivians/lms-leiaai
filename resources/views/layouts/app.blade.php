@@ -24,7 +24,7 @@
 <body style="background-color: #F4F5F7">
     {{-- modals --}}
     @include('partials.modal')
-    @include('partials.messages', ['title' => 'Login Error'])
+    @include('partials.messages')
 
     {{-- Navigations (Navbar) --}}
     <div class="nav_container">
@@ -102,11 +102,13 @@
     @yield('scripts')
 
     <script>
+
+
         $("#createClassForm").on("submit", (e) => {
             e.preventDefault();
             let form = new FormData(e.target);
 
-            if(form.get('course_name') == null || form.get('course_name') == '') {
+            if (form.get('course_name') == null || form.get('course_name') == '') {
                 error_message("Please select a course for the class.");
                 return
             }
@@ -172,19 +174,6 @@
                 },
             });
         });
-
-
-        const editorEl = document.querySelector('#editor');
-        if (editorEl) {
-            const quill = new Quill(editorEl, {
-                modules: {
-                    toolbar: '#toolbar'
-                },
-                theme: 'snow'
-            });
-        }
-
-
         $(document).ready(function() {
             // users
             $('#userTable').DataTable({

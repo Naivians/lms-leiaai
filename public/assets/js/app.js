@@ -102,6 +102,196 @@ $(document).ready(function () {
     displayEnrolledUsers();
 });
 
+let quill;
+
+const editorEl = document.querySelector("#editor");
+if (editorEl) {
+    quill = new Quill(editorEl, {
+        modules: {
+            toolbar: "#toolbar",
+        },
+        theme: "snow",
+    });
+}
+
+$("#announcement_form").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!quill) {
+        console.error("Quill editor is not initialized.");
+        return;
+    }
+
+    const content = quill.root.innerHTML;
+    const isEmpty = quill.getText().trim().length === 0;
+    if (isEmpty) {
+        error_message("Announcement content cannot be empty.");
+        return;
+    }
+
+    const formData = new FormData(this);
+    formData.append("announcement_content", content);
+
+    $.ajax({
+        url: "/announcement/store",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+            success_message(response.message);
+            quill.setText("");
+        },
+        error: (xhr) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                    $("#announcement_form")[0].reset();
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+});
+
+$("#edit_announcement_form").on("submit", function (e) {
+    e.preventDefault();
+
+    if (!quill) {
+        console.error("Quill editor is not initialized.");
+        return;
+    }
+
+    const content = quill.root.innerHTML;
+    const isEmpty = quill.getText().trim().length === 0;
+    if (isEmpty) {
+        error_message("Announcement content cannot be empty.");
+        return;
+    }
+
+    const formData = new FormData(this);
+    formData.append("announcement_content", content);
+
+    $.ajax({
+        url: "/announcement/update",
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+
+            if(!response.success) {
+                error_message(response.message);
+                return;
+            }
+
+            success_message(response.message);
+
+            setTimeout(() => {
+                window.location.href = response.redirect;
+            }
+            , 1500);
+
+        },
+        error: (xhr) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                    $("#announcement_form")[0].reset();
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+});
+
+
+
+function delete_announcement(announcementId) {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "This action will permanently delete the announcement.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/announcement/delete-announcement/${announcementId}`,
+                type: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                beforeSend() {
+                    pre_loader();
+                },
+                success: function (response) {
+                    if (!response.success) {
+                        error_message(response.message);
+                        return;
+                    }
+                    success_message(response.message);
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                },
+                error: (xhr) => {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+
+                        if (response.errors) {
+                            $("#errors").removeClass("d-none");
+                            Object.values(response.errors)
+                                .flat()
+                                .forEach((msg) => {
+                                    console.log(msg);
+                                });
+                        } else if (response.message) {
+                            error_message(response.message);
+                        }
+                    } catch (e) {
+                        console.error("An unexpected error occurred", e);
+                    }
+                },
+            });
+        }
+    });
+}
+
 function enrollUser(userId, role_id) {
     let encryptedId = window.location.pathname.split("/").pop();
     $.ajax({
@@ -116,12 +306,16 @@ function enrollUser(userId, role_id) {
             roleId: role_id,
         },
         success: (res) => {
-            if (!res.success) {
-                error_message(res.message);
-                return;
-            }
 
-            displayEnrolledUsers();
+            console.log(res);
+
+
+            // if (!res.success) {
+            //     error_message(res.message);
+            //     return;
+            // }
+
+            // displayEnrolledUsers();
         },
     });
 }
@@ -416,7 +610,6 @@ function collapseSidebar() {
     $(".main-content").removeClass("expanded");
     $(".nav_container").removeClass("expanded");
 }
-
 
 $("#logoutBtn").on("click", (e) => {
     e.preventDefault();

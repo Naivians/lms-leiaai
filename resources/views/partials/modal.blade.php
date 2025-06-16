@@ -32,8 +32,6 @@
                                  placeholder="Enter Class Description"></textarea>
                          </div>
 
-
-
                          @if (isset($courses) && $courses->count() > 0)
 
                              <select name="course_name" id="course_name" class="form-select mb-3">
@@ -49,12 +47,16 @@
                                  No courses available. Please add a course first.
                              </div>
                          @endif
+
+                         <div class="mb-3">
+                             <label for="class_description" class="form-label">Start Date</label>
+                             <input  type="date" name="start_date" id="start_date" class="
+                             form-control" required>
+                         </div>
                  </div>
                  <div class="modal-footer">
                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                      <button type="submit" class="btn btn-primary">Create Class</button>
-
-
                  </div>
                  </form>
              </div>

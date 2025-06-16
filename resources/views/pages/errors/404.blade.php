@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Page Not Found | LEIAAI</title>
@@ -15,6 +16,7 @@
             height: 100vh;
             margin: 0;
         }
+
         .cloud {
             position: absolute;
             background: #fff;
@@ -25,21 +27,32 @@
             top: 10%;
             animation: float 30s linear infinite;
         }
+
         @keyframes float {
-            from { left: -150px; }
-            to { left: 100%; }
+            from {
+                left: -150px;
+            }
+
+            to {
+                left: 100%;
+            }
         }
+
         .airplane {
             width: 80px;
             transform: rotate(10deg);
         }
+
         .error-container {
             text-align: center;
             padding: 80px 20px;
         }
     </style>
 </head>
+
 <body>
+
+
 
     <!-- Clouds -->
     <div class="cloud" style="animation-delay: 0s;"></div>
@@ -51,8 +64,15 @@
         <h1 class="display-1 text-primary fw-bold">404</h1>
         <h3 class="text-dark mb-3">You’ve flown off course</h3>
         <p class="text-muted mb-4">The page you’re looking for might have been grounded or doesn’t exist.</p>
-        <a href="{{ url('/') }}" class="btn btn-primary btn-lg">Return to Home</a>
+
+        @if ($user)
+            <a href="{{ route('user.dashboard') }}" class="btn btn-primary btn-lg">Return to dashboard</a>
+        @else
+            <a href="{{ url('/') }}" class="btn btn-primary btn-lg">Return to Home</a>
+        @endif
+
     </div>
 
 </body>
+
 </html>

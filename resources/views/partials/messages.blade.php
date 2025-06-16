@@ -2,7 +2,7 @@
     <script>
         Swal.fire({
             icon: 'error',
-             title: @json($title),
+             title: 'Opps!',
             text: 'Please check the following errors:',
             html: `{!! implode('<br>', $errors->all()) !!}`,
             confirmButtonText: 'OK'

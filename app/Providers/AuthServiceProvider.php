@@ -24,6 +24,9 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
+        Gate::define('cgi_only', function ($user) {
+            return in_array($user->role, [2,5]);
+        });
 
         Gate::define('admin_lvl1', function ($user) {
             return in_array($user->role, [3, 4, 5]);
@@ -38,15 +41,19 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('sp_only', function ($user) {
-            return $user->role == 0;
+            return in_array($user->role, [0, 5]);
         });
 
         Gate::define('sp_fi_only', function ($user) {
-            return in_array($user->role, [0, 1]);
+            return in_array($user->role, [0, 1, 5]);
         });
 
         Gate::define('not_for_sp_fi', function ($user) {
             return in_array($user->role, [2, 3, 4, 5]);
+        });
+
+        Gate::define('not_for_sp', function ($user) {
+            return in_array($user->role, [1, 2, 3, 4, 5]);
         });
     }
 }
