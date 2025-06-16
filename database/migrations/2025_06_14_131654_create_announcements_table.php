@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('class_id')->constrained('classes')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
-            $table->string('title');
+            $table->string('title')->nullable();
             $table->text('content');
             $table->dateTime('announcement_date')->useCurrent();
             $table->boolean('is_pinned')->default(false);

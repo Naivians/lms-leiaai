@@ -13,7 +13,6 @@ class Announcement extends Model
     protected $fillable = [
         'class_id',
         'user_id',
-        'title',
         'content',
         'announcement_date',
         'is_pinned',

@@ -20,8 +20,6 @@ class AnnouncementController extends Controller
     }
     public function index($class_id, $announcement_id)
     {
-
-
         if ($announcement_id != 0) {
             $announcement = $this->announcement->find($announcement_id);
 
