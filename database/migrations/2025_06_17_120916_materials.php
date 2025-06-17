@@ -13,16 +13,11 @@ return new class extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('course_id');
-            $table->string('title');
+            $table->foreignId('lessons_id')->constrained('lessons')->onDelete('cascade');
             $table->string('type');
+            $table->integer('size');
             $table->string('path');
             $table->timestamps();
-
-            $table->foreign('course_id')
-                ->references('id')
-                ->on('course_models')
-                ->onDelete('cascade');
         });
     }
 
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('materials');
+        //
     }
 };

@@ -106,6 +106,22 @@
         </div>
         {{-- classwork --}}
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
+
+            <div class="dropdown">
+                <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
+                    Create Classwork
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Lessons</a></li>
+                    <li><a class="dropdown-item" href="#">Quiz</a></li>
+                    <li><a class="dropdown-item" href="#">Exam</a></li>
+                </ul>
+            </div>
+
+
+
+
+
             <div class="my-3 p-3">
                 <h2 class="text-secondary mb-3 bg-light p-3 rounded">Lessons</h2>
                 <table id="classwork_lessons_table" class="display w-100">

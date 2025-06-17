@@ -414,11 +414,7 @@ class ClassController extends Controller
 
         return response()->json([
             'success' => true,
-            // 'message' => "User successfully enrolled in this class",
-            'data1' => [
-                'user' => $userInfo,
-                'classes' => $classes
-            ],
+            'message' => "User successfully enrolled in this class",
         ]);
     }
 
