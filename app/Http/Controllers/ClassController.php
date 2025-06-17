@@ -117,12 +117,12 @@ class ClassController extends Controller
             'class_name' => $request->class_name,
             'class_description' => $request->class_description,
             'course_name' => $request->course_name,
-            'user_id' => 3,
+            'user_id' => null,
             'class_code' => strtoupper(uniqid($request->course_name . '_')),
             'created_at' => $request->start_date ?? now(),
         ]);
 
-        $getCgi = $this->userModel->select('id', 'role', 'name', 'email')->where('role', 2)->get();
+        $getCgi = $this->userModel->select('id', 'role', 'name', 'email', 'isVerified', 'login_status')->where('role', 2)->get();
 
 
         if (count($getCgi) > 0) {
@@ -329,6 +329,7 @@ class ClassController extends Controller
         $roles = $request->input('roles') == 'fi' ? [1, 2] : [0];
         $users = $this->userModel->select('name', 'img', 'role', 'id')
             ->whereIn('role', $roles)
+            ->where('isVerified', '=', 1)
             ->where('name', 'Like', '%' . $search . '%')->get();
         $html = '';
 
@@ -386,7 +387,6 @@ class ClassController extends Controller
             ]);
         }
 
-        $class = $user->classes();
 
         $user = $this->enrollment->create([
             'user_id' => $userId,
@@ -401,10 +401,24 @@ class ClassController extends Controller
             ]);
         }
 
+        $classes = $user->class;
+        $userInfo = $user->user;
+
+        try {
+            Mail::to($userInfo->email)->queue(new enrollment_notification($userInfo, $classes));
+        } catch (\Exception $e) {
+            Log::error('Failed to send enrollment email to ' . $userInfo->email . ': ' . $e->getMessage());
+        }
+
+
+
         return response()->json([
             'success' => true,
             // 'message' => "User successfully enrolled in this class",
-            'data1' => [$user, $class],
+            'data1' => [
+                'user' => $userInfo,
+                'classes' => $classes
+            ],
         ]);
     }
 

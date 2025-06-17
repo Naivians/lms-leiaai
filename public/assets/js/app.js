@@ -201,7 +201,7 @@ $("#edit_announcement_form").on("submit", function (e) {
         },
         success: function (response) {
 
-            if(!response.success) {
+            if (!response.success) {
                 error_message(response.message);
                 return;
             }
@@ -211,7 +211,7 @@ $("#edit_announcement_form").on("submit", function (e) {
             setTimeout(() => {
                 window.location.href = response.redirect;
             }
-            , 1500);
+                , 1500);
 
         },
         error: (xhr) => {
@@ -306,16 +306,13 @@ function enrollUser(userId, role_id) {
             roleId: role_id,
         },
         success: (res) => {
-
-            console.log(res);
-
-
-            // if (!res.success) {
-            //     error_message(res.message);
-            //     return;
-            // }
-
-            // displayEnrolledUsers();
+            if (!res.success) {
+                error_message(res.message);
+                return;
+            }
+            $('#search_fi').val('');
+            $('#search_student').val('');
+            displayEnrolledUsers();
         },
     });
 }
@@ -635,12 +632,20 @@ $("[data-toggle-form]").on("click", function () {
     const target = $(this).data("toggle-form");
     $(`#${target}_form`).removeClass("d-none");
     $(`#${target}_container`).addClass("d-none");
+    $('#students_search_results').empty().show();
+    $('#fi_search_results').empty().show();
+    $('#search_fi').val('');
+    $('#search_student').val('');
 });
 
 $("[data-close-form]").on("click", function () {
     const target = $(this).data("close-form");
     $(`#${target}_form`).addClass("d-none");
     $(`#${target}_container`).removeClass("d-none");
+    $('#fi_search_results').empty().hide();
+    $('#students_search_results').empty().hide();
+    $('#search_fi').val('');
+    $('#search_student').val('');
 });
 
 function refreshTable(tableName) {

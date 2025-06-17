@@ -35,7 +35,7 @@
             padding: 10px 20px;
             margin-top: 20px;
             color: white;
-            background-color: #4CAF50;
+            background-color: #f4f4f4;
             border-radius: 5px;
             text-decoration: none;
         }
@@ -62,12 +62,18 @@
             <ul>
                 <li><strong>Class:</strong> {{ $class->class_name ?? 'TBA' }}</li>
                 <li><strong>Course:</strong> {{ $class->course_name ?? 'TBA' }}</li>
-                <li><strong>Instructor:</strong> {{ $user->name ?? 'Your Instructor' }}</li>
+                <li><strong>Instructor:</strong> {{ $user->name ?? 'TBA' }}</li>
             </ul>
 
             <p>Your classes will begin on
                 <strong>{{ $class->created_at ? $class->created_at->format('F j, Y') : 'TBD' }}</strong>. Please make
-                sure to check the student portal for updated schedules, materials, and announcements.</p>
+                sure to check the student portal for updated schedules, materials, and announcements.
+            </p>
+
+            @if ($user->login_status == 0)
+                <p style="color: red"><strong>NOTE:</strong> Your account has been verified but is not yet activated by
+                    the Registrar. Please contact the LEIAAI Registrar for activation.</p>
+            @endif
 
 
             <a href="{{ url('http://127.0.0.1:8000/') ?? '#' }}" class="button">Go to Class Portal</a>

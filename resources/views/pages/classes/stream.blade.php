@@ -161,7 +161,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3 d-none" id="enroll_fi_form">
+                <div class="input-group my-3 d-none" id="enroll_fi_form">
                     <input type="search" class="form-control" id="search_fi" placeholder="Search FI or CG"
                         aria-label="Enroll FI or CGI" aria-describedby="basic-addon1">
                     <button type="button" class="btn btn-outline-danger" id="close_enroll_fi_btn"
@@ -189,7 +189,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="input-group mb-3 my-3 d-none" id="enroll_student_form">
+                <div class="input-group mt-5 mb-3 d-none" id="enroll_student_form">
                     <input type="search" class="form-control" placeholder="Search Students" aria-label="Enroll Students"
                         aria-describedby="basic-addon1" id="search_student">
                     <button type="button" class="btn btn-outline-danger" id="close_enroll_student_btn"
@@ -198,7 +198,7 @@
 
                 <div id="students_search_results"></div>
             @endcan
-            <h5>{{ Gate::allows('sp_only') ? 'Classmates' : 'Studentssss' }}</h5>
+            <h5>{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
             <div id="enrolled_student_container"></div>
         </div>
         {{-- grades --}}
