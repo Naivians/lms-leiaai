@@ -41,21 +41,14 @@ class LessonsController extends Controller
 
     function store(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required|string|max:255',
-        //     'description' => 'nullable|string',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return response()->json(['errors' => $validator->errors()], 422);
-        // }
-
-
-
-        // $img = $request->file('img');
-        // $img_name = time() . '_' . $img->getClientOriginalName();
-        // $img->move(public_path('uploads/users'), $img_name);
-        // $img_path = 'uploads/users/' . $img_name;
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
         $decrypted_class_id = Crypt::decrypt($request->class_id);
         $course_name = $this->class_model->select('course_name')->where('id', $decrypted_class_id);
@@ -74,7 +67,6 @@ class LessonsController extends Controller
             ], 404);
         }
 
-        $attachmentPaths = [];
         $attachments = $request->file('attachments');
 
         if (is_array($attachments) && count($attachments) > 0) {
