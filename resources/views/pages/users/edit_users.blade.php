@@ -44,7 +44,7 @@
                 <input type="password" class="form-control" id="validationCustom06" name="password"
                     placeholder="*************" required>
                 <label class="mt-2" for="show_password">
-                    <input type="checkbox" id="show_password"> Show Password
+                    <input type="checkbox" onclick="showPassword()"> Show Password
                 </label>
             </div>
 
