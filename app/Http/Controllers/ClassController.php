@@ -3,11 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Classes;
-use App\Models\CourseModel;
-use App\Models\ClassUser;
-use App\Models\User;
-use App\Models\Announcement;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Validator;
@@ -18,6 +14,13 @@ use App\Mail\enrollment_notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
 
+use App\Models\Classes;
+use App\Models\CourseModel;
+use App\Models\ClassUser;
+use App\Models\User;
+use App\Models\Announcement;
+use App\Models\lessons;
+
 class ClassController extends Controller
 {
     private $classModel;
@@ -27,8 +30,9 @@ class ClassController extends Controller
     private $class_id;
     private $userRestrictions;
     private $announcement;
+    private $lesson_model;
 
-    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions, Announcement $announcement)
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions, Announcement $announcement, lessons $lesson_model)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
@@ -36,6 +40,7 @@ class ClassController extends Controller
         $this->userModel = $userModel;
         $this->userRestrictions = $userRestrictions;
         $this->announcement = $announcement;
+        $this->lesson_model = $lesson_model;
     }
     /**
      * Display a listing of the resource.
@@ -78,9 +83,16 @@ class ClassController extends Controller
         $announcements = Classes::with(['announcements.user'])->find(id: $class_id);
         $announcements = $announcements->announcements ?? null;
 
+        $course_name = $this->classModel->select('course_name')->where('id', $class_id);
+        $course_id = CourseModel::get_course_id($course_name);
+
+        $courses_lessons = $this->courseModel->find($course_id);
+        $courses_lessons = $courses_lessons->lessons;
+
         return view('pages.classes.stream', [
             'class_id' => $encryptedClassId,
             'announcements' => $announcements ?? null,
+            'lessons' => $courses_lessons
         ]);
     }
     function Instructor()

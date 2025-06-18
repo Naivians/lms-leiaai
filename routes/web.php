@@ -6,6 +6,7 @@ use App\Http\Controllers\ClassController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseModelController;
 use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\LessonsController;
 
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
@@ -63,7 +64,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/delete-announcement/{announcementId}', [AnnouncementController::class, 'destroy'])->name('destroy');
     });
 
-
     // course models
     Route::prefix('course')->name('course.')->group(function () {
         Route::get('/', [CourseModelController::class, 'Index'])->name('index');
@@ -72,6 +72,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/edit/{courseId}', [CourseModelController::class, 'Edit'])->name('edit');
         Route::post('/update', [CourseModelController::class, 'Update'])->name('update');
         Route::post('/delete/{courseId}', [CourseModelController::class, 'Destroy'])->name('delete');
+    });
+
+    // lessons
+    Route::prefix('lessons')->name('lesson.')->group(function () {
+        Route::get('/lessons/{class_id}', [LessonsController::class, 'index'])->name('index');
+        Route::get('/show/{lessonId}', [LessonsController::class, 'Show'])->name('show');
+        Route::get('/edit/{lessonId}', [LessonsController::class, 'Edit'])->name('edit');
+
+        Route::post('/store', [LessonsController::class, 'store'])->name('store');
+        Route::post('/update', [LessonsController::class, 'Update'])->name('update');
+        Route::post('/delete/{lessonId}', [LessonsController::class, 'Destroy'])->name('delete');
     });
 
     // logout

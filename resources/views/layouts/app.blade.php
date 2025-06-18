@@ -99,11 +99,10 @@
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
     <script src="https://unpkg.com/libphonenumber-js@1.10.22/bundle/libphonenumber-max.js"></script>
 
+    @yield('js_imports')
     @yield('scripts')
 
     <script>
-
-
         $("#createClassForm").on("submit", (e) => {
             e.preventDefault();
             let form = new FormData(e.target);

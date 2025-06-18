@@ -5,6 +5,7 @@
 @extends('layouts.app')
 
 @section('content')
+
     <input type="hidden" name="encrypted_class_id" id="encrypted_class_id" value="{{ $class_id ?? '' }}">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="classTab" role="tablist">
@@ -112,48 +113,63 @@
                     Create Classwork
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Lessons</a></li>
+                    <li><a class="dropdown-item" href="{{ route('lesson.index', ['class_id' => $class_id]) }}">Lessons</a>
+                    </li>
                     <li><a class="dropdown-item" href="#">Quiz</a></li>
                     <li><a class="dropdown-item" href="#">Exam</a></li>
                 </ul>
             </div>
 
-
-
-
-
             <div class="my-3 p-3">
-                <h2 class="text-secondary mb-3 bg-light p-3 rounded">Lessons</h2>
-                <table id="classwork_lessons_table" class="display w-100">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Suffix</th>
-                            <th>Role</th>
-                            <th>Email</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                </table>
+                <h2 class="text-secondary pb-2 border-bottom">Lessons</h2>
+                @if (isset($lessons) && count($lessons) > 0)
+                    @foreach ($lessons as $lesson)
+                        <div
+                            class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
+                            <a href="#"
+                                class=" text-decoration-none text-light bg-secondary p-2 rounded">{{ $lesson->title }}</a>
+                            <div>
+                                <i class="fa-solid fa-eye btn btn-primary "></i>
+                                @can('cgi_only')
+                                    <i class="fa-solid fa-pen-to-square btn btn-warning"></i>
+                                    <i class="fa-solid fa-trash btn btn-danger" id="deleteLessons"></i>
+                                @endcan
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div style="text-align: center; padding: 2rem; color: #6c757d;">
+                        <i class="fas fa-book-open fa-3x" style="margin-bottom: 1rem;"></i>
+                        <h3 style="font-weight: 500;">No Lessons Available</h3>
+                        <p>Please check back later or contact your instructor.</p>
+                    </div>
+                @endif
             </div>
 
             <div class="p-3">
-                <h2 class="text-secondary mb-3 bg-light p-3 rounded">Quizses / Exams</h2>
-                <table id="classwork_quiz_table" class="display w-100">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Suffix</th>
-                            <th>Role</th>
-                            <th>Email</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                </table>
+                <h2 class="text-secondary pb-2 border-bottom">Quizes / Exams</h2>
+                @if (isset($quizes) && count($quizes) > 0)
+                    @foreach ($lessons as $lesson)
+                        <div
+                            class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
+                            <a href="#"
+                                class=" text-decoration-none text-light bg-secondary p-2 rounded">{{ $lesson->title }}</a>
+                            <div>
+                                <i class="fa-solid fa-eye btn btn-primary "></i>
+                                @can('cgi_only')
+                                    <i class="fa-solid fa-pen-to-square btn btn-warning"></i>
+                                    <i class="fa-solid fa-trash btn btn-danger" id="deleteLessons"></i>
+                                @endcan
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <div style="text-align: center; padding: 2rem; color: #6c757d;">
+                        <i class="fas fa-file-alt fa-3x" style="margin-bottom: 1rem;"></i>
+                        <h3 style="font-weight: 500;">No Quizzes or Exams Available</h3>
+                        <p>Please check back later or wait for your instructor to assign them.</p>
+                    </div>
+                @endif
             </div>
         </div>
         {{-- people --}}

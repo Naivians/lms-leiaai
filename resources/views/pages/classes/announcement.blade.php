@@ -3,7 +3,7 @@
 @endphp
 
 @extends('layouts.app')
-@section('header_title', 'Make Announcements')
+@section('header_title', 'Create Announcements')
 @section('content')
 
     @if (!isset($announcement))
