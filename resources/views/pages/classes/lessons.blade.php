@@ -48,18 +48,20 @@
                                             style="width: 80px; height: 80px; object-fit: contain;">
                                     </a>
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'PDF File' }}</div>
-
                                 @elseif ($material->extension == 'mp4')
 
                                     <video src="{{ asset($material->path) }}"
                                         style="width: 100%; height: 100px; object-fit: cover;" muted controls></video>
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'Video File' }}</div>
-                                @elseif (in_array(strtolower($material->extension), ['jpg', 'jpeg', 'png']))
+
+                                @elseif (in_array($material->extension, ['jpg', 'jpeg', 'png']))
 
                                     <img src="{{ asset($material->path) }}" alt="{{ $material->filename }}"
                                         style="width: 100%; height: 100px; object-fit: cover;">
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'Image' }}</div>
+
                                 @endif
+
                             </div>
 
                             <div class="card-footer text-center">

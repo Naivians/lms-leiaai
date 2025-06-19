@@ -34,25 +34,10 @@ class LessonsController extends Controller
     // lessons
     function index($class_id, $lesson_id)
     {
-        $pdfs = [];
-        $imgs = [];
-        $videos = [];
         if ($lesson_id) {
             $lessons = $this->lesson_model->find($lesson_id);
             $materials = $lessons->materials;
         }
-
-        // foreach($materials as $material){
-        //     if($material->extension == 'pdf'){
-        //         $pdfs[] = [
-        //             'filename' => $material->filename,
-        //             'extension' => $material->extension,
-        //             'path' => $material->path,
-        //         ];
-        //     }
-        // }
-
-        // dd($pdfs);
 
         return view('pages.classes.lessons', [
             'class_id' => $class_id,
@@ -103,8 +88,6 @@ class LessonsController extends Controller
 
     function store_attachments($attachments, $lesson_id)
     {
-        $attachmentPaths = [];
-        $folder = "img";
         $accepted_extensions = [
             'jpg' => 'IMG',
             'jpeg' => 'IMG',
@@ -116,21 +99,9 @@ class LessonsController extends Controller
 
         foreach ($attachments as $attachment) {
             $extension = strtolower($attachment->getClientOriginalExtension());
-
             $filename = $accepted_extensions[$extension] . '-' . time() . '.' . $extension;
 
-            $attachmentPaths[] = [
-                'filename'     => $filename,
-                'extension' => $extension,
-                'size'     => $attachment->getSize(),
-                'type'     => $attachment->getClientMimeType(),
-                'path'     => $attachment->getPathname(),
-            ];
-        }
-
-        foreach ($attachmentPaths as $file) {
-
-            $folder = match ($file['extension']) {
+            $folder = match ($extension) {
                 'jpg', 'jpeg', 'png' => 'img',
                 'mp4' => 'video',
                 'mp3' => 'audio',
@@ -138,14 +109,14 @@ class LessonsController extends Controller
                 default => 'others',
             };
 
-            $path = $attachment->storeAs("uploads/lessons/$folder", $file['filename'], 'public');
+            $path = $attachment->storeAs("uploads/lessons/$folder", $filename, 'public');
 
             $materials = $this->materials_model->create([
                 'lessons_id' => $lesson_id,
                 'filename' => $filename,
-                'type' => $file['type'],
-                'extension' => $file['extension'],
-                'size' => $file['size'],
+                'type' => $attachment->getClientMimeType(),
+                'extension' => $extension,
+                'size' => $attachment->getSize(),
                 'path' => Storage::url($path),
             ]);
 
@@ -159,6 +130,7 @@ class LessonsController extends Controller
 
         return;
     }
+
 
     function Destroy($material_id)
     {
@@ -178,7 +150,8 @@ class LessonsController extends Controller
         ]);
     }
 
-    function deleteLesson($lesson_id){
+    function deleteLesson($lesson_id)
+    {
         $lesson = $this->lesson_model->find($lesson_id);
         $res = $lesson->delete();
 

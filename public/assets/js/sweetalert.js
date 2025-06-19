@@ -34,10 +34,10 @@ function confirm_message(message, callback) {
         }
     });
 }
-function pre_loader() {
+function pre_loader(title = 'Loading...', text = 'Please wait while we process your request.') {
     Swal.fire({
-        title: 'Redirecting...',
-        text: 'Please wait while we take you there.',
+        title: 'Loading...',
+        text: 'Please wait while we process your request.',
         allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();

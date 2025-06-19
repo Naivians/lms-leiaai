@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     $('#attachment').on('change', function () {
         const file = this.files[0];
+
+        if(file.type == 'video/mp4' && file.size > (10 * 1024 * 1024)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'File too large',
+                text: 'Please upload a file smaller than 10MB. or create a link to the file.',
+            });
+            this.value = ''; // Clear the input
+            return;
+        }
+
         if (file) {
             saveAttachment(file);
             $('#attachment').val('');
@@ -36,6 +47,8 @@ function openDB() {
 }
 
 function saveAttachment(file) {
+    pre_loader();
+
     const transaction = db.transaction([STORE_NAME], 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
 
@@ -47,7 +60,10 @@ function saveAttachment(file) {
 
     store.add(attachment);
 
-    transaction.oncomplete = () => previewAttachment();
+    transaction.oncomplete = () => {
+        Swal.close();
+        previewAttachment();
+    }
     transaction.onerror = () => alert('Failed to save attachment');
 }
 
