@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('materials', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('lessons_id')->constrained('lessons')->onDelete('cascade');
-            $table->string('type');
-            $table->integer('size');
-            $table->string('path');
-            $table->timestamps();
+        Schema::table('materials', function (Blueprint $table) {
+            $table->string('filename')->nullable()->after('lessons_id');
+            $table->string('extension')->nullable()->after('type');
         });
     }
 
@@ -26,6 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::table('materials', function (Blueprint $table) {
+            //
+        });
     }
 };

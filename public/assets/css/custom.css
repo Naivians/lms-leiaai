@@ -30,29 +30,12 @@ nav a:hover {
     background-color: var(--primary-color);
     color: var(--light-color) !important;
 }
-
-/* sidebar */
-/* #sidebar {
-    background-color: var(--primary-color);
-    width: 250px;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    transition: all 0.3s ease;
+.lesson_container{
+    transition: transform .2s ease-out;
 }
-
-#sidebar .footer_container{
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    text-align: center;
-    color: var(--dark-color);
-    align-self: center;
-    justify-self: center;
-} */
+.lesson_container:hover{
+    transform: scale(1.002);
+}
 
 #sidebar {
     background-color: var(--primary-color);
@@ -64,7 +47,6 @@ nav a:hover {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     z-index: 1000;
     transition: all 0.3s ease;
-
     display: flex;
     flex-direction: column;
 }
@@ -245,3 +227,8 @@ nav a:hover {
     transition: opacity 0.3s ease-in-out;
 }
 
+.lessons_stream_container{
+    padding: 10px;
+    height: 300px;
+    overflow-y: scroll;
+}

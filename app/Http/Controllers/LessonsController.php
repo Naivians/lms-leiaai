@@ -12,7 +12,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use App\Models\lessons;
-use App\Models\Materials;
+use App\Models\Material;
 use App\Models\CourseModel;
 use App\Models\Classes;
 
@@ -23,7 +23,7 @@ class LessonsController extends Controller
     private $class_model;
     private $course_model;
 
-    public function __construct(Lessons $lesson_model, Materials $materials_model, CourseModel $course_model, Classes $class_model)
+    public function __construct(Lessons $lesson_model, Material $materials_model, CourseModel $course_model, Classes $class_model)
     {
         $this->lesson_model = $lesson_model;
         $this->materials_model = $materials_model;
@@ -32,10 +32,32 @@ class LessonsController extends Controller
     }
 
     // lessons
-    function index($class_id)
+    function index($class_id, $lesson_id)
     {
+        $pdfs = [];
+        $imgs = [];
+        $videos = [];
+        if ($lesson_id) {
+            $lessons = $this->lesson_model->find($lesson_id);
+            $materials = $lessons->materials;
+        }
+
+        // foreach($materials as $material){
+        //     if($material->extension == 'pdf'){
+        //         $pdfs[] = [
+        //             'filename' => $material->filename,
+        //             'extension' => $material->extension,
+        //             'path' => $material->path,
+        //         ];
+        //     }
+        // }
+
+        // dd($pdfs);
+
         return view('pages.classes.lessons', [
             'class_id' => $class_id,
+            'lessons' => $lessons ?? null,
+            'materials' => $materials ?? null
         ]);
     }
 
@@ -83,32 +105,46 @@ class LessonsController extends Controller
     {
         $attachmentPaths = [];
         $folder = "img";
-        $accepted_extensions = ['jpg', 'jpeg', 'mp4', 'mp3', 'pdf'];
+        $accepted_extensions = [
+            'jpg' => 'IMG',
+            'jpeg' => 'IMG',
+            'png' => 'IMG',
+            'mp4' => 'VID',
+            'mp3' => 'AUD',
+            'pdf' => 'DOCS',
+        ];
+
         foreach ($attachments as $attachment) {
+            $extension = strtolower($attachment->getClientOriginalExtension());
+
+            $filename = $accepted_extensions[$extension] . '-' . time() . '.' . $extension;
+
             $attachmentPaths[] = [
-                'name' => time() . '-' . $attachment->getClientOriginalName(),
-                'extention' => $attachment->getClientOriginalExtension(),
-                'size' => $attachment->getSize(),
-                'type' => $attachment->getClientMimeType(),
-                'path' => $attachment->getPathname(),
+                'filename'     => $filename,
+                'extension' => $extension,
+                'size'     => $attachment->getSize(),
+                'type'     => $attachment->getClientMimeType(),
+                'path'     => $attachment->getPathname(),
             ];
         }
 
         foreach ($attachmentPaths as $file) {
 
-            $folder = match ($file['extention']) {
-                'jpg', 'jpeg' => 'img',
+            $folder = match ($file['extension']) {
+                'jpg', 'jpeg', 'png' => 'img',
                 'mp4' => 'video',
                 'mp3' => 'audio',
                 'pdf' => 'docs',
                 default => 'others',
             };
 
-            $path = $attachment->storeAs("uploads/lessons/$folder", $file['name'], 'public');
+            $path = $attachment->storeAs("uploads/lessons/$folder", $file['filename'], 'public');
 
             $materials = $this->materials_model->create([
                 'lessons_id' => $lesson_id,
+                'filename' => $filename,
                 'type' => $file['type'],
+                'extension' => $file['extension'],
                 'size' => $file['size'],
                 'path' => Storage::url($path),
             ]);
@@ -122,5 +158,40 @@ class LessonsController extends Controller
         }
 
         return;
+    }
+
+    function Destroy($material_id)
+    {
+        $material = $this->materials_model->find($material_id);
+        $res = $material->delete();
+
+        if (!$res) {
+            return response()->json([
+                'success' => false,
+                'message' => "failed to delete attachment"
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Attachment successfully deleted!"
+        ]);
+    }
+
+    function deleteLesson($lesson_id){
+        $lesson = $this->lesson_model->find($lesson_id);
+        $res = $lesson->delete();
+
+        if (!$res) {
+            return response()->json([
+                'success' => false,
+                'message' => "failed to delete lesson"
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Lesson successfully deleted!"
+        ]);
     }
 }

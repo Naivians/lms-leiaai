@@ -113,7 +113,8 @@
                     Create Classwork
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="{{ route('lesson.index', ['class_id' => $class_id]) }}">Lessons</a>
+                    <li><a class="dropdown-item"
+                            href="{{ route('lesson.index', ['class_id' => $class_id, 'lesson_id' => 0]) }}">Lessons</a>
                     </li>
                     <li><a class="dropdown-item" href="#">Quiz</a></li>
                     <li><a class="dropdown-item" href="#">Exam</a></li>
@@ -121,28 +122,39 @@
             </div>
 
             <div class="my-3 p-3">
-                <h2 class="text-secondary pb-2 border-bottom">Lessons</h2>
-                @if (isset($lessons) && count($lessons) > 0)
-                    @foreach ($lessons as $lesson)
-                        <div
-                            class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
-                            <a href="#"
-                                class=" text-decoration-none text-light bg-secondary p-2 rounded">{{ $lesson->title }}</a>
-                            <div>
-                                <i class="fa-solid fa-eye btn btn-primary "></i>
-                                @can('cgi_only')
-                                    <i class="fa-solid fa-pen-to-square btn btn-warning"></i>
-                                    <i class="fa-solid fa-trash btn btn-danger" id="deleteLessons"></i>
-                                @endcan
+                <h2 class="text-secondary pb-2 border-bottom">Lessons <span class="small text-muted">({{ count($lessons) }})</span></h2>
+                <div class="lessons_stream_container">
+                    @if (isset($lessons) && count($lessons) > 0)
+                        @foreach ($lessons as $lesson)
+                            <div
+                                class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
+                                <h5 class="m-0 text-secondary">{{ $lesson->title }}</h5>
+                                <div>
+                                    <a href="{{ route('lesson.index', ['class_id' => $class_id ?? null, 'lesson_id' => $lesson->id]) }}"
+                                        class="btn btn-primary text-decoration-none" data-bs-toggle="tooltip"
+                                        title="view">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    @can('cgi_only')
+                                        <a href="#" class="text-decoration-none btn btn-warning"
+                                            data-bs-toggle="tooltip" title="edit">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </a>
+                                        <button class="btn btn-danger" onclick="deleteLesson({{ $lesson->id }})" data-bs-toggle="tooltip"
+                                            title="delete">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    @endcan
+                                </div>
                             </div>
-                        </div>
-                    @endforeach
-                @else
-                    <div style="text-align: center; padding: 2rem; color: #6c757d;">
-                        <i class="fas fa-book-open fa-3x" style="margin-bottom: 1rem;"></i>
-                        <h3 style="font-weight: 500;">No Lessons Available</h3>
-                        <p>Please check back later or contact your instructor.</p>
-                    </div>
+                        @endforeach
+                </div>
+            @else
+                <div style="text-align: center; padding: 2rem; color: #6c757d;">
+                    <i class="fas fa-book-open fa-3x" style="margin-bottom: 1rem;"></i>
+                    <h3 style="font-weight: 500;">No Lessons Available</h3>
+                    <p>Please check back later or contact your instructor.</p>
+                </div>
                 @endif
             </div>
 
@@ -152,8 +164,7 @@
                     @foreach ($lessons as $lesson)
                         <div
                             class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
-                            <a href="#"
-                                class=" text-decoration-none text-light bg-secondary p-2 rounded">{{ $lesson->title }}</a>
+                            <h3>{{ $lesson->title }}</h3>
                             <div>
                                 <i class="fa-solid fa-eye btn btn-primary "></i>
                                 @can('cgi_only')

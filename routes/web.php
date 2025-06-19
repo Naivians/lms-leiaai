@@ -76,13 +76,14 @@ Route::middleware(['auth'])->group(function () {
 
     // lessons
     Route::prefix('lessons')->name('lesson.')->group(function () {
-        Route::get('/lessons/{class_id}', [LessonsController::class, 'index'])->name('index');
-        Route::get('/show/{lessonId}', [LessonsController::class, 'Show'])->name('show');
-        Route::get('/edit/{lessonId}', [LessonsController::class, 'Edit'])->name('edit');
+        Route::get('/lessons/{class_id}/{lesson_id}', [LessonsController::class, 'index'])->name('index');
+        Route::get('/show/{lesson_id}', [LessonsController::class, 'Show'])->name('show');
+        Route::get('/edit/{lesson_id}', [LessonsController::class, 'Edit'])->name('edit');
 
         Route::post('/store', [LessonsController::class, 'store'])->name('store');
         Route::post('/update', [LessonsController::class, 'Update'])->name('update');
-        Route::post('/delete/{lessonId}', [LessonsController::class, 'Destroy'])->name('delete');
+        Route::post('/deleteMaterials/{lesson_id}', [LessonsController::class, 'Destroy'])->name('delete');
+        Route::post('/deleteLesson/{lesson_id}', [LessonsController::class, 'deleteLesson'])->name('delete');
     });
 
     // logout

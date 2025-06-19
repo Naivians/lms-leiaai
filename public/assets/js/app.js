@@ -236,6 +236,69 @@ $("#edit_announcement_form").on("submit", function (e) {
 });
 
 
+// lessons
+
+function deleteLesson(lesson_id) {
+    Swal.fire({
+        title: "Delete Lesson?",
+        html: `
+            <p class="mb-1">Are you sure you want to delete this lesson?</p>
+            <small class="text-danger">All attached materials will also be permanently deleted.</small>
+        `,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/lessons/deleteLesson/${lesson_id}`,
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                beforeSend() {
+                    pre_loader();
+                },
+                success: function (response) {
+
+                    if (!response.success) {
+                        error_message(response.message);
+                        return;
+                    }
+
+                    success_message(response.message);
+
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500)
+
+                },
+                error: (xhr, status, error) => {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+
+                        if (response.errors) {
+                            Object.values(response.errors)
+                                .flat()
+                                .forEach((msg) => {
+                                    console.log(msg);
+                                });
+                        } else if (response.message) {
+                            error_message(response.message);
+                        }
+                    } catch (e) {
+                        console.error("An unexpected error occurred", e);
+                    }
+                },
+            });
+        }
+    });
+}
+
 
 function delete_announcement(announcementId) {
     Swal.fire({

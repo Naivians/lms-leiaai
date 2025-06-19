@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CourseModel;
-use App\Models\Materials;
+use App\Models\Material;
 class lessons extends Model
 {
     use HasFactory;
@@ -21,6 +21,6 @@ class lessons extends Model
     }
 
     public function materials(){
-        return $this->hasMany(Materials::class, 'lessons_id');
+        return $this->hasMany(Material::class, 'lessons_id', 'id');
     }
 }

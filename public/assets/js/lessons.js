@@ -161,3 +161,64 @@ function clearAttachments() {
 
     transaction.oncomplete = () => previewAttachment();
 }
+
+
+function remove_to_db(material_id) {
+    Swal.fire({
+        title: "Ooopsss?",
+        text: "Are you sure you want to delete this attachment?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/lessons/deleteMaterials/${material_id}`,
+                type: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                beforeSend() {
+                    pre_loader();
+                },
+                success: function (response) {
+
+                    if (!response.success) {
+                        error_message(response.message);
+                        return;
+                    }
+
+                    success_message(response.message);
+
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500)
+
+                },
+                error: (xhr, status, error) => {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
+
+                        if (response.errors) {
+                            Object.values(response.errors)
+                                .flat()
+                                .forEach((msg) => {
+                                    console.log(msg);
+                                });
+                        } else if (response.message) {
+                            error_message(response.message);
+                        }
+                    } catch (e) {
+                        console.error("An unexpected error occurred", e);
+                    }
+                },
+            });
+        }
+    });
+}
+
+
