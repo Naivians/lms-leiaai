@@ -79,11 +79,12 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/lessons/{class_id}/{lesson_id}', [LessonsController::class, 'index'])->name('index');
         Route::get('/show/{lesson_id}', [LessonsController::class, 'Show'])->name('show');
         Route::get('/edit/{lesson_id}', [LessonsController::class, 'Edit'])->name('edit');
+        Route::get('/view-pdf/{pdf_url}', [LessonsController::class, 'viewPDF'])->name('pdf');
 
         Route::post('/store', [LessonsController::class, 'store'])->name('store');
-        Route::post('/update', [LessonsController::class, 'Update'])->name('update');
+        Route::post('/update', [LessonsController::class, 'update'])->name('update');
         Route::post('/deleteMaterials/{lesson_id}', [LessonsController::class, 'Destroy'])->name('delete');
-        Route::post('/deleteLesson/{lesson_id}', [LessonsController::class, 'deleteLesson'])->name('delete');
+        Route::post('/deleteLesson/{lesson_id}', [LessonsController::class, 'deleteLesson'])->name('deleteLesson');
     });
 
     // logout

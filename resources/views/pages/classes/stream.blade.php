@@ -5,7 +5,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <input type="hidden" name="encrypted_class_id" id="encrypted_class_id" value="{{ $class_id ?? '' }}">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" id="classTab" role="tablist">
@@ -122,11 +121,107 @@
             </div>
 
             <div class="my-3 p-3">
-                <h2 class="text-secondary pb-2 border-bottom">Lessons <span class="small text-muted">({{ count($lessons) }})</span></h2>
+                <h2 class="text-secondary pb-2 border-bottom">Lessons</h2>
+
+
                 <div class="lessons_stream_container">
                     @if (isset($lessons) && count($lessons) > 0)
                         @foreach ($lessons as $lesson)
-                            <div
+                            <div class="accordion mb-2" id="{{ $lesson->title }}">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+
+                                        <button
+                                            class="accordion-button collapsed d-flex justify-content-between align-items-center"
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#{{ $lesson->id }}" aria-expanded="false"
+                                            aria-controls="{{ $lesson->id }}">
+
+                                            <span>{{ $lesson->title }}</span>
+
+                                            <div class="ms-auto d-flex gap-2">
+                                                <a href="{{ route('lesson.index', ['class_id' => $class_id ?? null, 'lesson_id' => $lesson->id]) }}"
+                                                    class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                                                    title="view">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+
+                                                @can('cgi_only')
+                                                    <a href="#" class="btn btn-sm btn-warning" data-bs-toggle="tooltip"
+                                                        title="edit">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </a>
+
+                                                    <span class="btn btn-sm btn-danger"
+                                                        onclick="deleteLesson({{ $lesson->id }})" data-bs-toggle="tooltip"
+                                                        title="delete">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </span>
+                                                @endcan
+                                            </div>
+                                        </button>
+
+
+                                    </h2>
+                                    <div id="{{ $lesson->id }}" class="accordion-collapse collapse"
+                                        data-bs-parent="#{{ $lesson->title }}">
+                                        <div class="accordion-body">
+                                            <div class="mb-3">
+                                                {!! $lesson->description !!}
+
+                                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                                    @foreach ($materials as $material)
+                                                        @foreach ($material as $attachment)
+                                                            @if ($lesson->id == $attachment->lessons_id)
+                                                                <div class="card m-2" style="width: 200px;">
+                                                                    <div class="card-body text-center">
+                                                                        @if ($attachment->extension == 'pdf')
+                                                                            <a href="{{ route('lesson.pdf', ['pdf_url' => base64_encode($attachment->path)]) }}"
+                                                                                target="_blank">
+                                                                                <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png"
+                                                                                    alt="PDF Icon"
+                                                                                    style="width: 80px; height: 80px; object-fit: contain;">
+                                                                            </a>
+                                                                            <div class="mt-2 small text-muted">
+                                                                                {{ $attachment->filename ?? 'PDF File' }}
+                                                                            </div>
+                                                                        @elseif ($attachment->extension == 'mp4')
+                                                                            <a href="{{ asset($attachment->path) }}"
+                                                                                target="_blank">
+                                                                                <video muted autoplay
+                                                                                    src="{{ asset($attachment->path) }}"
+                                                                                    style="width: 100%; height: 100px; object-fit: cover;"
+                                                                                    muted>
+                                                                                </video>
+                                                                            </a>
+                                                                            <div class="mt-2 small text-muted">
+                                                                                {{ $attachment->filename ?? 'Video File' }}
+                                                                            </div>
+                                                                        @elseif (in_array($attachment->extension, ['jpg', 'jpeg', 'png']))
+                                                                            <a href="{{ asset($attachment->path) }}"
+                                                                                target="_blank">
+                                                                                <img src="{{ asset($attachment->path) }}"
+                                                                                    alt="{{ $attachment->filename }}"
+                                                                                    style="width: 100%; height: 100px; object-fit: cover;">
+                                                                            </a>
+                                                                            <div class="mt-2 small text-muted">
+                                                                                {{ $attachment->filename ?? 'Image' }}
+                                                                            </div>
+                                                                        @endif
+
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                        @endforeach
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {{-- <div
                                 class="lesson_container d-flex align-items-center justify-content-between py-2 px-3 rounded my-2 border border-1">
                                 <h5 class="m-0 text-secondary">{{ $lesson->title }}</h5>
                                 <div>
@@ -140,13 +235,13 @@
                                             data-bs-toggle="tooltip" title="edit">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
-                                        <button class="btn btn-danger" onclick="deleteLesson({{ $lesson->id }})" data-bs-toggle="tooltip"
-                                            title="delete">
+                                        <button class="btn btn-danger" onclick="deleteLesson({{ $lesson->id }})"
+                                            data-bs-toggle="tooltip" title="delete">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                                     @endcan
                                 </div>
-                            </div>
+                            </div> --}}
                         @endforeach
                 </div>
             @else

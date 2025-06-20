@@ -30,10 +30,12 @@ nav a:hover {
     background-color: var(--primary-color);
     color: var(--light-color) !important;
 }
-.lesson_container{
+
+.lesson_container {
     transition: transform .2s ease-out;
 }
-.lesson_container:hover{
+
+.lesson_container:hover {
     transform: scale(1.002);
 }
 
@@ -52,19 +54,22 @@ nav a:hover {
 }
 
 #sidebar nav {
-    flex: 1; /* Takes up available vertical space */
-    overflow-y: auto; /* Optional: adds scroll if nav is too long */
+    flex: 1;
+    /* Takes up available vertical space */
+    overflow-y: auto;
+    /* Optional: adds scroll if nav is too long */
 }
 
 #sidebar .footer_container {
     text-align: center;
     padding: 10px;
     color: var(--dark-color);
-    background-color: rgba(255, 255, 255, 0.1); /* Optional: make footer stand out */
+    background-color: rgba(255, 255, 255, 0.1);
+    /* Optional: make footer stand out */
     font-size: 0.85rem;
 }
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -151,13 +156,13 @@ nav a:hover {
     color: var(--white-color);
 }
 
-.announcement_header{
+.announcement_header {
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.announcement_img_container{
+.announcement_img_container {
     width: 50px;
     height: 50px;
     border-radius: 50px;
@@ -167,50 +172,54 @@ nav a:hover {
     justify-content: center;
     border: 1px solid rgba(219, 220, 221, 0.6);
 }
-.announcement_img_container img{
+
+.announcement_img_container img {
     width: 100%;
     height: auto;
 }
 
 /* View User */
-.view_img_container{
+.view_img_container {
     width: 450px;
     height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.view_img_container img{
+
+.view_img_container img {
     width: 200px;
     height: 200px;
 }
 
 #contact.is-invalid {
-  border-color: #ff0000 !important; /* bright red */
-  box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
+    border-color: #ff0000 !important;
+    /* bright red */
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
 }
 
 /* For valid input: green border */
 #contact.is-valid {
-  border-color: #28a745 !important; /* bootstrap green */
-  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
+    border-color: #28a745 !important;
+    /* bootstrap green */
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25) !important;
 }
 
 
 /* login design */
-.login_container{
+.login_container {
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: 100vh;
 }
 
-.video_container{
+.video_container {
     width: 100%;
     height: 100%;
 }
 
-.login_form_container{
+.login_form_container {
     width: 30%;
     height: 100%;
     display: flex;
@@ -218,7 +227,7 @@ nav a:hover {
     justify-content: center;
 }
 
-#status_alert{
+#status_alert {
     position: fixed;
     top: 20px;
     right: 20px;
@@ -227,8 +236,12 @@ nav a:hover {
     transition: opacity 0.3s ease-in-out;
 }
 
-.lessons_stream_container{
+.lessons_stream_container {
     padding: 10px;
-    height: 300px;
+    height: 500px;
     overflow-y: scroll;
+}
+
+.accordion-button::after {
+    display: none !important;
 }

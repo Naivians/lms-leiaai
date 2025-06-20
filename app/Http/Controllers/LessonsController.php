@@ -50,7 +50,7 @@ class LessonsController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
+            'lessons_content' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -86,6 +86,43 @@ class LessonsController extends Controller
         ], 200);
     }
 
+    function update(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'lessons_content' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $lesson = $this->lesson_model->find($request->lesson_id);
+
+        $lessons =$lesson->update([
+            'title' => $request->title,
+            'description' => $request->lessons_content ?? null,
+        ]);
+
+        if (!$lessons) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create lessson, please contact the registrar.',
+            ], 404);
+        }
+
+        $attachments = $request->file('attachments');
+
+        if (is_array($attachments) && count($attachments) > 0) {
+            $this->store_attachments($attachments, $request->lesson_id);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Lesson updated successfully",
+        ], 200);
+    }
+
     function store_attachments($attachments, $lesson_id)
     {
         $accepted_extensions = [
@@ -99,7 +136,7 @@ class LessonsController extends Controller
 
         foreach ($attachments as $attachment) {
             $extension = strtolower($attachment->getClientOriginalExtension());
-            $filename = $accepted_extensions[$extension] . '-' . time() . '.' . $extension;
+            $filename = $attachment->getClientOriginalName();
 
             $folder = match ($extension) {
                 'jpg', 'jpeg', 'png' => 'img',
@@ -166,5 +203,11 @@ class LessonsController extends Controller
             'success' => true,
             'message' => "Lesson successfully deleted!"
         ]);
+    }
+
+    public function viewPDF($pdf_url)
+    {
+        $decodedPath = base64_decode($pdf_url);
+        return view('pages.classes.view_pdf', ['pdf_url' => $decodedPath]);
     }
 }

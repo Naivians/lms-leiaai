@@ -7,10 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
         previewAttachment();
     });
 
+
     $('#attachment').on('change', function () {
         const file = this.files[0];
 
-        if(file.type == 'video/mp4' && file.size > (10 * 1024 * 1024)) {
+        if (file.type == 'video/mp4' && file.size > (10 * 1024 * 1024)) {
             Swal.fire({
                 icon: 'error',
                 title: 'File too large',
@@ -122,11 +123,86 @@ function removeAttachment(id) {
     transaction.oncomplete = () => previewAttachment();
 }
 
+$('#edit_lessons_form').on('submit', function (e) {
+    e.preventDefault();
+
+    if (!quill) {
+        console.error("Quill editor is not initialized.");
+        return;
+    }
+
+    const content = quill.root.innerHTML;
+    const isEmpty = quill.getText().trim().length === 0;
+
+    if (isEmpty) {
+        error_message("lessons content cannot be empty.");
+        return;
+    }
+
+    const formData = new FormData(this);
+    formData.append("lessons_content", content);
+
+    const transaction = db.transaction([STORE_NAME], 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+
+    request.onsuccess = function () {
+        const attachments = request.result;
+
+        attachments.forEach((attachment, i) => {
+            formData.append('attachments[]', attachment.file, attachment.name);
+        });
+
+        $.ajax({
+            url: '/lessons/update',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            beforeSend: function () {
+                pre_loader();
+            },
+            success: function (response) {
+
+                if (!response.success) {
+                    error_message(response.message)
+                }
+                success_message(response.message)
+                setTimeout(() => {
+                    clearAttachments();
+                    window.location.reload();
+                }, 1500);
+
+            },
+            error: function (error) {
+                alert('Failed to create lesson');
+                clearAttachments()
+            }
+        });
+    };
+});
 
 $('#lessons_form').on('submit', function (e) {
     e.preventDefault();
 
+    if (!quill) {
+        console.error("Quill editor is not initialized.");
+        return;
+    }
+
+    const content = quill.root.innerHTML;
+    const isEmpty = quill.getText().trim().length === 0;
+
+    if (isEmpty) {
+        error_message("lessons content cannot be empty.");
+        return;
+    }
+
     const formData = new FormData(this);
+    formData.append("lessons_content", content);
 
     const transaction = db.transaction([STORE_NAME], 'readonly');
     const store = transaction.objectStore(STORE_NAME);
@@ -174,7 +250,6 @@ function clearAttachments() {
     const transaction = db.transaction([STORE_NAME], 'readwrite');
     const store = transaction.objectStore(STORE_NAME);
     store.clear();
-
     transaction.oncomplete = () => previewAttachment();
 }
 

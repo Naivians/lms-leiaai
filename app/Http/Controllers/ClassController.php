@@ -89,10 +89,23 @@ class ClassController extends Controller
         $courses_lessons = $this->courseModel->find($course_id);
         $courses_lessons = $courses_lessons->lessons;
 
+        $lesson_ids = [];
+        $materials_array = [];
+
+        foreach ($courses_lessons as $lesson) {
+            $lesson_ids[] = $lesson->id;
+        }
+
+        $lessons = $this->lesson_model->whereIn('id', $lesson_ids)->get();
+        foreach ($lessons as $lesson) {
+            $materials_array[] = $lesson->materials;
+        }
+
         return view('pages.classes.stream', [
             'class_id' => $encryptedClassId,
             'announcements' => $announcements ?? null,
-            'lessons' => $courses_lessons
+            'lessons' => $courses_lessons,
+            'materials' => $materials_array ?? null
         ]);
     }
     function Instructor()

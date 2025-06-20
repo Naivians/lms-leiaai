@@ -7,7 +7,10 @@
 @section('content')
 
     @if ($lessons != null)
-        <form id="lessons_form">
+
+
+        <form id="edit_lessons_form">
+
             <div class="mb-3">
                 <label for="title" class="form-label text-secondary">Lesson Title</label>
                 <input type="text" name="title" id="title" class="form-control border border-1 w-25" required
@@ -15,6 +18,7 @@
             </div>
             <input type="hidden" name="lessons_content" id="lessons_content">
             <input type="hidden" name="class_id" value="{{ $class_id ?? null }}">
+            <input type="hidden" name="lesson_id" value="{{ $lessons->id ?? null }}">
 
             <div id="toolbar" class="w-100">
                 <button class="ql-bold" data-bs-toggle="tooltip" title="bold"></button>
@@ -23,7 +27,7 @@
                 <button class="ql-list" value="bullet" data-bs-toggle="tooltip" title="list"></button>
                 <button class="ql-clean" data-bs-toggle="tooltip" title="clear format"></button>
             </div>
-            <div id="editor" style="height: 200px; width: 100%;" class="mb-2">
+            <div id="editor" style="height: 400px; width: 100%;" class="mb-2">
                 {!! $lessons->description !!}
             </div>
 
@@ -43,23 +47,24 @@
                             <div class="card-body text-center">
 
                                 @if ($material->extension == 'pdf')
-                                    <a href="{{ asset($material->path) }}" target="_blank">
+
+
+                                    <a href="{{ route('lesson.pdf', ['pdf_url' => base64_encode($material->path)]) }}"
+                                        target="_blank">
                                         <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Icon"
                                             style="width: 80px; height: 80px; object-fit: contain;">
                                     </a>
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'PDF File' }}</div>
-                                @elseif ($material->extension == 'mp4')
 
+
+                                @elseif ($material->extension == 'mp4')
                                     <video src="{{ asset($material->path) }}"
                                         style="width: 100%; height: 100px; object-fit: cover;" muted controls></video>
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'Video File' }}</div>
-
                                 @elseif (in_array($material->extension, ['jpg', 'jpeg', 'png']))
-
                                     <img src="{{ asset($material->path) }}" alt="{{ $material->filename }}"
                                         style="width: 100%; height: 100px; object-fit: cover;">
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'Image' }}</div>
-
                                 @endif
 
                             </div>
@@ -88,7 +93,7 @@
             </div>
             <div class="mt-5 mb-3">
                 <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-book-open-reader"></i>
-                    Create
+                    Update
                     Lesson</button>
                 </button>
                 <a href="{{ route('class.stream', ['class_id' => $class_id]) }}" class="btn btn-outline-danger">Back</a>
@@ -98,7 +103,7 @@
         <form id="lessons_form">
             <div class="mb-3">
                 <label for="title" class="form-label text-secondary">Lesson Title</label>
-                <input type="text" name="title" id="title" class="form-control border border-1 w-25" required>
+                <input type="text" name="title" id="title" class="form-control border border-1 w-50" required>
             </div>
             <input type="hidden" name="lessons_content" id="lessons_content">
             <input type="hidden" name="class_id" value="{{ $class_id ?? null }}">
@@ -110,7 +115,7 @@
                 <button class="ql-clean" data-bs-toggle="tooltip" title="clear format"></button>
             </div>
 
-            <div id="editor" style="height: 200px; width: 100%;" class="mb-2"></div>
+            <div id="editor" style="height: 400px; width: 100%;" class="mb-2"></div>
 
             <div class="mt-3">
                 <label for="attachment" class="form-label text-secondary">Attachments (<span class="fst-italic">pdf,
