@@ -200,7 +200,6 @@ $("#edit_announcement_form").on("submit", function (e) {
             pre_loader();
         },
         success: function (response) {
-
             if (!response.success) {
                 error_message(response.message);
                 return;
@@ -210,9 +209,7 @@ $("#edit_announcement_form").on("submit", function (e) {
 
             setTimeout(() => {
                 window.location.href = response.redirect;
-            }
-                , 1500);
-
+            }, 1500);
         },
         error: (xhr) => {
             try {
@@ -234,7 +231,6 @@ $("#edit_announcement_form").on("submit", function (e) {
         },
     });
 });
-
 
 // lessons
 
@@ -264,7 +260,6 @@ function deleteLesson(lesson_id) {
                     pre_loader();
                 },
                 success: function (response) {
-
                     if (!response.success) {
                         error_message(response.message);
                         return;
@@ -273,9 +268,8 @@ function deleteLesson(lesson_id) {
                     success_message(response.message);
 
                     setTimeout(() => {
-                        window.location.reload()
-                    }, 1500)
-
+                        window.location.reload();
+                    }, 1500);
                 },
                 error: (xhr, status, error) => {
                     try {
@@ -298,7 +292,6 @@ function deleteLesson(lesson_id) {
         }
     });
 }
-
 
 function delete_announcement(announcementId) {
     Swal.fire({
@@ -373,8 +366,8 @@ function enrollUser(userId, role_id) {
                 error_message(res.message);
                 return;
             }
-            $('#search_fi').val('');
-            $('#search_student').val('');
+            $("#search_fi").val("");
+            $("#search_student").val("");
             displayEnrolledUsers();
         },
     });
@@ -695,20 +688,20 @@ $("[data-toggle-form]").on("click", function () {
     const target = $(this).data("toggle-form");
     $(`#${target}_form`).removeClass("d-none");
     $(`#${target}_container`).addClass("d-none");
-    $('#students_search_results').empty().show();
-    $('#fi_search_results').empty().show();
-    $('#search_fi').val('');
-    $('#search_student').val('');
+    $("#students_search_results").empty().show();
+    $("#fi_search_results").empty().show();
+    $("#search_fi").val("");
+    $("#search_student").val("");
 });
 
 $("[data-close-form]").on("click", function () {
     const target = $(this).data("close-form");
     $(`#${target}_form`).addClass("d-none");
     $(`#${target}_container`).removeClass("d-none");
-    $('#fi_search_results').empty().hide();
-    $('#students_search_results').empty().hide();
-    $('#search_fi').val('');
-    $('#search_student').val('');
+    $("#fi_search_results").empty().hide();
+    $("#students_search_results").empty().hide();
+    $("#search_fi").val("");
+    $("#search_student").val("");
 });
 
 function refreshTable(tableName) {
@@ -946,6 +939,18 @@ function validatePhoneInput(input) {
     }
 
     input.value = val;
+}
+
+function validate_input_accept_numbers_only(input) {
+    // Allow only positive integers, minimum 1, no letters, no negatives
+    const regex = /^[1-9][0-9]*$/;
+
+    if (!regex.test(input.value)) {
+        input.value = input.value.replace(/[^0-9]/g, "");
+        if (input.value.startsWith("0")) {
+            input.value = input.value.replace(/^0+/, "");
+        }
+    }
 }
 
 function showPassword() {
