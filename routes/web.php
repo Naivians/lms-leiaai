@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CourseModelController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\LessonsController;
+use App\Http\Controllers\AssessmentController;
 
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
@@ -54,6 +55,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/archive/{classId}', [ClassController::class, 'ArchiveClass'])->name('archive');
         Route::post('/enroll', [ClassController::class, 'Enroll'])->name('enroll');
         Route::post('/remove-user-from-cLass', [ClassController::class, 'RemoveUserFromClass'])->name('remove-user');
+    });
+
+    // assessments
+    Route::prefix('assessments')->name('assessment.')->group(function () {
+        Route::get('/', [AssessmentController::class, 'index'])->name('index');
+        Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
+        Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
     });
 
     Route::prefix('announcement')->name('announcement.')->group(function () {

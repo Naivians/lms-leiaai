@@ -6,6 +6,7 @@
 @section('header_title', 'Create Lesson')
 @section('content')
 
+
     @if ($lessons != null)
 
 
@@ -39,24 +40,20 @@
                     accept=".jpeg,.jpg,.png,.mp4,.pdf">
             </div>
 
-            @if (count($materials) > 0)
+            @if (count($lessons->materials) > 0)
                 <h5 class="text-secondary mb-3 mt-5">Currently uploaded files</h5>
                 <div class="d-flex flex-wrap gap-2 mt-2">
-                    @foreach ($materials as $material)
+                    @foreach ($lessons->materials as $material)
                         <div class="card m-2" style="width: 200px;">
                             <div class="card-body text-center">
 
                                 @if ($material->extension == 'pdf')
-
-
                                     <a href="{{ route('lesson.pdf', ['pdf_url' => base64_encode($material->path)]) }}"
                                         target="_blank">
                                         <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Icon"
                                             style="width: 80px; height: 80px; object-fit: contain;">
                                     </a>
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'PDF File' }}</div>
-
-
                                 @elseif ($material->extension == 'mp4')
                                     <video src="{{ asset($material->path) }}"
                                         style="width: 100%; height: 100px; object-fit: cover;" muted controls></video>

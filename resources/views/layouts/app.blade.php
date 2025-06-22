@@ -45,15 +45,15 @@
                         @break
 
                         @case('Classes')
-                            @if (Auth::user()->role == 3 || Auth::user()->role == 4 || Auth::user()->role == 5)
+                            @can('admin_lvl1')
                                 <div class="card-tools">
                                     <div class="card-tools">
-                                        <button href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
                                             data-bs-target="#addClassModal"><i class="fa-solid fa-plus me-2"></i> Create Class
                                         </button>
                                     </div>
                                 </div>
-                            @endif
+                            @endcan
                         @break
 
                         @case('User Detailes')
@@ -62,6 +62,14 @@
                                     <a href="{{ route('user.index') }}" class="btn btn-danger btn-sm"><i
                                             class="fa-solid fa-arrow-left me-2"></i></i> Back
                                     </a>
+                                </div>
+                            </div>
+                        @break
+                        @case('Assessments')
+                            <div class="card-tools">
+                                <div class="card-tools">
+                                    <a href="{{ route('assessment.create', ['class_id' => 0]) }}" class="btn btn-primary btn-sm">Create <i
+                                            class="fa-solid fa-plus ms-1"></i></a>
                                 </div>
                             </div>
                         @break
@@ -241,21 +249,36 @@
                 ]
             });
 
-            // // LessonsTable
-            // $('#classwork_quiz_table').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            //     ajax: '{{ route('user.index') }}',
-            //     columns: [
-            //         { data: 'id' },
-            //         { data: 'fname' },
-            //         { data: 'lname' },
-            //         { data: 'ext_name' },
-            //         { data: 'role' },
-            //         { data: 'email' },
-            //         { data: 'action', orderable: false, searchable: false }
-            //     ]
-            // });
+            // LessonsTable
+            $('#assessments').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('assessment.index') }}',
+                columns: [{
+                        data: 'name'
+                    },
+                    {
+                        data: 'course'
+                    },
+                    {
+                        data: 'type'
+                    },
+                    {
+                        data: 'total'
+                    },
+                    {
+                        data: 'assessment_date'
+                    },
+                    {
+                        data: 'assessment_time'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            });
 
             // // LessonsTable
             // $('#classwork_fi_table').DataTable({

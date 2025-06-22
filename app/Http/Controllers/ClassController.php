@@ -20,6 +20,7 @@ use App\Models\ClassUser;
 use App\Models\User;
 use App\Models\Announcement;
 use App\Models\lessons;
+use App\Models\Assessment;
 
 class ClassController extends Controller
 {
@@ -31,8 +32,9 @@ class ClassController extends Controller
     private $userRestrictions;
     private $announcement;
     private $lesson_model;
+    private $assessment_model;
 
-    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions, Announcement $announcement, lessons $lesson_model)
+    public function __construct(Classes $classModel, CourseModel $courseModel, ClassUser $enrollment, User $userModel, UserRestrictions $userRestrictions, Announcement $announcement, lessons $lesson_model, Assessment $assessment_model)
     {
         $this->classModel = $classModel;
         $this->courseModel = $courseModel;
@@ -41,6 +43,7 @@ class ClassController extends Controller
         $this->userRestrictions = $userRestrictions;
         $this->announcement = $announcement;
         $this->lesson_model = $lesson_model;
+        $this->assessment_model = $assessment_model;
     }
     /**
      * Display a listing of the resource.
@@ -90,22 +93,18 @@ class ClassController extends Controller
         $courses_lessons = $courses_lessons->lessons;
 
         $lesson_ids = [];
-        $materials_array = [];
 
         foreach ($courses_lessons as $lesson) {
             $lesson_ids[] = $lesson->id;
         }
 
-        $lessons = $this->lesson_model->whereIn('id', $lesson_ids)->get();
-        foreach ($lessons as $lesson) {
-            $materials_array[] = $lesson->materials;
-        }
-
+        $lessons = $this->lesson_model->with('materials')->whereIn('id', $lesson_ids)->get();
+        $assessments = $this->assessment_model->where('class_id', $class_id)->get();
         return view('pages.classes.stream', [
             'class_id' => $encryptedClassId,
             'announcements' => $announcements ?? null,
             'lessons' => $courses_lessons,
-            'materials' => $materials_array ?? null
+            'assessments' => $assessments,
         ]);
     }
     function Instructor()

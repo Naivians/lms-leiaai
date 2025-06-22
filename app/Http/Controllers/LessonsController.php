@@ -35,14 +35,13 @@ class LessonsController extends Controller
     function index($class_id, $lesson_id)
     {
         if ($lesson_id) {
-            $lessons = $this->lesson_model->find($lesson_id);
-            $materials = $lessons->materials;
+            $lessons = $this->lesson_model->with('materials')->find($lesson_id);
         }
+
 
         return view('pages.classes.lessons', [
             'class_id' => $class_id,
             'lessons' => $lessons ?? null,
-            'materials' => $materials ?? null
         ]);
     }
 
