@@ -8,9 +8,8 @@
 
 @section('content')
     <div class="container">
-
-        @if (isset($assessments) && count($assessments) > 0)
-            <form id="assessmentForm">
+        @if (isset($classes) && count($classes) > 0)
+            <form id="assessmentForms">
                 <div class="mb-4">
                     <input type="text" name="name" id="name" class="form-control p-3 border-bottom" autocomplete="off"
                         placeholder="Assessment Title" required>
@@ -20,11 +19,9 @@
                     <div class="col-md-4 mb-3">
                         <label for="class_id" class="form-label">Select Class</label>
                         <select name="class_id" id="class_id" class="form-select" required>
-                            <option value="" selected disabled>.....</option>
-
-                            <option value="a">sample</option>
-                            <option value="a">sample</option>
-                            <option value="a">sample</option>
+                            @foreach ($classes as $class)
+                                <option value="{{ $class->id }}" selected>{{$class->class_name}}</option>
+                            @endforeach
                         </select>
                     </div>
 
@@ -44,6 +41,13 @@
                     <div class="col-md-4 mb-3">
                         <label for="assessment_time" class="form-label">Time Duration (mins)</label>
                         <input type="text" name="assessment_time" id="assessment_time" class="form-control"
+                            autocomplete="off" placeholder="e.g. 30">
+                        <small class="text-muted text-info"></small>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="total" class="form-label">Total Questions</label>
+                        <input type="text" name="total" id="total" class="form-control"
                             autocomplete="off" placeholder="e.g. 30">
                         <small class="text-muted text-info"></small>
                     </div>

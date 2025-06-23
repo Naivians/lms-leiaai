@@ -1,19 +1,21 @@
 @php
-    $title = 'Assessments';
+    $title = 'Assessments | Take';
 @endphp
 
 @extends('layouts.app')
 
-@section('header_title', 'Show Assessment')
+@section('header_title', 'Take Assessment')
 
 @section('content')
 
-
-
-    <h1>{{ $assessment->title }}</h1>
+    <h1>{{ $assessment->name }}</h1>
+    <h2>{{$assessment->assessment_time}}</h2>
+    <h2>{{$assessment->assessment_date}}</h2>
+    <h2>{{$assessment->type}}</h2>
+    <h2>{{$assessment->total}}</h2>
 
     @foreach ($assessment->question as $question)
-        <div class="mb-4">
+        <div class="my-3 bg-light p-3 rounded">
             <h4>{{ $question->q_name }}</h4>
 
             @foreach ($question->choices as $choice)

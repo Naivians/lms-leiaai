@@ -65,11 +65,12 @@
                                 </div>
                             </div>
                         @break
+
                         @case('Assessments')
                             <div class="card-tools">
                                 <div class="card-tools">
-                                    <a href="{{ route('assessment.create', ['class_id' => 0]) }}" class="btn btn-primary btn-sm">Create <i
-                                            class="fa-solid fa-plus ms-1"></i></a>
+                                    <a href="{{ route('assessment.create', ['class_id' => 0]) }}"
+                                        class="btn btn-primary btn-sm">Create <i class="fa-solid fa-plus ms-1"></i></a>
                                 </div>
                             </div>
                         @break
@@ -111,6 +112,7 @@
     @yield('scripts')
 
     <script>
+
         $("#createClassForm").on("submit", (e) => {
             e.preventDefault();
             let form = new FormData(e.target);

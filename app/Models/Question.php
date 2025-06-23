@@ -10,10 +10,9 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
-        'question',
+        'q_name',
         'assessment_id',
         'type',
-        'total',
     ];
 
     public function choices()

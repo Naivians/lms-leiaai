@@ -57,13 +57,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/remove-user-from-cLass', [ClassController::class, 'RemoveUserFromClass'])->name('remove-user');
     });
 
-    // assessments
-    Route::prefix('assessments')->name('assessment.')->group(function () {
-        Route::get('/', [AssessmentController::class, 'index'])->name('index');
-        Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
-        Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
-    });
-
     Route::prefix('announcement')->name('announcement.')->group(function () {
         Route::get('/{class_id}/{announcement_id}', [AnnouncementController::class, 'index'])->name('index');
 
@@ -93,6 +86,15 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/update', [LessonsController::class, 'update'])->name('update');
         Route::post('/deleteMaterials/{lesson_id}', [LessonsController::class, 'Destroy'])->name('delete');
         Route::post('/deleteLesson/{lesson_id}', [LessonsController::class, 'deleteLesson'])->name('deleteLesson');
+    });
+
+    // assessments
+    Route::prefix('assessments')->name('assessment.')->group(function () {
+        Route::get('/', [AssessmentController::class, 'index'])->name('index');
+        Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
+        Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
+
+        Route::post('/store', [AssessmentController::class, 'store'])->name('store');
     });
 
     // logout
