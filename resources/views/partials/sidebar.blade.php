@@ -38,7 +38,7 @@
                 class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-book me-2"></i> Contents</a>
             <a href="{{ route('assessment.index')}}"
-                class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
+                class="nav-link {{ request()->routeIs('assessment.index') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-bookmark me-2"></i> Assessments</a>
         @endcan
 

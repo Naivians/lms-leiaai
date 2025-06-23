@@ -36,8 +36,6 @@ $(document).ready(function () {
 
         const form = new FormData(this);
         const data = JSON.parse(localStorage.getItem("assessment_data")) || [];
-        // form.append("assessments", data);
-
         Swal.fire({
             title: "Ooopsss?",
             text: "Are you sure you want to submit this form?",
@@ -71,6 +69,7 @@ $(document).ready(function () {
                             localStorage.setItem("total_question", 0);
                             localStorage.removeItem("assessment_data");
                             $("#questions_container").empty();
+                            $("#total").val('')
                         }, 1500);
 
                     },
