@@ -52,12 +52,6 @@
             Archive Class
         </a>
 
-        {{-- Announcement
-        - Announcement id
-        - Class Id
-        - Announcement Title
-        - Announcement Body
-        - Announcement Materials --}}
     </nav>
     <div class="footer_container">
         <p class="m-0 mt-3 border border-1">&copy; {{ date('Y') }} LEIAAI LMS. All rights reserved. </p>

@@ -111,9 +111,10 @@ class AssessmentController extends Controller
             ], 422);
         }
 
+
+
         $assessment = $this->assessment_model->create([
             'class_id' => $request->class_id,
-            'lesson_id' => 13,
             'name' => $request->name,
             'type' => $request->type,
             'total' => (int) $request->total,

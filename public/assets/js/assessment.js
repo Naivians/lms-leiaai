@@ -1,18 +1,18 @@
 $(document).ready(function () {
 
     generate_question_ui();
-
+    $("#questions_container").empty();
     const debouncedLog = debounce((value) => {
         localStorage.setItem("total_question", value);
         generate_question_ui();
     }, 10);
 
-    $("#total").on("input", function () {
+    $("#total").off().on("change", function () {
         let value = $(this).val();
         const regex = /^[1-9][0-9]*$/;
 
         if (value === "" || !regex.test(value)) {
-            $(this).val("");
+            $(this).val() == 0;
             localStorage.setItem("total_question", 0);
             localStorage.removeItem("assessment_data");
             $("#questions_container").empty();
@@ -60,17 +60,20 @@ $(document).ready(function () {
                     },
                     success: function (response) {
 
-                        if (!response.success) {
-                            error_message(response.message)
-                        }
-                        success_message(response.message)
-                        setTimeout(() => {
-                            $(this).val("");
-                            localStorage.setItem("total_question", 0);
-                            localStorage.removeItem("assessment_data");
-                            $("#questions_container").empty();
-                            $("#total").val('')
-                        }, 1500);
+                        // if (!response.success) {
+                        //     error_message(response.message)
+                        // }
+                        // success_message(response.message)
+                        // setTimeout(() => {
+                        //     $(this).val("");
+                        //     localStorage.setItem("total_question", 0);
+                        //     localStorage.removeItem("assessment_data");
+                        //     $("#questions_container").empty();
+                        //     $("#total").val('')
+                        // }, 1500);
+
+                        console.log(response);
+
 
                     },
                     error: function (error) {

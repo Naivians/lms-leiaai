@@ -15,7 +15,8 @@ class Assessment extends Model
         'type',
         'total',
         'class_id',
-        'lesson_id',
+        'assessment_time',
+        'assessment_date',
     ];
 
 

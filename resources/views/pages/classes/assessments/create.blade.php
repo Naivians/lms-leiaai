@@ -17,21 +17,21 @@
 
                 <div class="row">
                     <div class="col-md-4 mb-3">
-                        <label for="class_id" class="form-label">Select Class</label>
+                        <label for="class_id" class="form-label text-secondary">Select Class</label>
                         <select name="class_id" id="class_id" class="form-select" required>
                             @foreach ($classes as $class)
-                                <option value="{{ $class->id }}" selected>{{$class->class_name}}</option>
+                                <option value="{{ $class->id }}" selected>{{ $class->class_name }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label for="assessment_date" class="form-label">Assessment Date</label>
+                        <label for="assessment_date" class="form-label text-secondary">Assessment Date</label>
                         <input type="date" name="assessment_date" id="assessment_date" class="form-control" required>
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label for="type" class="form-label">Assessment Type</label>
+                        <label for="type" class="form-label text-secondary">Assessment Type</label>
                         <select name="type" id="type" class="form-select" required>
                             <option value="quiz">Quiz</option>
                             <option value="exam">Exam</option>
@@ -39,44 +39,46 @@
                     </div>
 
                     <div class="col-md-4 mb-3">
-                        <label for="assessment_time" class="form-label">Time Duration (mins)</label>
-                        <input type="text" name="assessment_time" id="assessment_time" class="form-control"
-                            autocomplete="off" placeholder="e.g. 30">
-                        <small class="text-muted text-info"></small>
+                        <label for="" class="form-label text-secondary">Time Duration</label>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="hrs" class="form-label text-secondary">Hour(s)</label>
+                                <select name="hrs" id="hrs" class="form-select">
+                                    <option value="00">00</option>
+                                    @for ($i = 1; $i <= 12; $i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hrs" class="form-label text-secondary">Minutes</label>
+                                <select name="minutes" id="minutes" class="form-select">
+                                    <option value="00">00</option>
+                                    @for ($i = 1; $i <= 60; $i++)
+                                        <option value="{{ $i }}">{{ $i }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="col-md-4 mb-3">
-                        <label for="total" class="form-label">Total Questions</label>
-                        <input type="text" name="total" id="total" class="form-control"
-                            autocomplete="off" placeholder="e.g. 30">
-                        <small class="text-muted text-info"></small>
+                    <div class="col-md-4 mb-3 " style="margin-top: 31px">
+                        <label for="total" class="form-label text-secondary">Total Questions</label>
+                        {{-- <input type="text" name="total" id="total" class="form-control" autocomplete="off"
+                            placeholder="e.g. 30">
+                        <small class="text-muted text-info"></small> --}}
+
+                        <select name="total" id="total" class="form-select">
+                            <option value="0" selected>0</option>
+                            @for ($i = 5; $i <= 120; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
                     </div>
-
-
                 </div>
 
                 <div id="questions_container">
-                    {{-- <div class="card mx-auto">
-                        <div class="card-header bg-primary text-light">Which of the following documents must be carried on
-                            board an aircraft during international flights?</div>
-                        <div class="card-body">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="choices[]" id="radioDefault1">
-                                <label class="form-check-label" for="radioDefault1">
-                                    <input type="text" name="choices[]" id="choices[]" class="form-control" autocomplete="off">
-                                </label>
-                            </div>
-                        </div>
-                        <div class="card-footer d-flex align-items-center justify-content-between">
-                            <div class="input-group w-25 d-flex align-items-center">
-                                <label for="correct" class="form-label text-secondary me-3 mt-2">Correct Answer</label>
-                                <input type="text" name="correct" id="correct" class="form-control"
-                                    placeholder="eg. A">
-                            </div>
-                            <i class="fa-solid fa-trash btn btn-outline-danger" data-bs-toggle="tooltip"
-                                title="remove question"></i>
-                        </div>
-                    </div> --}}
+
                 </div>
 
                 <div class="mb-3 mt-5 d-flex align-items-center justify-content-end gap-1">
