@@ -62,6 +62,7 @@ $(document).ready(function () {
 
                         if (!response.success) {
                             error_message(response.message)
+                            return
                         }
                         success_message(response.message)
                         setTimeout(() => {
@@ -71,8 +72,6 @@ $(document).ready(function () {
                             $("#questions_container").empty();
                             $("#total").val('')
                         }, 1500);
-
-
 
                     },
                     error: function (error) {

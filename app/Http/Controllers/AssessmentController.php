@@ -95,6 +95,10 @@ class AssessmentController extends Controller
     public function store(Request $request)
     {
         $assessment_time = '';
+
+        $hrs = '';
+        $mins = '';
+
         $validator = Validator::make($request->all(), [
             'assessment_date' => 'required|string',
             'type' => 'required|string',
@@ -110,19 +114,36 @@ class AssessmentController extends Controller
             ], 422);
         }
 
+
+        $meridiems = [
+            1 => ($request->hrs > 1) ? 'hrs' : 'hr',
+            2 => ($request->minutes > 1) ? 'mins' : 'min',
+        ];
+
         if ($request->total == 0) {
             return response()->json([
                 'success' => false,
-                'errors' => "Question must not be empty"
+                'message' => "Question must not be empty"
             ]);
         }
 
+        $questions = $request->question;
+
+        foreach ($questions as $question) {
+            if ($question == '') {
+                return response()->json([
+                    'success' => false,
+                    'message' => "An error occurred because one or more required question fields are empty."
+                ]);
+            }
+        }
+
         if ($request->hrs == 00 && $request->minutes != 00) {
-            $assessment_time = $request->minutes . ' min(s)';
+            $assessment_time = $request->minutes . ' ' . $meridiems[2];
         } elseif ($request->hrs != 00 && $request->minutes == 00) {
-            $assessment_time = $request->hrs . ' hr(s)';
+            $assessment_time = $request->hrs . ' ' . $meridiems[1];
         } else {
-            $assessment_time = $request->hrs . 'hr(s) and ' . $request->minutes . ' min(s)';
+            $assessment_time = $request->hrs . ' ' . $meridiems[1] . ' and ' . $request->minutes . ' ' . $meridiems[2];
         }
 
         $assessment = $this->assessment_model->create([
@@ -134,7 +155,7 @@ class AssessmentController extends Controller
             'assessment_date' => $request->assessment_date,
         ]);
 
-        $questions = $request->question;
+
 
         for ($i = 0; $i < count($questions); $i++) {
             $q_name = $questions[$i];
