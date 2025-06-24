@@ -54,7 +54,7 @@
                                 <label for="hrs" class="form-label text-secondary">Minutes</label>
                                 <select name="minutes" id="minutes" class="form-select">
                                     <option value="00">00</option>
-                                    @for ($i = 1; $i <= 60; $i++)
+                                    @for ($i = 1; $i < 60; $i++)
                                         <option value="{{ $i }}">{{ $i }}</option>
                                     @endfor
                                 </select>
@@ -64,9 +64,6 @@
 
                     <div class="col-md-4 mb-3 " style="margin-top: 31px">
                         <label for="total" class="form-label text-secondary">Total Questions</label>
-                        {{-- <input type="text" name="total" id="total" class="form-control" autocomplete="off"
-                            placeholder="e.g. 30">
-                        <small class="text-muted text-info"></small> --}}
 
                         <select name="total" id="total" class="form-select">
                             <option value="0" selected>0</option>

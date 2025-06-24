@@ -60,19 +60,18 @@ $(document).ready(function () {
                     },
                     success: function (response) {
 
-                        // if (!response.success) {
-                        //     error_message(response.message)
-                        // }
-                        // success_message(response.message)
-                        // setTimeout(() => {
-                        //     $(this).val("");
-                        //     localStorage.setItem("total_question", 0);
-                        //     localStorage.removeItem("assessment_data");
-                        //     $("#questions_container").empty();
-                        //     $("#total").val('')
-                        // }, 1500);
+                        if (!response.success) {
+                            error_message(response.message)
+                        }
+                        success_message(response.message)
+                        setTimeout(() => {
+                            $(this).val("");
+                            localStorage.setItem("total_question", 0);
+                            localStorage.removeItem("assessment_data");
+                            $("#questions_container").empty();
+                            $("#total").val('')
+                        }, 1500);
 
-                        console.log(response);
 
 
                     },

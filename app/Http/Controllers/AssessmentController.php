@@ -94,10 +94,9 @@ class AssessmentController extends Controller
 
     public function store(Request $request)
     {
-
+        $assessment_time = '';
         $validator = Validator::make($request->all(), [
             'assessment_date' => 'required|string',
-            'assessment_time' => 'required|string',
             'type' => 'required|string',
             'total' => 'required|string',
             'name' => 'required|string',
@@ -111,14 +110,27 @@ class AssessmentController extends Controller
             ], 422);
         }
 
+        if ($request->total == 0) {
+            return response()->json([
+                'success' => false,
+                'errors' => "Question must not be empty"
+            ]);
+        }
 
+        if ($request->hrs == 00 && $request->minutes != 00) {
+            $assessment_time = $request->minutes . ' min(s)';
+        } elseif ($request->hrs != 00 && $request->minutes == 00) {
+            $assessment_time = $request->hrs . ' hr(s)';
+        } else {
+            $assessment_time = $request->hrs . 'hr(s) and ' . $request->minutes . ' min(s)';
+        }
 
         $assessment = $this->assessment_model->create([
             'class_id' => $request->class_id,
             'name' => $request->name,
             'type' => $request->type,
             'total' => (int) $request->total,
-            'assessment_time' => $request->assessment_time,
+            'assessment_time' => $assessment_time,
             'assessment_date' => $request->assessment_date,
         ]);
 

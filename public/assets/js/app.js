@@ -5,6 +5,24 @@ document.addEventListener("DOMContentLoaded", function () {
     tooltipTriggerList.forEach((tooltipTriggerEl) => {
         new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    const tabButtons = document.querySelectorAll("#classTab button");
+
+    const activeTabId = localStorage.getItem("activeTabId");
+    if (activeTabId) {
+        const triggerEl = document.querySelector(
+            `#classTab button#${activeTabId}`
+        );
+        if (triggerEl) {
+            new bootstrap.Tab(triggerEl).show();
+        }
+    }
+
+    tabButtons.forEach((button) => {
+        button.addEventListener("shown.bs.tab", function (event) {
+            localStorage.setItem("activeTabId", event.target.id);
+        });
+    });
 });
 
 $(document).ready(function () {
@@ -720,27 +738,6 @@ function edit_announcement(id) {
     let announce_modal = $("#announcementForm");
     announce_modal.modal("sho");
 }
-
-// Tabs
-document.addEventListener("DOMContentLoaded", function () {
-    const tabButtons = document.querySelectorAll("#classTab button");
-
-    const activeTabId = localStorage.getItem("activeTabId");
-    if (activeTabId) {
-        const triggerEl = document.querySelector(
-            `#classTab button#${activeTabId}`
-        );
-        if (triggerEl) {
-            new bootstrap.Tab(triggerEl).show();
-        }
-    }
-
-    tabButtons.forEach((button) => {
-        button.addEventListener("shown.bs.tab", function (event) {
-            localStorage.setItem("activeTabId", event.target.id);
-        });
-    });
-});
 
 $("#registerForm").on("submit", function (e) {
     e.preventDefault();
