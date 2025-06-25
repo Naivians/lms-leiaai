@@ -97,9 +97,11 @@ class AssessmentController extends Controller
     public function store(Request $request)
     {
         $assessment_time = '';
-
-        $hrs = '';
-        $mins = '';
+        $questions = $request->question;
+        $meridiems = [
+            1 => ($request->hrs > 1) ? 'hrs' : 'hr',
+            2 => ($request->minutes > 1) ? 'mins' : 'min',
+        ];
 
         $validator = Validator::make($request->all(), [
             'assessment_date' => 'required|string',
@@ -108,7 +110,6 @@ class AssessmentController extends Controller
             'name' => 'required|string',
         ]);
 
-
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -116,20 +117,12 @@ class AssessmentController extends Controller
             ], 422);
         }
 
-
-        $meridiems = [
-            1 => ($request->hrs > 1) ? 'hrs' : 'hr',
-            2 => ($request->minutes > 1) ? 'mins' : 'min',
-        ];
-
         if ($request->total == 0) {
             return response()->json([
                 'success' => false,
                 'message' => "Question must not be empty"
             ]);
         }
-
-        $questions = $request->question;
 
         foreach ($questions as $question) {
             if ($question == '') {
@@ -140,7 +133,22 @@ class AssessmentController extends Controller
             }
         }
 
-        if ($request->hrs == 00 && $request->minutes != 00) {
+        foreach ($questions as $index => $question) {
+            $correct_answer = $request->input('correct_' . $index);
+            if ($correct_answer == '') {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Correct Answer field is required"
+                ]);
+            }
+        }
+
+        if ($request->hrs == 00 && $request->minutes == 00) {
+            return response()->json([
+                'success' => false,
+                'message' => "Time duration field is required"
+            ]);
+        } elseif ($request->hrs == 00 && $request->minutes != 00) {
             $assessment_time = $request->minutes . ' ' . $meridiems[2];
         } elseif ($request->hrs != 00 && $request->minutes == 00) {
             $assessment_time = $request->hrs . ' ' . $meridiems[1];
@@ -156,8 +164,6 @@ class AssessmentController extends Controller
             'assessment_time' => $assessment_time,
             'assessment_date' => $request->assessment_date,
         ]);
-
-
 
         for ($i = 0; $i < count($questions); $i++) {
             $q_name = $questions[$i];
@@ -268,7 +274,6 @@ class AssessmentController extends Controller
 
     function destroy($assessment_id)
     {
-
         try {
             $assessment_id = Crypt::decrypt($assessment_id);
         } catch (DecryptException $e) {

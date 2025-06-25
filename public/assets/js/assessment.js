@@ -1,5 +1,4 @@
 $(document).ready(function () {
-
     generate_question_ui();
     $("#questions_container").empty();
     const debouncedLog = debounce((value) => {
@@ -7,19 +6,21 @@ $(document).ready(function () {
         generate_question_ui();
     }, 10);
 
-    $("#total").off().on("change", function () {
-        let value = $(this).val();
-        const regex = /^[1-9][0-9]*$/;
+    $("#total")
+        .off()
+        .on("change", function () {
+            let value = $(this).val();
+            const regex = /^[1-9][0-9]*$/;
 
-        if (value === "" || !regex.test(value)) {
-            $(this).val() == 0;
-            localStorage.setItem("total_question", 0);
-            localStorage.removeItem("assessment_data");
-            $("#questions_container").empty();
-            return;
-        }
-        debouncedLog(value);
-    });
+            if (value === "" || !regex.test(value)) {
+                $(this).val() == 0;
+                localStorage.setItem("total_question", 0);
+                localStorage.removeItem("assessment_data");
+                $("#questions_container").empty();
+                return;
+            }
+            debouncedLog(value);
+        });
 
     $(document).on("click", ".fa-trash", function () {
         $(this).closest(".card").remove();
@@ -30,7 +31,7 @@ $(document).ready(function () {
         saveAssessmentData();
     });
 
-    $('#assessmentForms').on("submit", function (e) {
+    $("#assessmentForms").on("submit", function (e) {
         e.preventDefault();
         saveAssessmentData();
 
@@ -43,95 +44,52 @@ $(document).ready(function () {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Confirm"
+            confirmButtonText: "Confirm",
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: '/assessments/store',
-                    type: 'POST',
+                    url: "/assessments/store",
+                    type: "POST",
                     data: form,
                     processData: false,
                     contentType: false,
                     headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                            "content"
+                        ),
                     },
                     beforeSend: function () {
                         pre_loader();
                     },
                     success: function (response) {
-
                         if (!response.success) {
-                            error_message(response.message)
-                            return
+                            error_message(response.message);
+                            return;
                         }
-                        success_message(response.message)
+                        success_message(response.message);
                         setTimeout(() => {
                             $(this).val("");
                             localStorage.setItem("total_question", 0);
                             localStorage.removeItem("assessment_data");
                             $("#questions_container").empty();
-                            $("#total").val('')
+                            $("#total").val("");
                         }, 1500);
 
                     },
                     error: function (error) {
                         alert(`error: ${error}`);
-                    }
+                    },
                 });
             }
         });
-
     });
-
-    deleteAssessments(assessment_id);
-
 });
-
-function deleteAssessments(assessment_id) {
-
-        alert('awdawd')
-        // Swal.fire({
-        //     title: "Ooopsss?",
-        //     text: "Are you sure you want to remove this question?",
-        //     icon: "warning",
-        //     showCancelButton: true,
-        //     confirmButtonColor: "#3085d6",
-        //     cancelButtonColor: "#d33",
-        //     confirmButtonText: "Confirm"
-        // }).then((result) => {
-        //     if (result.isConfirmed) {
-        //         $.ajax({
-        //             url: `/assessments/destroyAssessment/${assessment_id}`,
-        //             type: 'POST',
-        //             headers: {
-        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //             },
-        //             beforeSend: function () {
-        //                 pre_loader();
-        //             },
-        //             success: function (response) {
-
-        //                 if (!response.success) {
-        //                     error_message(response.message)
-        //                     return
-        //                 }
-        //                 success_message(response.message)
-        //                 setTimeout(() => {
-        //                     refreshTable('assessments')
-        //                 }, 1500);
-        //             },
-        //             error: function (error) {
-        //                 alert(`error: ${error}`);
-        //             }
-        //         });
-        //     }
-        // });
-    }
 
 
 
 function generate_question_ui() {
-    let total_questions = parseInt(localStorage.getItem("total_question"), 10) || 0;
+    let total_questions =
+        parseInt(localStorage.getItem("total_question"), 10) || 0;
     let savedData = JSON.parse(localStorage.getItem("assessment_data") || "[]");
     let question_container = $("#questions_container");
 
@@ -149,17 +107,22 @@ function generate_question_ui() {
                 <input type="text" name="question[]" id="question_${index}" class="form-control" placeholder="Question here" value="${questionText}">
             </div>
             <div class="card-body">
-                ${choices.map((choice, i) => {
-            const optionLabel = String.fromCharCode(65 + i);
-            const isChecked = savedQuestion.correct === optionLabel ? "checked" : "";
-            return `
+                ${choices
+                    .map((choice, i) => {
+                        const optionLabel = String.fromCharCode(65 + i);
+                        const isChecked =
+                            savedQuestion.correct === optionLabel
+                                ? "checked"
+                                : "";
+                        return `
                         <div class="form-check my-2">
                             <input class="form-check-input" type="radio" name="choices_${index}" id="q${index}_option${i}" value="${optionLabel}" ${isChecked}>
                             <label class="form-check-label w-100" for="q${index}_option${i}">
                                 <input type="text" name="choices_${index}[]" id="choices_${index}_${i}" class="form-control" placeholder="Option ${optionLabel}" value="${choice}">
                             </label>
                         </div>`;
-        }).join("")}
+                    })
+                    .join("")}
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <div class="input-group w-75 d-flex align-items-center">
@@ -189,7 +152,7 @@ function saveAssessmentData() {
         data.push({
             question: questionText,
             choices: choices,
-            correct: correct
+            correct: correct,
         });
     });
 
@@ -204,42 +167,41 @@ function removeQuestions(question_id, assessment_id) {
         showCancelButton: true,
         confirmButtonColor: "#3085d6",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Confirm"
+        confirmButtonText: "Confirm",
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
                 url: `/assessments/destroyQuestion`,
-                type: 'POST',
+                type: "POST",
                 headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
                 },
                 data: {
-                    'assessment_id': assessment_id,
-                    'question_id': question_id,
+                    assessment_id: assessment_id,
+                    question_id: question_id,
                 },
                 beforeSend: function () {
                     pre_loader();
                 },
                 success: function (response) {
-
                     if (!response.success) {
-                        error_message(response.message)
+                        error_message(response.message);
                         setTimeout(() => {
-                            window.location.reload()
+                            window.location.reload();
                         }, 1500);
-                        return
+                        return;
                     }
-                    success_message(response.message)
+                    success_message(response.message);
                     setTimeout(() => {
-                        window.location.reload()
+                        window.location.reload();
                     }, 1500);
-
                 },
                 error: function (error) {
                     alert(`error: ${error}`);
-                }
+                },
             });
         }
     });
 }
-

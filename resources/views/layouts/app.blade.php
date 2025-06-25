@@ -22,6 +22,10 @@
 </head>
 
 <body style="background-color: #F4F5F7">
+
+    <div class="airplane-cursor">
+        <i class="fas fa-plane"></i>
+    </div>
     {{-- modals --}}
     @include('partials.modal')
     @include('partials.messages')
@@ -31,6 +35,7 @@
         @include('partials.navbar')
     </div>
     <div class="main-content">
+
         <header>
             <div class="card my-2 mx-3 {{ isset($title) && $title === 'Streams' ? 'd-none' : '' }}">
                 <div class="card-header header_container  white-bg d-flex align-item-center justify-content-between">
@@ -107,11 +112,57 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
     <script src="https://unpkg.com/libphonenumber-js@1.10.22/bundle/libphonenumber-max.js"></script>
+    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 
     @yield('js_imports')
     @yield('scripts')
 
     <script>
+        const cursor = document.querySelector('.airplane-cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        function deleteAssessments(assessment_id) {
+            Swal.fire({
+                title: "Ooopsss?",
+                text: "Are you sure you want to delete this assessment?. exams and quizzes will be permanently deleted",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/assessments/destroyAssessment/${assessment_id}`,
+                        type: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        beforeSend: function() {
+                            pre_loader();
+                        },
+                        success: function(response) {
+
+                            if (!response.success) {
+                                error_message(response.message)
+                                return
+                            }
+                            success_message(response.message)
+                            refreshTable('assessments')
+                            setTimeout(() => {
+                                refreshTable('#assessments')
+                            }, 1500);
+                        },
+                        error: function(error) {
+                            alert(`error: ${error}`);
+                        }
+                    });
+                }
+            });
+        }
 
         $("#createClassForm").on("submit", (e) => {
             e.preventDefault();
