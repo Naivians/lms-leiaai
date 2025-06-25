@@ -82,7 +82,53 @@ $(document).ready(function () {
         });
 
     });
+
+    deleteAssessments(assessment_id);
+
 });
+
+function deleteAssessments(assessment_id) {
+
+        alert('awdawd')
+        // Swal.fire({
+        //     title: "Ooopsss?",
+        //     text: "Are you sure you want to remove this question?",
+        //     icon: "warning",
+        //     showCancelButton: true,
+        //     confirmButtonColor: "#3085d6",
+        //     cancelButtonColor: "#d33",
+        //     confirmButtonText: "Confirm"
+        // }).then((result) => {
+        //     if (result.isConfirmed) {
+        //         $.ajax({
+        //             url: `/assessments/destroyAssessment/${assessment_id}`,
+        //             type: 'POST',
+        //             headers: {
+        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             },
+        //             beforeSend: function () {
+        //                 pre_loader();
+        //             },
+        //             success: function (response) {
+
+        //                 if (!response.success) {
+        //                     error_message(response.message)
+        //                     return
+        //                 }
+        //                 success_message(response.message)
+        //                 setTimeout(() => {
+        //                     refreshTable('assessments')
+        //                 }, 1500);
+        //             },
+        //             error: function (error) {
+        //                 alert(`error: ${error}`);
+        //             }
+        //         });
+        //     }
+        // });
+    }
+
+
 
 function generate_question_ui() {
     let total_questions = parseInt(localStorage.getItem("total_question"), 10) || 0;
@@ -116,9 +162,9 @@ function generate_question_ui() {
         }).join("")}
             </div>
             <div class="card-footer d-flex align-items-center justify-content-between">
-                <div class="input-group w-25 d-flex align-items-center">
+                <div class="input-group w-75 d-flex align-items-center">
                     <label for="correct_${index}" class="form-label text-secondary me-3 mt-2">Correct Answer</label>
-                    <input type="text" name="correct_${index}" id="correct_${index}" class="form-control" placeholder="e.g. A" value="${correct}">
+                    <input type="text" name="correct_${index}" id="correct_${index}" class="form-control" placeholder="paste the correct answer" value="${correct}">
                 </div>
                 <i class="fa-solid fa-trash btn btn-outline-danger" title="Remove question"></i>
             </div>
@@ -149,3 +195,51 @@ function saveAssessmentData() {
 
     localStorage.setItem("assessment_data", JSON.stringify(data));
 }
+
+function removeQuestions(question_id, assessment_id) {
+    Swal.fire({
+        title: "Ooopsss?",
+        text: "Are you sure you want to remove this question?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirm"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: `/assessments/destroyQuestion`,
+                type: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                data: {
+                    'assessment_id': assessment_id,
+                    'question_id': question_id,
+                },
+                beforeSend: function () {
+                    pre_loader();
+                },
+                success: function (response) {
+
+                    if (!response.success) {
+                        error_message(response.message)
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 1500);
+                        return
+                    }
+                    success_message(response.message)
+                    setTimeout(() => {
+                        window.location.reload()
+                    }, 1500);
+
+                },
+                error: function (error) {
+                    alert(`error: ${error}`);
+                }
+            });
+        }
+    });
+}
+

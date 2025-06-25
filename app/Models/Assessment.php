@@ -20,16 +20,41 @@ class Assessment extends Model
     ];
 
 
-    public function question(){
+    public function question()
+    {
         return $this->hasMany(Question::class);
     }
 
-    public function class(){
+    public function class()
+    {
         return $this->belongsTo(Classes::class, 'class_id');
     }
 
-    function lesson(){
+    public function lesson()
+    {
         return $this->belongsTo(Lessons::class, 'lesson_id');
     }
 
+    public function getAssessmentTimeArrayAttribute()
+    {
+        $time = $this->assessment_time;
+        $hours = 0;
+        $minutes = 0;
+
+        preg_match('/(\d+)\s*hrs?/i', $time, $hrMatch);
+        preg_match('/(\d+)\s*mins?/i', $time, $minMatch);
+
+        if (!empty($hrMatch[1])) {
+            $hours = (int) $hrMatch[1];
+        }
+
+        if (!empty($minMatch[1])) {
+            $minutes = (int) $minMatch[1];
+        }
+
+        return [
+            'hours' => $hours,
+            'minutes' => $minutes,
+        ];
+    }
 }

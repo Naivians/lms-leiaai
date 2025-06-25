@@ -93,8 +93,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [AssessmentController::class, 'index'])->name('index');
         Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
         Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
+        Route::get('/edit/{assessment_id}', [AssessmentController::class, 'edit'])->name('edit');
 
         Route::post('/store', [AssessmentController::class, 'store'])->name('store');
+        Route::post('/destroyQuestion', [AssessmentController::class, 'destroyQuestion'])->name('destroy.question');
+        Route::post('/destroyAssessment/{assessment_id}', [AssessmentController::class, 'destroy'])->name('destroy');
     });
 
     // logout

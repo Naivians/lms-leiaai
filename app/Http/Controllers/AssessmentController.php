@@ -51,10 +51,11 @@ class AssessmentController extends Controller
                 })
 
                 ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => $row->id]) . ' " class="btn btn-sm btn-primary mb-2" data-bs-toggle="tooltip" title="take tis quiz">Take ' . ucfirst($row->type) . ' </a>';
-                    // $editBtn = '<a href= " ' . route('user.edit', ['userId' => $row->id]) . ' " class="btn btn-sm btn-warning w-100" data-bs-toggle="tooltip" title="Edit this user"><i class="fa-solid fa-user-pen"></i></a>';
-                    // return $viewBtn . ' ' . $editBtn;
-                    return $viewBtn;
+                    //
+                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
+                    $editBtn = '<a href= " ' . route('assessment.edit', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="edit"><i class="fa-solid fa-pen-to-square"></i></a>';
+                    $deleteBtn = '<a href= "#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="delete"><i class="fa-solid fa-trash" title="Remove question" onclick = "deleteAssessments(\'' . Crypt::encrypt($row->id) . '\')"></i></a>';
+                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -70,6 +71,7 @@ class AssessmentController extends Controller
 
         return view('pages.classes.assessments.show', compact('assessment'));
     }
+
 
     public function create($class_id)
     {
@@ -191,18 +193,104 @@ class AssessmentController extends Controller
         ]);
     }
 
-    public function edit($id)
+    public function edit($assessment_id)
     {
-        // Logic to show form for editing an existing assessment
+        $encryptedClassId = $assessment_id;
+
+        try {
+            $assessment_id = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors([
+                'error' => 'Invalid class ID',
+            ]);
+        }
+
+        $assessment = $this->assessment_model->with(['class', 'question.choices.answer_keys'])->find($assessment_id);
+        $timeArray = $assessment->assessment_time_array;
+        $classes = $this->class_model->all();
+
+        if (!$assessment) {
+            return redirect()->route('user.dashboard')->withErrors([
+                'error' => 'Assessment do not exist'
+            ]);
+        }
+
+        return view('pages.classes.assessments.edit_update', ['assessments' => $assessment ?? null, 'classes' => $classes ?? null, 'time' => $timeArray]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        // Logic to update an existing assessment
+        return response()->json([
+            'message' => $request->all()
+        ]);
     }
 
-    public function destroy($id)
+    public function destroyQuestion(Request $request)
     {
-        // Logic to delete an assessment
+        $res = $this->question_model->find($request->question_id);
+        $assessment = $res->assessment;
+
+        $assessment = $this->assessment_model->find($request->assessment_id);
+
+        if ($assessment->total == 1) {
+            return response()->json([
+                'success' => false,
+                'message' => "You cannot delete this question. Assessment should have atlease one question remain"
+            ]);
+        }
+
+        $assessment = $assessment->update([
+            'total' => $assessment->total - 1
+        ]);
+
+        if (!$res) {
+            return response()->json([
+                'success' => false,
+                'message' => "Question id do not exists"
+            ]);
+        }
+
+        $res = $res->delete();
+
+        if (!$res) {
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to remove question"
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Successfully remove question"
+        ]);
+    }
+
+
+    function destroy($assessment_id)
+    {
+
+        try {
+            $assessment_id = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => "Assessment id do not exist"
+            ]);
+        }
+
+        $assessment = $this->assessment_model->find($assessment_id);
+        $res = $assessment->delete();
+
+        if (!$res) {
+            return response()->json([
+                'success' => false,
+                'message' => "Failed to delete assessment"
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Successfully deleted assessment"
+        ]);
     }
 }
