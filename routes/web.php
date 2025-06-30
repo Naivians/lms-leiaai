@@ -94,8 +94,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
         Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
         Route::get('/edit/{assessment_id}', [AssessmentController::class, 'edit'])->name('edit');
-
+        Route::get('/assessment/{assessment_id}', [AssessmentController::class, 'takeAssessment'])->name('take');
         Route::post('/store', [AssessmentController::class, 'store'])->name('store');
+        Route::post('/update', [AssessmentController::class, 'update'])->name('update');
         Route::post('/destroyQuestion', [AssessmentController::class, 'destroyQuestion'])->name('destroy.question');
         Route::post('/destroyAssessment/{assessment_id}', [AssessmentController::class, 'destroy'])->name('destroy');
     });

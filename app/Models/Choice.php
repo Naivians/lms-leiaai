@@ -21,4 +21,10 @@ class Choice extends Model
     public function answer_keys(){
         return $this->hasMany(AnswerKey::class, 'choice_id');
     }
+
+    public function answer_key(){
+        return $this->hasOne(AnswerKey::class, 'choice_id');
+    }
+
+
 }

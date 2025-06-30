@@ -15,6 +15,8 @@
                         placeholder="Assessment Title" required value="{{ $assessments->name }}">
                 </div>
 
+                <input type="hidden" name="assessment_id" value="{{ $assessments->id }}">
+
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label for="class_id" class="form-label text-secondary">Select Class</label>
@@ -73,34 +75,38 @@
 
                     <div class="col-md-4 mb-3 " style="margin-top: 31px">
                         <label for="total" class="form-label text-secondary">Total Questions</label>
-
-                        <select name="total" id="total" class="form-select">
-                            <option value="{{ $assessments->total }}" selected class="text-primary">
-                                {{ $assessments->total }}</option>
-                            <option value="0">0</option>
-                            @for ($i = 5; $i <= 120; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
+                        <input type="text" name="total" id="total" class="form-control" disabled
+                            value="{{ $assessments->total }}">
+                    </div>
+                    <div class="col-md-4 mb-3 " style="margin-top: 31px">
+                        <label for="total" class="form-label text-secondary">Would you like to publish it?</label>
+                        <select name="is_published" id="is_published" class="form-select">
+                            <option value="{{ $assessments->is_published }}" selected class="text-primary">
+                                {{ $assessments->is_published ? 'Yes' : 'No' }}</option>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
                         </select>
                     </div>
                 </div>
 
-                @foreach ($assessments->question as $questions)
+                @foreach ($assessments->question as $index => $questions)
                     <div class="card mx-auto my-3">
-
                         <div class="card-header bg-light text-light">
-                            <input type="text" name="edit_question[]" id="question_{{ $questions->id }}" class="form-control"
+                            <input type="hidden" name="question_id[]" value="{{ $questions->id }}">
+                            <input type="text" name="question[]" id="question_{{ $index }}" class="form-control"
                                 placeholder="Question here" value="{{ $questions->q_name }}">
                         </div>
 
                         <div class="card-body">
-                            @php
-                                $options = range('A', 'Z');
-                            @endphp
-                            @foreach ($questions->choices as $index => $choices)
+                            @php $options = range('A', 'Z'); @endphp
+
+                            @foreach ($questions->choices as $c_index => $choices)
+                                <input type="hidden" name="choices_id_{{ $index }}[]" value="{{ $choices->id }}">
                                 <div class="input-group mb-3">
-                                    <button class="btn btn-secondary" disabled><input type="radio" name="" id=""></button>
-                                    <input type="text" name="choices[]"
+                                    <button class="btn btn-secondary" disabled>
+                                        <input type="radio" name="" id="">
+                                    </button>
+                                    <input type="text" name="choices_{{ $index }}[]"
                                         id="choices_{{ $choices->id }}" class="form-control"
                                         value="{{ $choices->choices }}">
                                 </div>
@@ -108,23 +114,28 @@
 
                             @foreach ($questions->choices as $choices)
                                 @foreach ($choices->answer_keys as $answers)
+                                    <input type="hidden" name="correct_id[]" value="{{ $answers->id }}">
                                     <div class="card-footer d-flex align-items-center justify-content-between">
                                         <div class="input-group w-75 d-flex align-items-center">
-                                            <label for="correct_${index}"
+                                            <label for="correct_{{ $index }}"
                                                 class="form-label text-secondary me-3 mt-2">Correct</label>
-                                            <input type="text" name="correct[]"
-                                                id="correct_{{ $answers->id }}" class="form-control" placeholder="e.g. A"
-                                                value="{{ $answers->answer ?? 'no answer' }}">
+                                            <input type="text" name="correct_{{ $index }}"
+                                                id="correct_{{ $answers->id }}" class="form-control"
+                                                placeholder="e.g. A" value="{{ $answers->answer ?? 'no answer' }}">
                                         </div>
-                                        <i class="fa-solid fa-trash btn btn-outline-danger" title="Remove question" onclick = "removeQuestions({{ $questions->id }}, {{ $assessments->id }})"></i>
+                                        <i class="fa-solid fa-trash btn btn-outline-danger" title="Remove question"
+                                            onclick="removeQuestions({{ $questions->id }}, {{ $assessments->id }})"></i>
                                     </div>
                                 @endforeach
                             @endforeach
                         </div>
                     </div>
                 @endforeach
+
+
+
                 <div class="mb-3 mt-5 d-flex align-items-center justify-content-end gap-1">
-                    <input type="submit" value="Create" class="btn btn-primary">
+                    <input type="submit" value="Update Questions" class="btn btn-primary">
                     <a href="{{ route('assessment.index') }}" class="btn btn-outline-danger"><i
                             class="fa-solid fa-arrow-left-long"></i> Back</a>
                 </div>

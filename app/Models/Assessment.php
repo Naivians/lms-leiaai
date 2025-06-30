@@ -20,6 +20,7 @@ class Assessment extends Model
     ];
 
 
+
     public function question()
     {
         return $this->hasMany(Question::class);

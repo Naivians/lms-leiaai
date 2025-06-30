@@ -10,19 +10,6 @@
     --white-color: #fff;
 }
 
-* {
-    cursor: none !important;
-}
-
-.airplane-cursor {
-    position: fixed;
-    pointer-events: none;
-    font-size: 24px;
-    color: blue;
-    z-index: 9999;
-    transform: rotate(-90deg);
-}
-
 .white-bg {
     background-color: var(--white-color);
 }

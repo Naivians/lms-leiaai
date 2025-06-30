@@ -65,12 +65,37 @@ class AssessmentController extends Controller
 
     public function show($assessment_id)
     {
-        $assessment = $this->assessment_model->with([
-            'question.choices.answer_keys'
-        ])->findOrFail($assessment_id);
 
-        return view('pages.classes.assessments.show', compact('assessment'));
+        $encryptedClassId = $assessment_id;
+
+        try {
+            $assessment_id = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors([
+                'error' => 'Invalid class ID',
+            ]);
+        }
+        $assessment = $this->assessment_model->find($assessment_id);
+
+        return view('pages.classes.assessments.assessment_intro', compact('assessment'));
     }
+    public function takeAssessment($assessment_id)
+    {
+
+        $encryptedClassId = $assessment_id;
+
+        try {
+            $assessment_id = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors([
+                'error' => 'Invalid class ID',
+            ]);
+        }
+        $assessment = $this->assessment_model->find($assessment_id);
+
+        return view('pages.classes.assessments.take_assessment', compact('assessment'));
+    }
+
 
 
     public function create($class_id)
@@ -124,21 +149,27 @@ class AssessmentController extends Controller
             ]);
         }
 
-        foreach ($questions as $question) {
+        foreach ($questions as $index => $question) {
+
             if ($question == '') {
                 return response()->json([
                     'success' => false,
                     'message' => "An error occurred because one or more required question fields are empty."
                 ]);
             }
-        }
 
-        foreach ($questions as $index => $question) {
             $correct_answer = $request->input('correct_' . $index);
             if ($correct_answer == '') {
                 return response()->json([
                     'success' => false,
                     'message' => "Correct Answer field is required"
+                ]);
+            }
+
+            if (!in_array($correct_answer, $request->input('choices_' . $index))) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Answer key on question #" . ($index + 1) . " do not match with any choices"
                 ]);
             }
         }
@@ -182,7 +213,6 @@ class AssessmentController extends Controller
                     'choices' => $choice_text,
                     'question_id' => $question->id,
                 ]);
-
                 if ($choice_text == $correct_answer) {
                     $this->answer_key_model->create([
                         'choice_id' => $choice->id,
@@ -226,10 +256,109 @@ class AssessmentController extends Controller
 
     public function update(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'assessment_id' => 'required|integer|exists:assessments,id',
+            'assessment_date' => 'required|string',
+            'name' => 'required|string',
+            'type' => 'required|string',
+            'hrs' => 'required|string',
+            'minutes' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()
+            ]);
+        }
+
+        if ($request->hrs == 0 && $request->minutes == 0) {
+            return response()->json([
+                'success' => false,
+                'message' => "Time duration field is required"
+            ]);
+        }
+
+        $assessment_time = '';
+        if ($request->hrs > 0) {
+            $assessment_time .= $request->hrs . ' ' . ($request->hrs > 1 ? 'hrs' : 'hr');
+        }
+        if ($request->minutes > 0) {
+            $assessment_time .= ($assessment_time ? ' and ' : '') . $request->minutes . ' ' . ($request->minutes > 1 ? 'mins' : 'min');
+        }
+
+        $assessment = $this->assessment_model->find($request->assessment_id);
+        if (!$assessment) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Assessment ID does not exist.'
+            ]);
+        }
+
+        $assessment->update([
+            'name' => $request->name,
+            'assessment_time' => $assessment_time,
+            'assessment_date' => $request->assessment_date,
+            'total' => $assessment->total,
+            'is_publish' => $request->is_publish,
+        ]);
+
+        foreach ($request->question as $q_index => $questionText) {
+            $questionId = $request->question_id[$q_index] ?? null;
+            $correctId = $request->correct_id[$q_index] ?? null;
+            $correctInput = $request->input("correct_{$q_index}");
+            $choicesInput = $request->input("choices_{$q_index}") ?? [];
+            $choicesIdList = $request->input("choices_id_{$q_index}") ?? [];
+
+            if (empty($questionText)) {
+                return response()->json(['success' => false, 'message' => "Question #" . ($q_index + 1) . " is required."]);
+            }
+
+            if (empty($correctInput)) {
+                return response()->json(['success' => false, 'message' => "Correct answer for Question #" . ($q_index + 1) . " is required."]);
+            }
+
+            if (empty($choicesInput) || !is_array($choicesInput)) {
+                return response()->json(['success' => false, 'message' => "Choices for Question #" . ($q_index + 1) . " are required."]);
+            }
+
+            if (!in_array($correctInput, $choicesInput)) {
+                return response()->json(['success' => false, 'message' => "Correct answer for Question #" . ($q_index + 1) . " must match one of the choices."]);
+            }
+
+            $question = $this->question_model->find($questionId);
+            $answerKey = $this->answer_key_model->find($correctId);
+
+            if (!$question || !$answerKey) {
+                return response()->json(['success' => false, 'message' => "Question or answer key not found for Question #" . ($q_index + 1)]);
+            }
+
+            $question->update([
+                'q_name' => $questionText,
+                'type' => $request->type,
+            ]);
+
+            foreach ($choicesInput as $c_index => $choiceText) {
+                $choiceId = $choicesIdList[$c_index] ?? null;
+                if (!$choiceId) continue;
+
+                $choice = $this->choice_model->find($choiceId);
+                if ($choice) {
+                    $choice->update(['choices' => $choiceText]);
+                }
+            }
+
+            $answerKey->update(['answer' => $correctInput]);
+        }
+
         return response()->json([
-            'message' => $request->all()
+            'success' => true,
+            'message' => "Successfully updated assessment."
         ]);
     }
+
+
+
 
     public function destroyQuestion(Request $request)
     {

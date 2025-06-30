@@ -18,14 +18,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
     <script src="https://unpkg.com/libphonenumber-js@1.10.25/bundle/libphonenumber-js.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body style="background-color: #F4F5F7">
-
-    <div class="airplane-cursor">
-        <i class="fas fa-plane"></i>
-    </div>
     {{-- modals --}}
     @include('partials.modal')
     @include('partials.messages')
@@ -112,16 +107,64 @@
     <script src="{{ asset('assets/js/app.js') }}"></script>
     <script src="{{ asset('assets/js/sweetalert.js') }}"></script>
     <script src="https://unpkg.com/libphonenumber-js@1.10.22/bundle/libphonenumber-max.js"></script>
-    <script src="https://kit.fontawesome.com/your-kit-id.js" crossorigin="anonymous"></script>
 
     @yield('js_imports')
     @yield('scripts')
 
     <script>
-        const cursor = document.querySelector('.airplane-cursor');
-        document.addEventListener('mousemove', e => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+        $("#editAssessmentForms").on("submit", function(e) {
+            e.preventDefault();
+            const form = new FormData(this);
+
+            // form.forEach((value, key) => {
+            //     console.log(`${key} = ${value}`);
+            // });
+
+            Swal.fire({
+                title: "Ooopsss?",
+                text: "Are you sure you want to update this assessment?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Confirm",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "/assessments/update",
+                        type: "POST",
+                        data: form,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                                "content"
+                            ),
+                        },
+                        beforeSend: function() {
+                            pre_loader();
+                        },
+                        success: function(response) {
+                            if (!response.success) {
+                                error_message(response.message);
+                                return;
+                            }
+                            success_message(response.message);
+                            setTimeout(() => {
+                                localStorage.setItem("total_question", 0);
+                                localStorage.removeItem("assessment_data");
+                                $("#questions_container").empty();
+                                window.location.reload()
+                            }, 1500);
+
+                            // console.log(response);
+                        },
+                        error: function(error) {
+                            alert(`error: ${error}`);
+                        },
+                    });
+                }
+            });
         });
 
         function deleteAssessments(assessment_id) {

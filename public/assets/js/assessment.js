@@ -37,6 +37,9 @@ $(document).ready(function () {
 
         const form = new FormData(this);
         const data = JSON.parse(localStorage.getItem("assessment_data")) || [];
+
+
+
         Swal.fire({
             title: "Ooopsss?",
             text: "Are you sure you want to submit this form?",
@@ -68,13 +71,13 @@ $(document).ready(function () {
                         }
                         success_message(response.message);
                         setTimeout(() => {
-                            $(this).val("");
+                            // $(this).val("");
                             localStorage.setItem("total_question", 0);
                             localStorage.removeItem("assessment_data");
                             $("#questions_container").empty();
-                            $("#total").val("");
+                            // $("#total").val("");
+                            window.location.reload()
                         }, 1500);
-
                     },
                     error: function (error) {
                         alert(`error: ${error}`);
@@ -84,6 +87,7 @@ $(document).ready(function () {
         });
     });
 });
+
 
 
 
