@@ -4,7 +4,6 @@
 
 @extends('layouts.assessment')
 @section('content')
-
     @if ($assessments != null)
         <div class="quiz_outer_container">
             <div class="quiz-container mx-auto">
@@ -32,7 +31,7 @@
 
                     @if ($questions->hasMorePages())
                         <a href="{{ $questions->nextPageUrl() }}">
-                            <button class="next-btn">Next Que</button>
+                            <button class="next-btn" id="next">Next Que</button>
                         </a>
                     @else
                         <button class="next-btn" id="finish">Finish</button>
@@ -41,13 +40,48 @@
             </div>
         </div>
     @endif
+
+    <div class="modal fade show" id="results" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Assessment Results</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="result_icon text-center">
+                        <i class="fa-solid fa-circle-check" style="font-size: 100px" id='result_icon'></i>
+                        <p class="text-success mt-3" id="result_description">Nice job, you passed</p>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-center gap-2 my-5">
+                        <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column text-success rounded"
+                            style="width: 200px; height: 200px;">
+                            <p style="font-size: 40px" class="m-0">100%</p>
+                            <p class="text-success">Passed</p>
+                        </div>
+                        <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
+                            style="width: 200px; height: 200px;">
+                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span id="total">10</span></p>
+                            <p class="text-success">Passed</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Review Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
     <script>
         $(document).ready(function() {
             const options = $('#options');
-
             options.on('click', '.option', function() {
                 options.find('.option').removeClass('correct');
                 $(this).addClass('correct');
@@ -70,15 +104,46 @@
 
                 localStorage.setItem('answers', JSON.stringify(answers));
                 getAnswers();
+
+                $('#next').click()
             });
         });
+
+
 
         function getAnswers() {
             const stored = localStorage.getItem('answers');
             if (!stored) return;
-
             const answers = JSON.parse(stored);
-            console.log('All answers:', answers);
+            return answers
+        }
+
+        function launchConfetti(duration = 5000) {
+            const end = Date.now() + duration;
+
+            (function frame() {
+                // Random confetti burst
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: {
+                        x: 0
+                    }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: {
+                        x: 1
+                    }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            })();
         }
 
         var total = $('#total').val();
@@ -87,19 +152,45 @@
 
         finishBtn.on('click', () => {
             localStorage.removeItem('answers')
-            window.location.href = '/assessments'
+            finishBtn.prop('disabled', true)
+            finishBtn.text('Calculating.....')
+            finishBtn.addClass('btn btn-secondary')
+            showResults()
+            launchConfetti()
+            confetti({
+                particleCount: 200,
+                spread: 70,
+                origin: {
+                    y: 0.6
+                }
+            });
+
+            setTimeout(() => {
+                window.location.href = '/assessments'
+            }, 5000)
 
         })
 
-        let time = 5;
+        let time = localStorage.getItem('timer');
         const timeDisplay = document.getElementById('time');
         const timer = setInterval(() => {
             time--;
             timeDisplay.textContent = time.toString().padStart(2, '0');
             if (time <= 0) {
                 clearInterval(timer);
-                document.querySelector('.next-btn').click();
+                finishBtn.prop('disabled', true)
+                finishBtn.addClass('btn btn-secondary')
+                finishBtn.text('Calculating.....')
+                showResults()
+                localStorage.setItem('timer', 0)
             }
+            localStorage.setItem('timer', time)
         }, 1000);
+
+        function showResults() {
+            $('#results').modal({
+                backdrop: false
+            }).modal('show');
+        }
     </script>
 @endsection

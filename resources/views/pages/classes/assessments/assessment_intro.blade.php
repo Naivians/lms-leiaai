@@ -29,6 +29,8 @@
                 <a href="{{ route('assessment.index') }}" class="btn btn-warning fs-4 mb-4">Back</a>
                 <button class="btn btn-primary fs-4 mb-4" id="playSound"><i class="fa-solid fa-volume-high"></i></button>
                 <button class="btn btn-primary fs-4 mb-4" id="pauseSound"><i class="fa-solid fa-volume-xmark"></i></button>
+                <input type="text" name="" id="timer" style="height: 50px;" class="form-control"
+                    placeholder="adjust timer (default 30s)">
             </div>
         </div>
     </div>
@@ -36,6 +38,15 @@
 
 @section('script')
     <script>
+        $(document).ready(() => {
+
+            $('#timer').on('input', function() {
+                let val = $(this).val();
+                timer = val !== '' ? parseInt(val) : 30;
+                localStorage.setItem('timer', timer)
+            });
+        })
+
         var source = "{{ asset('assets/audio/plane_sound.mp3') }}";
         var audio = new Audio(source);
         audio.loop = true;
