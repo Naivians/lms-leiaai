@@ -91,12 +91,11 @@ class AssessmentController extends Controller
                 'error' => 'Invalid class ID',
             ]);
         }
-        $assessment = $this->assessment_model->find($assessment_id);
-
-        return view('pages.classes.assessments.take_assessment', compact('assessment'));
+        $questions = $this->question_model::where('assessment_id', $assessment_id)->with('choices.answer_key')->paginate(1);
+        $assessments = $this->assessment_model->find($assessment_id);
+        $timeArray = $assessments->assessment_time_array;
+        return view('pages.classes.assessments.take_assessment', compact(['questions', 'assessments', 'timeArray']));
     }
-
-
 
     public function create($class_id)
     {

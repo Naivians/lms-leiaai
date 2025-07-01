@@ -6,15 +6,26 @@
 @section('content')
     <div class= "intro_main_container">
         <div class="intro_container">
-            <h1 class="text-center mb-5">Balance and Performance</h1>
-            <ul class="mb-5" class="intro_content">
+            <h1 class="text-center mb-5">{{ $assessment->name }}</h1>
+            <ul class="mb-2" class="intro_content">
                 <li class="fs-4">Total Item: <span><strong>{{ $assessment->total }}</strong></span></li>
                 <li class="fs-4">Type: <span><strong>{{ ucfirst($assessment->type) }}</strong></span></li>
                 <li class="fs-4">Duration: <span><strong>{{ $assessment->assessment_time }}</strong></span></li>
                 <li class="fs-4">Date: <span><strong>{{ $assessment->assessment_date }}</strong></span></li>
             </ul>
-            <div class="text-center d-flex gap-2 mx-4">
-                <a href="{{ route('assessment.take', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}" class="btn btn-primary fs-4 mb-4">Start</a>
+            <div class="alert alert-warning my-4">
+                <strong>Important Instructions:</strong>
+                <ul class="mb-0 mt-2">
+                    <li>Once you begin the assessment, you will not be able to return to previous questions.</li>
+                    <li>Each question is timed individually. You will have <strong>30 seconds</strong> to answer each item.
+                    </li>
+                    <li>If no response is selected within the allotted time, the system will automatically proceed to the
+                        next question.</li>
+                </ul>
+            </div>
+            <div class="text-center d-flex gap-2">
+                <a href="{{ route('assessment.take', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}"
+                    class="btn btn-primary fs-4 mb-4">Start</a>
                 <a href="{{ route('assessment.index') }}" class="btn btn-warning fs-4 mb-4">Back</a>
                 <button class="btn btn-primary fs-4 mb-4" id="playSound"><i class="fa-solid fa-volume-high"></i></button>
                 <button class="btn btn-primary fs-4 mb-4" id="pauseSound"><i class="fa-solid fa-volume-xmark"></i></button>

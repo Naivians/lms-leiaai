@@ -27,12 +27,10 @@
 </head>
 
 <body>
-
     <img src="{{ asset('assets/img/bg-cloud1.png') }}" alt="" id="bg-cloud1">
     <img src="{{ asset('assets/img/bg-cloud1.png') }}" alt="" id="bg-cloud2">
     <img src="{{ asset('assets/img/bg-cloud1.png') }}" alt="" id="bg-cloud3">
     <img src="{{ asset('assets/img/plane 1.png') }}" alt="" id="plane_1">
-    <!-- Animated Clouds and Airplane -->
     <div class="airplane"></div>
 
     <main>

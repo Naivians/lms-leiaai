@@ -68,7 +68,7 @@ body {
 }
 
 main {
-    margin: 4rem auto;
+    /* margin: 4rem auto; */
     padding: 2rem;
     border-radius: 16px;
 }
@@ -100,7 +100,7 @@ main {
     width: 400px;
     height: auto;
     z-index: -2;
-    bottom: -400px;
+    bottom: -20px;
     transform: rotate(16deg);
     animation: flyPlane1 30s linear infinite;
 }
@@ -118,11 +118,6 @@ main {
     height: 100%;
 }
 
-.intro_container ul {
-    list-style: none;
-}
-
-/* quiz */
 .quiz-container {
     background: white;
     padding: 20px 25px;
