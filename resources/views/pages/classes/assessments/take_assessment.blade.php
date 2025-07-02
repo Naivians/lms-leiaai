@@ -51,7 +51,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="result_icon text-center">
-                        <i class="fa-solid fa-circle-check" style="font-size: 100px" id='result_icon'></i>
+                        <i class="fa-solid fa-circle-check text-success" style="font-size: 100px" id='result_icon'></i>
                         <p class="text-success mt-3" id="result_description">Nice job, you passed</p>
                     </div>
 
@@ -63,14 +63,15 @@
                         </div>
                         <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
                             style="width: 200px; height: 200px;">
-                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span id="total">10</span></p>
+                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span
+                                    id="total">10</span></p>
                             <p class="text-success">Passed</p>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="back">End</button>
                     <button type="button" class="btn btn-primary">Review Quiz</button>
                 </div>
             </div>
@@ -80,6 +81,10 @@
 
 @section('script')
     <script>
+        // window.addEventListener('beforeunload', function(e) {
+        //     e.preventDefault();
+        //     e.returnValue = '';
+        // });
         $(document).ready(function() {
             const options = $('#options');
             options.on('click', '.option', function() {
@@ -104,12 +109,35 @@
 
                 localStorage.setItem('answers', JSON.stringify(answers));
                 getAnswers();
-
-                $('#next').click()
             });
+
+            let time = parseInt(localStorage.getItem('timer'));
+            let origTime = parseInt(localStorage.getItem('origTime'));
+            const timeDisplay = document.getElementById('time');
+            timeDisplay.textContent = time.toString().padStart(2, '0');
+
+            const timer = setInterval(() => {
+                time--;
+                timeDisplay.textContent = time.toString().padStart(2, '0');
+
+                localStorage.setItem('timer', time);
+                if (time <= 0) {
+                    clearInterval(timer);
+                    localStorage.setItem('timer', time);
+                    if (pages == total) {
+                        finishBtn.prop('disabled', true)
+                        finishBtn.text('Calculating.....')
+                        finishBtn.addClass('btn btn-secondary')
+                        localStorage.setItem('timer', 0);
+                        launchConfetti()
+                        showResults()
+                        return
+                    }
+                    $('#next').click();
+                    localStorage.setItem('timer', origTime);
+                }
+            }, 1000);
         });
-
-
 
         function getAnswers() {
             const stored = localStorage.getItem('answers');
@@ -117,6 +145,12 @@
             const answers = JSON.parse(stored);
             return answers
         }
+
+        $('#back').on('click', () => {
+            localStorage.setItem('timer', 30);
+            window.location.href = "/assessments"
+        })
+
 
         function launchConfetti(duration = 5000) {
             const end = Date.now() + duration;
@@ -171,26 +205,14 @@
 
         })
 
-        let time = localStorage.getItem('timer');
-        const timeDisplay = document.getElementById('time');
-        const timer = setInterval(() => {
-            time--;
-            timeDisplay.textContent = time.toString().padStart(2, '0');
-            if (time <= 0) {
-                clearInterval(timer);
-                finishBtn.prop('disabled', true)
-                finishBtn.addClass('btn btn-secondary')
-                finishBtn.text('Calculating.....')
-                showResults()
-                localStorage.setItem('timer', 0)
-            }
-            localStorage.setItem('timer', time)
-        }, 1000);
-
         function showResults() {
+
             $('#results').modal({
                 backdrop: false
             }).modal('show');
+
+            $('#results .modal-body').hide().fadeIn(500);
+
         }
     </script>
 @endsection

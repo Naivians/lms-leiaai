@@ -38,12 +38,27 @@
 
 @section('script')
     <script>
+        let seconds = 60;
+        let minutes = 1 * 60;
+        let hours = (minutes / 1) * 60;
+
+        let countdown = setInterval(() => {
+            console.log(`Time left: ${minutes}s`);
+            minutes--;
+
+            if (minutes < 0) {
+                clearInterval(countdown);
+                console.log("Time's up!");
+            }
+        }, 1000); // Runs every 1000ms (1 second)
+
         $(document).ready(() => {
 
             $('#timer').on('input', function() {
                 let val = $(this).val();
                 timer = val !== '' ? parseInt(val) : 30;
                 localStorage.setItem('timer', timer)
+                localStorage.setItem('origTime', timer)
             });
         })
 

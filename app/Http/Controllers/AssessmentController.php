@@ -77,6 +77,7 @@ class AssessmentController extends Controller
         }
         $assessment = $this->assessment_model->find($assessment_id);
         $timeArray = $assessment->assessment_time_array;
+        $duration = ($timeArray['hours'] * 60) + $timeArray['minutes'];
         return view('pages.classes.assessments.assessment_intro', compact('assessment'));
     }
     public function takeAssessment($assessment_id)
