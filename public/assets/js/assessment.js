@@ -89,8 +89,6 @@ $(document).ready(function () {
 });
 
 
-
-
 function generate_question_ui() {
     let total_questions =
         parseInt(localStorage.getItem("total_question"), 10) || 0;

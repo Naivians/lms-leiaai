@@ -427,4 +427,52 @@ class AssessmentController extends Controller
             'message' => "Successfully deleted assessment"
         ]);
     }
+
+    public function saveAssessments(Request $request)
+    {
+        $totalQuestion = $request->total;
+        $score = 0;
+        $percentage = 0;
+        $status = '';
+        $statusText = '';
+
+        foreach ($request->answers as $answer) {
+            $qid = $answer['qid'];
+            $cid = $answer['cid'];
+
+            $answer_key = $this->answer_key_model->where('question_id', $qid)->first();
+
+            if (!$answer_key) {
+                return response()->json([
+                    'success' => false,
+                    "message" => "Invalid question id"
+                ]);
+            }
+
+            if ($answer_key->choice_id == $cid) {
+                $score += 1;
+            }
+        }
+
+        if ($totalQuestion > 0) {
+            $percentage = round(($score / $totalQuestion) * 100, 2);
+
+            if($percentage > 75){
+                $status = "Passed";
+                $statusText = "Nice job, you Passed!";
+            }else{
+                $status = "Failed";
+                $statusText = "Better luck next time";
+            }
+        } else {
+            $percentage = 0;
+        }
+        return response()->json([
+            'success' => true,
+            "score" =>  $score,
+            "percentage" => $percentage,
+            "status" => $status,
+            "statusText" => $statusText,
+        ]);
+    }
 }

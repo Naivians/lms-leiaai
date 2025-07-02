@@ -99,6 +99,7 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/update', [AssessmentController::class, 'update'])->name('update');
         Route::post('/destroyQuestion', [AssessmentController::class, 'destroyQuestion'])->name('destroy.question');
         Route::post('/destroyAssessment/{assessment_id}', [AssessmentController::class, 'destroy'])->name('destroy');
+        Route::post('/save_assessment', [AssessmentController::class, 'saveAssessments'])->name('save.assessments');
     });
 
     // logout

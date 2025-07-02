@@ -12,7 +12,6 @@
                 </div>
 
                 @foreach ($questions as $question)
-
                     <div class="question">{{ $questions->currentPage() }}. {{ $question->q_name }}</div>
                     <div class="options" id="options">
                         @foreach ($question->choices as $choice)
@@ -30,14 +29,14 @@
                     <div>{{ $questions->currentPage() }} of {{ $questions->total() }} Questions</div>
 
                     @if ($questions->hasMorePages())
-                    <div>
-                        {{-- <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
+                        <div>
+                            {{-- <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
                             <button class="next-btn" id="previous">Back</button>
                         </a> --}}
-                        <a href="{{ $questions->nextPageUrl() }}" class="text-decoration-none">
-                            <button class="next-btn" id="next">Next Que</button>
-                        </a>
-                    </div>
+                            <a href="{{ $questions->nextPageUrl() }}" class="text-decoration-none">
+                                <button class="next-btn" id="next">Next Que</button>
+                            </a>
+                        </div>
                     @else
                         <button class="next-btn" id="finish">Finish</button>
                     @endif
@@ -56,27 +55,32 @@
                 </div>
                 <div class="modal-body">
                     <div class="result_icon text-center">
-                        <i class="fa-solid fa-circle-check" style="font-size: 100px" id='result_icon'></i>
-                        <p class="text-success mt-3" id="result_description">Nice job, you passed</p>
+                        <div id='result_icon'>
+                            {{-- <i class="fa-solid fa-circle-check" style="font-size: 100px"></i> --}}
+                            <img src="{{asset(Auth::user()->img)}}" alt="" style="width: 150px; height: auto;">
+                        </div>
+                        <p class="text-success mt-3 " id="result_description">Nice job, you passed</p>
                     </div>
 
                     <div class="d-flex align-items-center justify-content-center gap-2 my-5">
                         <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column text-success rounded"
                             style="width: 200px; height: 200px;">
-                            <p style="font-size: 40px" class="m-0">100%</p>
-                            <p class="text-success">Passed</p>
+                            <p style="font-size: 40px" class="m-0"><span id="percentage">100%</span></p>
+                            <p class="text-success status">Passed</p>
                         </div>
                         <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
                             style="width: 200px; height: 200px;">
-                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span
-                                    id="total">10</span></p>
-                            <p class="text-success">Passed</p>
+                            <p style="font-size: 40px" class="m-0 text-success" id="points"><span id="score">8</span> / <span
+                                    id="totals">10</span></p>
+                            <p class="text-success status">Passed</p>
                         </div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <a href="#" class="text-decoration-none">
+                        <button type="button" class="btn btn-secondary" id="endBtn">End</button>
+                    </a>
                     <button type="button" class="btn btn-primary">Review Quiz</button>
                 </div>
             </div>
@@ -86,11 +90,14 @@
 
 @section('script')
     <script>
+        var total = $('#total').val();
+        var pages = $('#pages').val();
+        var finishBtn = $('#finish');
         $(document).ready(function() {
-            let showResult = 1
-
-            if(localStorage.get('show') == 0){
-
+            let show = localStorage.getItem('show');
+            if (show == 0) {
+                showResults();
+                disableElements();
             }
 
             const options = $('#options');
@@ -115,22 +122,15 @@
                 }
 
                 localStorage.setItem('answers', JSON.stringify(answers));
-                getAnswers();
-
             });
 
-
-            var total = $('#total').val();
-            var pages = $('#pages').val();
-            var finishBtn = $('#finish');
-
             finishBtn.on('click', () => {
-                localStorage.removeItem('answers')
                 finishBtn.prop('disabled', true)
                 finishBtn.text('Calculating.....')
                 finishBtn.addClass('btn btn-secondary')
                 launchConfetti()
                 showResults()
+                localStorage.setItem('show', 0)
                 // setTimeout(() => {
                 //     window.location.href = '/assessments'
                 // }, 5000)
@@ -138,7 +138,11 @@
             })
         });
 
-
+        $('#endBtn').on('click', () => {
+            localStorage.setItem('show', 1)
+            localStorage.removeItem('answers')
+            window.location.href = "/assessments"
+        })
 
         function getAnswers() {
             const stored = localStorage.getItem('answers');
@@ -175,11 +179,59 @@
             })();
         }
 
+        function disableElements() {
+            finishBtn.prop('disabled', true)
+            finishBtn.text('Calculating.....')
+            finishBtn.addClass('btn btn-secondary')
+        }
 
         function showResults() {
-            $('#results').modal({
-                backdrop: false
-            }).modal('show');
+            $.ajax({
+                url: "/assessments/save_assessment",
+                type: "POST",
+                data: {
+                    answers: JSON.parse(localStorage.getItem('answers')),
+                    total: total
+                },
+                headers: {
+                    "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
+                        "content"
+                    ),
+                },
+                // beforeSend: function() {
+                //     pre_loader();
+                // },
+                success: function(response) {
+                    if (!response.success) {
+                        error_message(response.message);
+                        return;
+                    }
+
+                    $('#results').modal({
+                        backdrop: false
+                    }).modal('show');
+
+                    $('#result_description').text(response.statusText)
+                    $('#percentage').text(`${response.percentage}%`)
+                    $('.status').text(response.status)
+                    $('#score').text(response.score)
+                    $('#total').text(response.total)
+
+                    if (response.status == "Failed") {
+                        $('.status').removeClass('text-success')
+                        $('.status').addClass('text-danger')
+                        $('#result_description').removeClass('text-success')
+                        $('#result_description').addClass('text-danger')
+                        $('#percentage').removeClass('text-success')
+                        $('#percentage').addClass('text-danger')
+                        $('#points').removeClass('text-success')
+                        $('#points').addClass('text-danger')
+                    }
+                },
+                error: function(error) {
+                    alert(`error: ${error}`);
+                },
+            });
         }
     </script>
 @endsection
