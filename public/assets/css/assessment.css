@@ -112,6 +112,9 @@ main {
     border-radius: 10px;
     padding: 20px;
     height: auto;
+    position: relative;
+    z-index: 9999;
+    top: 50px;
 }
 
 .intro_container {

@@ -9,11 +9,11 @@
             <div class="quiz-container mx-auto">
                 <div class="quiz-header">
                     <h2>{{ $assessments->name }}</h2>
-                    <div class="timer">Time Left: <span id="time">00</span></div>
                 </div>
 
                 @foreach ($questions as $question)
-                    <div class="question">{{ $loop->iteration }}. {{ $question->q_name }}</div>
+
+                    <div class="question">{{ $questions->currentPage() }}. {{ $question->q_name }}</div>
                     <div class="options" id="options">
                         @foreach ($question->choices as $choice)
                             <div class="option" data-choice-id="{{ $choice->id }}" data-q_id={{ $question->id }}>
@@ -30,9 +30,14 @@
                     <div>{{ $questions->currentPage() }} of {{ $questions->total() }} Questions</div>
 
                     @if ($questions->hasMorePages())
-                        <a href="{{ $questions->nextPageUrl() }}">
+                    <div>
+                        {{-- <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
+                            <button class="next-btn" id="previous">Back</button>
+                        </a> --}}
+                        <a href="{{ $questions->nextPageUrl() }}" class="text-decoration-none">
                             <button class="next-btn" id="next">Next Que</button>
                         </a>
+                    </div>
                     @else
                         <button class="next-btn" id="finish">Finish</button>
                     @endif
@@ -63,7 +68,8 @@
                         </div>
                         <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
                             style="width: 200px; height: 200px;">
-                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span id="total">10</span></p>
+                            <p style="font-size: 40px" class="m-0"><span id="points">8</span> / <span
+                                    id="total">10</span></p>
                             <p class="text-success">Passed</p>
                         </div>
                     </div>
@@ -81,6 +87,12 @@
 @section('script')
     <script>
         $(document).ready(function() {
+            let showResult = 1
+
+            if(localStorage.get('show') == 0){
+
+            }
+
             const options = $('#options');
             options.on('click', '.option', function() {
                 options.find('.option').removeClass('correct');
@@ -105,8 +117,25 @@
                 localStorage.setItem('answers', JSON.stringify(answers));
                 getAnswers();
 
-                $('#next').click()
             });
+
+
+            var total = $('#total').val();
+            var pages = $('#pages').val();
+            var finishBtn = $('#finish');
+
+            finishBtn.on('click', () => {
+                localStorage.removeItem('answers')
+                finishBtn.prop('disabled', true)
+                finishBtn.text('Calculating.....')
+                finishBtn.addClass('btn btn-secondary')
+                launchConfetti()
+                showResults()
+                // setTimeout(() => {
+                //     window.location.href = '/assessments'
+                // }, 5000)
+
+            })
         });
 
 
@@ -146,46 +175,6 @@
             })();
         }
 
-        var total = $('#total').val();
-        var pages = $('#pages').val();
-        var finishBtn = $('#finish');
-
-        finishBtn.on('click', () => {
-            localStorage.removeItem('answers')
-            finishBtn.prop('disabled', true)
-            finishBtn.text('Calculating.....')
-            finishBtn.addClass('btn btn-secondary')
-            showResults()
-            launchConfetti()
-            confetti({
-                particleCount: 200,
-                spread: 70,
-                origin: {
-                    y: 0.6
-                }
-            });
-
-            setTimeout(() => {
-                window.location.href = '/assessments'
-            }, 5000)
-
-        })
-
-        let time = localStorage.getItem('timer');
-        const timeDisplay = document.getElementById('time');
-        const timer = setInterval(() => {
-            time--;
-            timeDisplay.textContent = time.toString().padStart(2, '0');
-            if (time <= 0) {
-                clearInterval(timer);
-                finishBtn.prop('disabled', true)
-                finishBtn.addClass('btn btn-secondary')
-                finishBtn.text('Calculating.....')
-                showResults()
-                localStorage.setItem('timer', 0)
-            }
-            localStorage.setItem('timer', time)
-        }, 1000);
 
         function showResults() {
             $('#results').modal({
