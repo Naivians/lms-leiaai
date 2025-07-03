@@ -376,39 +376,23 @@
                 ]
             });
 
-            // // LessonsTable
-            // $('#classwork_fi_table').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            //     ajax: '{{ route('user.index') }}',
-            //     columns: [
-            //         { data: 'id' },
-            //         { data: 'fname' },
-            //         { data: 'lname' },
-            //         { data: 'ext_name' },
-            //         { data: 'role' },
-            //         { data: 'email' },
-            //         { data: 'action', orderable: false, searchable: false }
-            //     ]
-            // });
-
             // // progress
-            // $('#view_user_progress').DataTable({
-            //     processing: true,
-            //     serverSide: true,
-            //     ajax: '{{ route('user.index') }}',
-            //     dom: 'Blfrtip',
-            //     buttons: ['copy', 'csv', 'print', 'colvis'],
-            //     columns: [
-            //         { data: 'id' },
-            //         { data: 'fname' },
-            //         { data: 'lname' },
-            //         { data: 'ext_name' },
-            //         { data: 'role' },
-            //         { data: 'email' },
-            //         { data: 'action', orderable: false, searchable: false }
-            //     ]
-            // });
+            $('#progress').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('assessment.show.progress') }}',
+                dom: 'Blfrtip',
+                buttons: ['copy', 'csv', 'print', 'colvis'],
+                columns: [
+                    { data: 'user_name' },
+                    { data: 'name' },
+                    { data: 'type' },
+                    { data: 'total' },
+                    { data: 'score' },
+                    { data: 'status' },
+                    { data: 'action', orderable: false, searchable: false }
+                ]
+            });
         });
     </script>
 </body>

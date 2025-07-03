@@ -14,7 +14,7 @@
                 @foreach ($questions as $question)
                     <div class="question">{{ $questions->currentPage() }}. {{ $question->q_name }}</div>
                     <div class="options" id="options">
-                        @foreach ($question->choices as $choice)
+                        <p>{{$choice->answer_key}}</p>
                             <div class="option" data-choice-id="{{ $choice->id }}" data-q_id={{ $question->id }}>
                                 {{ $choice->choices }}
                             </div>
@@ -26,6 +26,8 @@
 
                     <input type="hidden" name="total" id="total" value="{{ $questions->total() }}">
                     <input type="hidden" name="pages" id="pages" value="{{ $questions->currentPage() }}">
+                    <input type="hidden" name="assessment_id" id="assessment_id"
+                        data-assessment-id="{{ $assessments->id }}">
                     <div>{{ $questions->currentPage() }} of {{ $questions->total() }} Questions</div>
 
                     @if ($questions->hasMorePages())
@@ -57,7 +59,7 @@
                     <div class="result_icon text-center">
                         <div id='result_icon'>
                             {{-- <i class="fa-solid fa-circle-check" style="font-size: 100px"></i> --}}
-                            <img src="{{asset(Auth::user()->img)}}" alt="" style="width: 150px; height: auto;">
+                            <img src="{{ asset(Auth::user()->img) }}" alt="" style="width: 150px; height: auto;">
                         </div>
                         <p class="text-success mt-3 " id="result_description">Nice job, you passed</p>
                     </div>
@@ -70,8 +72,8 @@
                         </div>
                         <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
                             style="width: 200px; height: 200px;">
-                            <p style="font-size: 40px" class="m-0 text-success" id="points"><span id="score">8</span> / <span
-                                    id="totals">10</span></p>
+                            <p style="font-size: 40px" class="m-0 text-success" id="points"><span id="score">8</span>
+                                / <span id="totals">10</span></p>
                             <p class="text-success status">Passed</p>
                         </div>
                     </div>
@@ -131,31 +133,21 @@
                 launchConfetti()
                 showResults()
                 localStorage.setItem('show', 0)
-                // setTimeout(() => {
-                //     window.location.href = '/assessments'
-                // }, 5000)
-
             })
         });
 
         $('#endBtn').on('click', () => {
             localStorage.setItem('show', 1)
             localStorage.removeItem('answers')
-            window.location.href = "/assessments"
+            setTimeout(() => {
+                window.location.href = "/assessments"
+            }, 1500);
         })
-
-        function getAnswers() {
-            const stored = localStorage.getItem('answers');
-            if (!stored) return;
-            const answers = JSON.parse(stored);
-            return answers
-        }
 
         function launchConfetti(duration = 5000) {
             const end = Date.now() + duration;
 
             (function frame() {
-                // Random confetti burst
                 confetti({
                     particleCount: 5,
                     angle: 60,
@@ -191,16 +183,13 @@
                 type: "POST",
                 data: {
                     answers: JSON.parse(localStorage.getItem('answers')),
-                    total: total
+                    assessment_id: $('#assessment_id').data('assessment-id'),
                 },
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr(
                         "content"
                     ),
                 },
-                // beforeSend: function() {
-                //     pre_loader();
-                // },
                 success: function(response) {
                     if (!response.success) {
                         error_message(response.message);
@@ -215,7 +204,7 @@
                     $('#percentage').text(`${response.percentage}%`)
                     $('.status').text(response.status)
                     $('#score').text(response.score)
-                    $('#total').text(response.total)
+                    $('#totals').text(total)
 
                     if (response.status == "Failed") {
                         $('.status').removeClass('text-success')
@@ -227,6 +216,11 @@
                         $('#points').removeClass('text-success')
                         $('#points').addClass('text-danger')
                     }
+
+                    // console.log(response);
+
+
+
                 },
                 error: function(error) {
                     alert(`error: ${error}`);

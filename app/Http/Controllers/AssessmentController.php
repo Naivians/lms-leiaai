@@ -21,6 +21,8 @@ use App\Models\Assessment;
 use App\Models\Choice;
 use App\Models\AnswerKey;
 use App\Models\Question;
+use App\Models\AssessmentProgress;
+use App\Models\ProgressDetail;
 
 class AssessmentController extends Controller
 {
@@ -28,15 +30,19 @@ class AssessmentController extends Controller
     private $class_model;
     private $choice_model;
     private $question_model;
+    private $assessment_progress_model;
+    private $assessment_progress_details_model;
     private $answer_key_model;
 
-    public function __construct(Assessment $assessment_model, Classes $class_model, Question $question_model, AnswerKey $answer_key_model, Choice $choice_model)
+    public function __construct(Assessment $assessment_model, Classes $class_model, Question $question_model, AnswerKey $answer_key_model, Choice $choice_model, AssessmentProgress $assessment_progress_model, ProgressDetail $assessment_progress_details_model)
     {
         $this->assessment_model = $assessment_model;
         $this->class_model = $class_model;
         $this->question_model = $question_model;
         $this->answer_key_model = $answer_key_model;
         $this->choice_model = $choice_model;
+        $this->assessment_progress_model = $assessment_progress_model;
+        $this->assessment_progress_details_model = $assessment_progress_details_model;
     }
 
     public function index(Request $request)
@@ -357,9 +363,6 @@ class AssessmentController extends Controller
         ]);
     }
 
-
-
-
     public function destroyQuestion(Request $request)
     {
         $res = $this->question_model->find($request->question_id);
@@ -430,22 +433,62 @@ class AssessmentController extends Controller
 
     public function saveAssessments(Request $request)
     {
-        $totalQuestion = $request->total;
+
+        $assessment = $this->assessment_model->find($request->assessment_id);
+
+        if (!$assessment) {
+            return response()->json([
+                'success' => false,
+                "message" => "Assessment id do not exists"
+            ]);
+        }
+
+        $totalQuestion = 3;
         $score = 0;
         $percentage = 0;
         $status = '';
         $statusText = '';
 
+        $assessment_progress = $this->assessment_progress_model->create([
+            'user_id' => Auth::id(),
+            'assessment_id' => $assessment->id,
+            'name' => $assessment->name,
+            'type' => $assessment->type,
+            'total' => $assessment->total,
+            'score' => 0,
+            'status' => "Not set",
+        ]);
+
+        if (!$assessment_progress) {
+            return response()->json([
+                'success' => false,
+                "message" => "Failed to save assessment record."
+            ]);
+        }
+
         foreach ($request->answers as $answer) {
             $qid = $answer['qid'];
             $cid = $answer['cid'];
+
+            $progress_details = $this->assessment_progress_details_model->create([
+                'progress_id' => $assessment_progress->id,
+                'qid' => $qid,
+                'cid' => $cid,
+            ]);
+
+            if (!$progress_details) {
+                return response()->json([
+                    'success' => false,
+                    "message" => "Failed to save assessment progress details."
+                ]);
+            }
 
             $answer_key = $this->answer_key_model->where('question_id', $qid)->first();
 
             if (!$answer_key) {
                 return response()->json([
                     'success' => false,
-                    "message" => "Invalid question id"
+                    "message" => "Question id do not exists"
                 ]);
             }
 
@@ -457,16 +500,33 @@ class AssessmentController extends Controller
         if ($totalQuestion > 0) {
             $percentage = round(($score / $totalQuestion) * 100, 2);
 
-            if($percentage > 75){
+            if ($percentage > 75) {
                 $status = "Passed";
                 $statusText = "Nice job, you Passed!";
-            }else{
+            } else {
                 $status = "Failed";
                 $statusText = "Better luck next time";
             }
         } else {
             $percentage = 0;
         }
+
+
+        //  $assessment_progress
+        $scores = $this->assessment_progress_model->find($assessment_progress->id);
+
+        $scores = $scores->update([
+            'score' => $score,
+            'status' => $status,
+        ]);
+
+        if (!$scores) {
+            return response()->json([
+                'success' => false,
+                "message" => "Failed to update assessment scores"
+            ]);
+        }
+
         return response()->json([
             'success' => true,
             "score" =>  $score,
@@ -474,5 +534,29 @@ class AssessmentController extends Controller
             "status" => $status,
             "statusText" => $statusText,
         ]);
+    }
+
+
+    public function progress(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = $this->assessment_progress_model->with('user')->orderBy('created_at', 'desc')->get();
+
+            return DataTables::of($data)
+                ->addColumn('user_name', function ($row) {
+                    return optional($row->user)->name ?? 'N/A';
+                })
+                ->addColumn('action', function ($row) {
+                    //
+                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
+                    $editBtn = '<a href= " ' . route('assessment.edit', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="edit"><i class="fa-solid fa-pen-to-square"></i></a>';
+                    $deleteBtn = '<a href= "#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="delete"><i class="fa-solid fa-trash" title="Remove question" onclick = "deleteAssessments(\'' . Crypt::encrypt($row->id) . '\')"></i></a>';
+                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('pages.classes.assessments.progress');
     }
 }

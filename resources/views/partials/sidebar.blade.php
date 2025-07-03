@@ -37,13 +37,13 @@
             <a href="#"
                 class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-book me-2"></i> Contents</a>
-            <a href="{{ route('assessment.index')}}"
+            <a href="{{ route('assessment.index') }}"
                 class="nav-link {{ request()->routeIs('assessment.index') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-bookmark me-2"></i> Assessments</a>
         @endcan
 
-        <a href="#"
-            class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
+        <a href="{{ route('assessment.show.progress') }}"
+            class="nav-link {{ request()->routeIs('assessment.show.progress') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                 class="fa-solid fa-chart-line me-2"></i> Progress</a>
 
         <a href="{{ route('class.archives') }}"
