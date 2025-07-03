@@ -242,7 +242,7 @@
                                         <td>{{ $assessment->assessment_time }}</td>
                                         <td>{{ $assessment->assessment_date }}</td>
                                         <td>
-                                            <a href="#" class="btn btn-outline-primary">Take
+                                            <a href="{{ route('assessment.show', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}" class="btn btn-outline-primary">Take
                                                 {{ ucfirst($assessment->type) }}</a>
                                         </td>
                                     </tr>

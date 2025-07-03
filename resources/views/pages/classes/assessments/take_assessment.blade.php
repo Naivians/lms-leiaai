@@ -14,7 +14,7 @@
                 @foreach ($questions as $question)
                     <div class="question">{{ $questions->currentPage() }}. {{ $question->q_name }}</div>
                     <div class="options" id="options">
-                        <p>{{$choice->answer_key}}</p>
+                        @foreach ($question->choices as $choice)
                             <div class="option" data-choice-id="{{ $choice->id }}" data-q_id={{ $question->id }}>
                                 {{ $choice->choices }}
                             </div>

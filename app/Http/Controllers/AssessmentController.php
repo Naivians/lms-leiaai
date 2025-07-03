@@ -540,7 +540,7 @@ class AssessmentController extends Controller
     public function progress(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->assessment_progress_model->with('user')->orderBy('created_at', 'desc')->get();
+            $data = $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
 
             return DataTables::of($data)
                 ->addColumn('user_name', function ($row) {
