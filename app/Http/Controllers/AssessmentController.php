@@ -315,7 +315,6 @@ class AssessmentController extends Controller
             $correctInput = $request->input("correct_{$q_index}");
             $choicesInput = $request->input("choices_{$q_index}") ?? [];
             $choicesIdList = $request->input("choices_id_{$q_index}") ?? [];
-
             if (empty($questionText)) {
                 return response()->json(['success' => false, 'message' => "Question #" . ($q_index + 1) . " is required."]);
             }
@@ -349,12 +348,18 @@ class AssessmentController extends Controller
                 if (!$choiceId) continue;
 
                 $choice = $this->choice_model->find($choiceId);
+
                 if ($choice) {
                     $choice->update(['choices' => $choiceText]);
                 }
-            }
 
-            $answerKey->update(['answer' => $correctInput]);
+                if ($choiceText == $correctInput) {
+                     $answerKey->update([
+                        'answer' => $correctInput,
+                        'choice_id' => $choiceId
+                    ]);
+                }
+            }
         }
 
         return response()->json([
@@ -536,22 +541,20 @@ class AssessmentController extends Controller
         ]);
     }
 
-
     public function progress(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
 
+            $data = Gate::allows('admin_lvl1') ? $this->assessment_progress_model->with('user')->orderBy('created_at', 'desc')->get() : $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+            // $data = $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addColumn('user_name', function ($row) {
                     return optional($row->user)->name ?? 'N/A';
                 })
                 ->addColumn('action', function ($row) {
                     //
-                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
-                    $editBtn = '<a href= " ' . route('assessment.edit', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="edit"><i class="fa-solid fa-pen-to-square"></i></a>';
-                    $deleteBtn = '<a href= "#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="delete"><i class="fa-solid fa-trash" title="Remove question" onclick = "deleteAssessments(\'' . Crypt::encrypt($row->id) . '\')"></i></a>';
-                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => $row->id]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
+                    return $viewBtn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);

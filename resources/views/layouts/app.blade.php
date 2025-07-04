@@ -115,11 +115,6 @@
         $("#editAssessmentForms").on("submit", function(e) {
             e.preventDefault();
             const form = new FormData(this);
-
-            // form.forEach((value, key) => {
-            //     console.log(`${key} = ${value}`);
-            // });
-
             Swal.fire({
                 title: "Ooopsss?",
                 text: "Are you sure you want to update this assessment?",
@@ -157,7 +152,6 @@
                                 window.location.reload()
                             }, 1500);
 
-                            // console.log(response);
                         },
                         error: function(error) {
                             alert(`error: ${error}`);

@@ -23,8 +23,15 @@
                 <a href="{{ route('assessment.take', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}"
                     class="btn btn-primary fs-4 mb-4">Start</a>
 
-                <a href="{{ Gate::allows('sp_fi_only') ? route('class.index') : route('assessment.index') }}" class="btn btn-warning fs-4 mb-4">Back</a>
+                <a href="{{ Gate::allows('sp_fi_only') ? route('class.index') : route('assessment.index') }}"
+                    class="btn btn-warning fs-4 mb-4">Back</a>
             </div>
         </div>
     </div>
+@endsection
+
+@section('script')
+    <script>
+        localStorage.setItem('show', 0)
+    </script>
 @endsection

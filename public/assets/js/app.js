@@ -16,6 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (triggerEl) {
             new bootstrap.Tab(triggerEl).show();
         }
+    } else {
+        const triggerEl = document.querySelector(
+            `#classTab button#streams`
+        );
+        if (triggerEl) {
+            new bootstrap.Tab(triggerEl).show();
+        }
     }
 
     tabButtons.forEach((button) => {

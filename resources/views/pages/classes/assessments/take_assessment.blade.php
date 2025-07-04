@@ -95,9 +95,11 @@
         var total = $('#total').val();
         var pages = $('#pages').val();
         var finishBtn = $('#finish');
+        let show = parseInt(localStorage.getItem('show'));
+
         $(document).ready(function() {
-            let show = localStorage.getItem('show');
-            if (show == 0) {
+
+            if (parseInt(localStorage.getItem('show')) == 1) {
                 showResults();
                 disableElements();
             }
@@ -122,23 +124,23 @@
                         cid: choice_id
                     });
                 }
-
                 localStorage.setItem('answers', JSON.stringify(answers));
             });
-
-            finishBtn.on('click', () => {
-                finishBtn.prop('disabled', true)
-                finishBtn.text('Calculating.....')
-                finishBtn.addClass('btn btn-secondary')
-                launchConfetti()
-                showResults()
-                localStorage.setItem('show', 0)
-            })
         });
+
+        finishBtn.on('click', () => {
+            finishBtn.prop('disabled', true)
+            finishBtn.text('Calculating.....')
+            finishBtn.addClass('btn btn-secondary')
+            launchConfetti()
+            SaveResults()
+            localStorage.setItem('show', 1)
+        })
 
         $('#endBtn').on('click', () => {
             localStorage.setItem('show', 1)
             localStorage.removeItem('answers')
+            localStorage.removeItem('results')
             setTimeout(() => {
                 window.location.href = "/assessments"
             }, 1500);
@@ -178,6 +180,34 @@
         }
 
         function showResults() {
+            let results = JSON.parse(localStorage.getItem("results"))
+            if (results == null) {
+                alert("No result found in localStorage.");
+                return
+            }
+
+            $('#result_description').text(results.result_description)
+            $('#percentage').text(`${results.percentage}%`)
+            $('.status').text(results.status)
+            $('#score').text(results.score)
+            $('#totals').text(total)
+            if (results.status == "Failed") {
+                $('.status').removeClass('text-success')
+                $('.status').addClass('text-danger')
+                $('#result_description').removeClass('text-success')
+                $('#result_description').addClass('text-danger')
+                $('#percentage').removeClass('text-success')
+                $('#percentage').addClass('text-danger')
+                $('#points').removeClass('text-success')
+                $('#points').addClass('text-danger')
+            }
+
+            $('#results').modal({
+                backdrop: false
+            }).modal('show');
+        }
+
+        function SaveResults() {
             $.ajax({
                 url: "/assessments/save_assessment",
                 type: "POST",
@@ -195,32 +225,15 @@
                         error_message(response.message);
                         return;
                     }
-
-                    $('#results').modal({
-                        backdrop: false
-                    }).modal('show');
-
-                    $('#result_description').text(response.statusText)
-                    $('#percentage').text(`${response.percentage}%`)
-                    $('.status').text(response.status)
-                    $('#score').text(response.score)
-                    $('#totals').text(total)
-
-                    if (response.status == "Failed") {
-                        $('.status').removeClass('text-success')
-                        $('.status').addClass('text-danger')
-                        $('#result_description').removeClass('text-success')
-                        $('#result_description').addClass('text-danger')
-                        $('#percentage').removeClass('text-success')
-                        $('#percentage').addClass('text-danger')
-                        $('#points').removeClass('text-success')
-                        $('#points').addClass('text-danger')
-                    }
-
-                    // console.log(response);
-
-
-
+                    const result = {
+                        result_description: response.statusText,
+                        percentage: response.percentage,
+                        status: response.status,
+                        score: response.score,
+                        totals: response.total,
+                    };
+                    localStorage.setItem("results", JSON.stringify(result));
+                    showResults()
                 },
                 error: function(error) {
                     alert(`error: ${error}`);
