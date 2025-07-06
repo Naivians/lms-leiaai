@@ -16,6 +16,6 @@ class ProgressDetail extends Model
     ];
 
     public function assessmentProgress(){
-        $this->belongsTo(AssessmentProgress::class, 'progress_id');
+        return $this->belongsTo(AssessmentProgress::class, 'progress_id');
     }
 }

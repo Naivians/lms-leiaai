@@ -19,11 +19,15 @@ class AssessmentProgress extends Model
         'status',
     ];
 
-    public function ProgressDetailes(){
+    public function ProgressDetails(){
         return $this->hasMany(ProgressDetail::class, "progress_id");
     }
 
     public function user(){
         return $this->belongsTo(User::class, "user_id");
+    }
+
+    public function assessment(){
+        return $this->belongsTo(Assessment::class, "assessment_id");
     }
 }

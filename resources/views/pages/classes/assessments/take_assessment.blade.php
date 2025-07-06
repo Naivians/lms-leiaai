@@ -141,6 +141,7 @@
             localStorage.setItem('show', 1)
             localStorage.removeItem('answers')
             localStorage.removeItem('results')
+            pre_loader()
             setTimeout(() => {
                 window.location.href = "/assessments"
             }, 1500);

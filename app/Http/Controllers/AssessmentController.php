@@ -553,7 +553,7 @@ class AssessmentController extends Controller
                 })
                 ->addColumn('action', function ($row) {
                     //
-                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => $row->id]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
+                    $viewBtn = '<a href= " ' . route('assessment.view.progress', ['progress_id' => $row->id]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
                     return $viewBtn;
                 })
                 ->rawColumns(['action'])
@@ -561,5 +561,19 @@ class AssessmentController extends Controller
         }
 
         return view('pages.classes.assessments.progress');
+    }
+
+
+    public function viewProgress($progress_id){
+        $view_progress = $this->assessment_progress_model->with(['ProgressDetails','assessment.question.choices.answer_key'])->find($progress_id);
+        $progress_detail = $view_progress->ProgressDetails;
+        $assessment = $view_progress->assessment;
+        $questions = $view_progress->assessment->question;
+        return view('pages.classes.assessments.view_progress', [
+            'progress_detail' => $progress_detail,
+            'assessment_progress' => $view_progress,
+            'assessment' => $assessment,
+            'questions' => $questions,
+        ]);
     }
 }

@@ -103,6 +103,7 @@ Route::middleware(['auth'])->group(function () {
 
         // progress
         Route::get('/progress', [AssessmentController::class, 'progress'])->name('show.progress');
+        Route::get('/progress/{progress_id}', [AssessmentController::class, 'viewProgress'])->name('view.progress');
 
     });
 

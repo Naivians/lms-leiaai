@@ -239,7 +239,7 @@ nav a:hover {
     overflow-y: scroll;
 }
 
-.lessons_stream_container {
+.lessons_stream_container, .view_progress_container {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and old Edge */
 }

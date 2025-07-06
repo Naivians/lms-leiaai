@@ -1,5 +1,5 @@
 @php
-    $title = 'Assessments';
+    $title = 'Assessments ';
 @endphp
 
 @extends('layouts.assessment')
