@@ -66,6 +66,10 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function assessmentProgress(){
+        return $this->hasMany(AssessmentProgress::class, 'user_id')->orderBy("id", "desc");
+    }
+
     public function activeClasses()
     {
         return $this->belongsToMany(Classes::class, 'class_users', 'user_id', 'class_id')

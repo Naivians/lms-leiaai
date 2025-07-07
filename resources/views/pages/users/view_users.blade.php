@@ -7,6 +7,7 @@
 @section('header_title', 'User Information')
 
 @section('content')
+
     <div class="card mb-5">
         <div class="card-body">
             @if ($users)
@@ -78,24 +79,37 @@
                 @else
                     <h5 class="text-muted text-center my-4">This user is not enrolled in any classes yet.</h5>
                 @endif
+
+
                 <div class="card mb-2">
                     <div class="card-header d-flex align-items-center">
                         <i class="fa-solid fa-bookmark fs-1 me-2"></i>
                         <h2 class="m-0">Assessment Progress</h2>
                     </div>
                 </div>
-                <table id="view_user_progress" class="display w-100">
+
+                <table class="table table-striped">
                     <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Suffix</th>
-                            <th>Role</th>
-                            <th>Email</th>
-                            <th>Action</th>
-                        </tr>
+                        <th class="bg-secondary text-light">Assessment Name</th>
+                        <th class="bg-secondary text-light">Type</th>
+                        <th class="bg-secondary text-light">Total</th>
+                        <th class="bg-secondary text-light">Score</th>
+                        <th class="bg-secondary text-light">Status</th>
                     </thead>
+                    <tbody>
+                        @foreach ($assessments as $assessment)
+                            @php
+                                $class = $assessment->status == 'Passed' ? 'text-success' : 'text-danger';
+                            @endphp
+                            <tr>
+                                <td>{{ $assessment->name }}</td>
+                                <td>{{ $assessment->type }}</td>
+                                <td>{{ $assessment->total }}</td>
+                                <td>{{ $assessment->score }}</td>
+                                <td><span class="badge {{ $class }}">{{ $assessment->status }}</span></td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             @else
                 <h2>No Data Found!</h2>

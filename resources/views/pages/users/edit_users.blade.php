@@ -3,7 +3,7 @@
 @endphp
 @extends('layouts.app')
 
-@section('header_title', (isset($users)) ? 'Update Users' :'Register Users')
+@section('header_title', isset($users) ? 'Update Users' : 'Register Users')
 @section('content')
     <div class="m-0 alert alert-warning d-none" id="errors">
         <ul class="px-3 m-0" id="errorList"></ul>
@@ -79,13 +79,7 @@
     @else
         @if (Auth::user()->role == 0 || Auth::user()->role == 1 || Auth::user()->role == 2)
             <div class="alert alert-warning">
-                <p>Ask Registrar if you want to change the following:</p>
-                <ol>
-                    <li>Gender</li>
-                    <li>ID number</li>
-                    <li>Phone Number</li>
-                    <li>Email Address</li>
-                </ol>
+                <p class="m-0">Ask Registrar if you want to change your information</p>
             </div>
         @endif
 
@@ -94,7 +88,9 @@
             <div class="d-flex align-items-start gap-1">
                 <div class="card view_img_container p-3">
                     <img src="{{ asset($users->img) }}">
-                    <input type="file" name="img" id="img" class="form-control mt-3">
+                    @if (Gate::allows('admin_lvl1'))
+                        <input type="file" name="img" id="img" class="form-control mt-3">
+                    @endif
                 </div>
                 <div class="view_content border border-1 w-100 p-2">
                     <div class="col-md-12">
@@ -102,35 +98,34 @@
                                 but
                                 needed)</span></label>
                         <input type="text" class="form-control" id="id_number" name="id_number"
-                            value="{{ $users->id_number }}"
-                            {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
+                            value="{{ $users->id_number }}" {{ Gate::allows('admin_lvl1') ? '' : 'disabled' }}>
                     </div>
                     <div class="row">
                         <div class="mb-3 col-md-4">
                             <label for="name" class="form-label text-secondary">Name</label>
                             <input type="text" name="name" id="name" class="form-control enable_input"
-                                placeholder="John" value="{{ $users->name }}">
+                                placeholder="John" value="{{ $users->name }}"
+                                {{ Gate::allows('admin_lvl1') ? '' : 'disabled' }}>
                         </div>
 
                         <div class="mb-3 col-md-4">
                             <label for="contact" class="form-label text-secondary">Phone Number</label>
                             <input type="text" name="contact" id="contact" class="form-control enable_input"
-                                 value="{{ $users->contact }}"
-                                {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
+                                value="{{ $users->contact }}" {{ Gate::allows('admin_lvl1') ? '' : 'disabled' }}>
                         </div>
 
                         <div class="mb-3 col-md-4">
                             <label for="email" class="form-label text-secondary">Email Address</label>
                             <input type="text" name="email" id="email" class="form-control enable_input"
                                 placeholder="manasesjohn@gmail.com" value="{{ $users->email }}"
-                                {{ Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5 ? '' : 'disabled' }}>
+                                {{ Gate::allows('admin_lvl1') ? '' : 'disabled' }}>
                         </div>
 
-                        @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
+                        @if (Gate::allows('admin_lvl1'))
                             <div class="col-md-4">
                                 <label for="gender" class="form-label">Select Gender</label>
                                 <select class="form-select" id="gender" name="gender" required>
-                                    <option selected value="{{ $users->gender ?? '' }}">
+                                    <option selected value="{{ $users->gender ?? '' }}" class="text-primary">
                                         {{ $gender ?? 'Choose...' }}
                                     </option>
                                     <option value="0">Male</option>
@@ -139,19 +134,19 @@
                                 </select>
                             </div>
 
-                            {{ $users->role }}
-
                             <div class="col-md-4">
                                 <label for="validationCustom04" class="form-label">Select Role</label>
                                 <select class="form-select" id="validationCustom04" name="role">
-                                    {{-- <option selected value="{{ $users->role }}">{{ $roles }}
-                                    </option> --}}
+                                    <option value="{{ $users->role }}" class="text-primary">{{ $roles }}
+                                    </option>
                                     <option value="0">Student</option>
                                     <option value="1">Flight Instructor</option>
                                     <option value="2">CGI</option>
                                     <option value="3">Registrar</option>
                                     <option value="4">Admin</option>
-                                    <option value="5">Super Admin</option>
+                                    @if (Gate::allows('admin_lvl3'))
+                                        <option value="5">Super Admin</option>
+                                    @endif
                                 </select>
                             </div>
                         @else
@@ -168,12 +163,11 @@
                             </div>
                         @endif
 
-
-
                     </div>
                     <div class="col-md-12 mt-3">
-                        <button class="btn btn-primary" type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
-                        @if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5)
+                        @if (Gate::allows('admin_lvl1'))
+                            <button class="btn btn-primary"
+                                type="submit">{{ $users ? 'Update Info' : 'Register' }}</button>
                             <a href="{{ route('user.index') }}" class="btn btn-outline-danger">Back</a>
                         @else
                             <a href="{{ route('user.dashboard') }}" class="btn btn-outline-danger">Back</a>

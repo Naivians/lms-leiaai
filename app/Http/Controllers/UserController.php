@@ -118,7 +118,7 @@ class UserController extends Controller
     public function ViewUsers($userId)
     {
         $user = $this->user->find($userId);
-        // $classIds = $this->enrollment->where('user_id', $userId)->pluck('class_id')->toArray();
+        $assessments = $user->assessmentProgress;
         $class = $user->activeClasses;
 
         $roles = [
@@ -135,7 +135,7 @@ class UserController extends Controller
             2 => 'Rather not say',
         ];
 
-        return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender], 'classes' => $class]);
+        return view('pages.users.view_users', ['users' => $user, 'roles' => $roles[$user->role], 'gender' => $gender[$user->gender], 'classes' => $class, 'assessments' => $assessments]);
     }
 
     public function Store(Request $request)
@@ -222,11 +222,6 @@ class UserController extends Controller
     public function UpdateUser(Request $request)
     {
 
-        // return response()->json([
-        //     'success' => true,
-        //     'message' => $request->all(),
-        // ]);
-
         $user = User::find($request->id);
         $new_id_number = $request->id_number;
         $validator = Validator::make($request->all(), [
@@ -234,7 +229,7 @@ class UserController extends Controller
             'name' => 'string|max:255',
             'contact' => ['string', 'regex:/^(?:\+?\d{10,15}|0\d{10})$/'],
             'email' => 'string|nullable',
-            'role' => 'in:0,1,2,3,4',
+            'role' => 'in:0,1,2,3,4,5',
             'gender' => 'in:0,1,2',
             'img' => 'image|mimes:jpeg,jpg,png|max:1024',
         ]);

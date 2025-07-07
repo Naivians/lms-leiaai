@@ -870,16 +870,21 @@ $("#updateForm").on("submit", function (e) {
         processData: false,
         data: form,
         success: (response) => {
-            if (!response.success) {
-                error_message("Failed to register user");
-                return;
-            }
+            // if (!response.success) {
+            //     error_message("Failed to register user");
+            //     return;
+            // }
 
-            success_message(response.message);
-            $("#errors").hide();
-            setInterval(() => {
-                window.location.reload();
-            }, 1500);
+            // success_message(response.message);
+            // $("#errors").hide();
+            // setInterval(() => {
+            //     window.location.reload();
+            // }, 1500);
+
+            console.log(response);
+
+
+
         },
         error: (xhr, status, error) => {
             try {
