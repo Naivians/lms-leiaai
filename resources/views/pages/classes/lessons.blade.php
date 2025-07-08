@@ -1,44 +1,50 @@
 @php
     $title = 'Lessons';
+    $headerTitle = Gate::allows('admin_lvl1') ? 'Create Lesson' : $lessons->title ?? '';
 @endphp
 
 @extends('layouts.app')
-@section('header_title', 'Create Lesson')
+
+
+@section('header_title', $headerTitle)
 @section('content')
-
-
     @if ($lessons != null)
-
-
         <form id="edit_lessons_form">
+            @if (Gate::allows('admin_lvl1'))
+                <div class="mb-3">
+                    <label for="title" class="form-label text-secondary">Lesson Title</label>
+                    <input type="text" name="title" id="title" class="form-control border border-1 w-25" required
+                        value="{{ $lessons->title ?? null }}">
+                </div>
+            @endif
 
-            <div class="mb-3">
-                <label for="title" class="form-label text-secondary">Lesson Title</label>
-                <input type="text" name="title" id="title" class="form-control border border-1 w-25" required
-                    value="{{ $lessons->title ?? null }}">
-            </div>
             <input type="hidden" name="lessons_content" id="lessons_content">
             <input type="hidden" name="class_id" value="{{ $class_id ?? null }}">
             <input type="hidden" name="lesson_id" value="{{ $lessons->id ?? null }}">
 
-            <div id="toolbar" class="w-100">
-                <button class="ql-bold" data-bs-toggle="tooltip" title="bold"></button>
-                <button class="ql-italic" data-bs-toggle="tooltip" title="italic"></button>
-                <button class="ql-underline" data-bs-toggle="tooltip" title="underline"></button>
-                <button class="ql-list" value="bullet" data-bs-toggle="tooltip" title="list"></button>
-                <button class="ql-clean" data-bs-toggle="tooltip" title="clear format"></button>
-            </div>
-            <div id="editor" style="height: 400px; width: 100%;" class="mb-2">
-                {!! $lessons->description !!}
-            </div>
+            @if (Gate::allows('admin_lvl1'))
+                <div id="toolbar" class="w-100">
+                    <button class="ql-bold" data-bs-toggle="tooltip" title="bold"></button>
+                    <button class="ql-italic" data-bs-toggle="tooltip" title="italic"></button>
+                    <button class="ql-underline" data-bs-toggle="tooltip" title="underline"></button>
+                    <button class="ql-list" value="bullet" data-bs-toggle="tooltip" title="list"></button>
+                    <button class="ql-clean" data-bs-toggle="tooltip" title="clear format"></button>
+                </div>
+                <div id="editor" style="height: 400px; width: 100%;" class="mb-2">
+                </div>
 
-            <div class="mt-3">
-                <label for="attachment" class="form-label text-secondary">Attachments (<span class="fst-italic">pdf,
-                        video,
-                        image</span>)</label>
-                <input type="file" name="attachment" id="attachment" class="form-control"
-                    accept=".jpeg,.jpg,.png,.mp4,.pdf">
-            </div>
+                <div class="mt-3">
+                    <label for="attachment" class="form-label text-secondary">Attachments (<span class="fst-italic">pdf,
+                            video,
+                            image</span>)</label>
+                    <input type="file" name="attachment" id="attachment" class="form-control"
+                        accept=".jpeg,.jpg,.png,.mp4,.pdf">
+                </div>
+            @else
+                <div class="border border-1 p-4" style="height: 400px; width: 100%;">
+                    {!! $lessons->description !!}
+                </div>
+            @endif
 
             @if (count($lessons->materials) > 0)
                 <h5 class="text-secondary mb-3 mt-5">Currently uploaded files</h5>
@@ -65,16 +71,16 @@
                                 @endif
 
                             </div>
-
-                            <div class="card-footer text-center">
-                                <button type="button" class="btn btn-outline-danger btn-sm remove-attachment"
-                                    onclick="remove_to_db({{ $material->id }})">
-                                    <i class="fa-solid fa-trash"></i> Remove
-                                </button>
-                            </div>
+                            @can('admin_lvl1')
+                                <div class="card-footer text-center">
+                                    <button type="button" class="btn btn-outline-danger btn-sm remove-attachment"
+                                        onclick="remove_to_db({{ $material->id }})">
+                                        <i class="fa-solid fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            @endcan
                         </div>
                     @endforeach
-
                 </div>
             @else
                 <div class="alert alert-secondary text-center my-4 py-4 rounded shadow-sm">
@@ -82,19 +88,21 @@
                     <p class="mb-0 text-muted">You haven’t added any files for this lesson yet.</p>
                 </div>
             @endif
-            <div class="attachments my-4">
-                <h5 class="text-secondary mb-3 mt-5">Newly uploaded files</h5>
-                <div class="attachment-preview d-flex flex-wrap gap-2 mt-2">
+            @can('admin_lvl1')
+                <div class="attachments my-4">
+                    <h5 class="text-secondary mb-3 mt-5">Newly uploaded files</h5>
+                    <div class="attachment-preview d-flex flex-wrap gap-2 mt-2">
 
+                    </div>
                 </div>
-            </div>
-            <div class="mt-5 mb-3">
-                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-book-open-reader"></i>
-                    Update
-                    Lesson</button>
-                </button>
-                <a href="{{ route('class.stream', ['class_id' => $class_id]) }}" class="btn btn-outline-danger">Back</a>
-            </div>
+                <div class="mt-5 mb-3">
+                    <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-book-open-reader"></i>
+                        Update
+                        Lesson</button>
+                </div>
+            @endcan
+            </button>
+            <a href="{{ route('class.stream', ['class_id' => $class_id]) }}" class="btn btn-outline-danger">Back</a>
         </form>
     @else
         <form id="lessons_form">

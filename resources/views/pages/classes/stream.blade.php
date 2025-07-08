@@ -30,7 +30,7 @@
             </button>
         </li>
 
-        @can('sp_fi_only')
+        @can('fi_only')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
                     role="tab" aria-controls="tab4" aria-selected="false">
@@ -43,27 +43,29 @@
     <div class="tab-content mt-3">
         {{-- announcement --}}
         <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="streams">
-            <a href="{{ route('announcement.index', ['class_id' => $class_id ?? null, 'announcement_id' => 0]) }}"
-                class="text-decoration-none">
-                <div class="announce_form-controller my-3">
-                    <div class="google-classroom-announce announce_btn">
-                        <div class="announce-text w-100">
-                            <div>
-                                <div class="d-flex align-items-center">
-                                    <div class="announcement_header">
-                                        <div class="announcement_img_container">
-                                            <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+            @can('not_for_sp')
+                <a href="{{ route('announcement.index', ['class_id' => $class_id ?? null, 'announcement_id' => 0]) }}"
+                    class="text-decoration-none">
+                    <div class="announce_form-controller my-3">
+                        <div class="google-classroom-announce announce_btn">
+                            <div class="announce-text w-100">
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="announcement_header">
+                                            <div class="announcement_img_container">
+                                                <img src="{{ asset('assets/img/pilot.png') }}" alt="">
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div>
-                                        <p class=" mx-2 my-0">Announce something to your class</p>
+                                        <div>
+                                            <p class=" mx-2 my-0">Announce something to your class</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </a>
+                </a>
+            @endcan
 
 
             {{-- Announcements --}}
@@ -110,18 +112,21 @@
         {{-- classwork --}}
         <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
 
-            <div class="dropdown">
-                <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
-                    Create Classwork
-                </button>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item"
-                            href="{{ route('lesson.index', ['class_id' => $class_id, 'lesson_id' => 0]) }}">Lessons</a>
-                    </li>
-                    <li><a class="dropdown-item" href="{{ route('assessment.create', ['class_id' => $class_id]) }}">Assessments</a>
-                    </li>
-                </ul>
-            </div>
+            @can('admin_lvl1')
+                <div class="dropdown">
+                    <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
+                        Create Classwork
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item"
+                                href="{{ route('lesson.index', ['class_id' => $class_id, 'lesson_id' => 0]) }}">Lessons</a>
+                        </li>
+                        <li><a class="dropdown-item"
+                                href="{{ route('assessment.create', ['class_id' => $class_id]) }}">Assessments</a>
+                        </li>
+                    </ul>
+                </div>
+            @endcan
 
             <div>
                 <h2 class="text-secondary pb-2 border-bottom mt-3">Lessons</h2>
@@ -242,7 +247,8 @@
                                         <td>{{ $assessment->assessment_time }}</td>
                                         <td>{{ $assessment->assessment_date }}</td>
                                         <td>
-                                            <a href="{{ route('assessment.show', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}" class="btn btn-outline-primary">Take
+                                            <a href="{{ route('assessment.show', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}"
+                                                class="btn btn-outline-primary">Take
                                                 {{ ucfirst($assessment->type) }}</a>
                                         </td>
                                     </tr>
@@ -290,7 +296,7 @@
                 <div id="fi_search_results"></div>
             @endcan
             <h5>Flight Instructor | CGI</h5>
-            <div id="enrolled_fi_cgi_container"></div>
+            <div id="enrolled_fi_cgi_container" class="my-4"></div>
 
             @can('admin_lvl1')
                 <div class="announce_form-controller mt-5 mb-3" style="cursor: pointer;" id="enroll_student_container"
@@ -317,12 +323,12 @@
 
                 <div id="students_search_results"></div>
             @endcan
-            <h5>{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
-            <div id="enrolled_student_container"></div>
+            <h5 class="mt-5">{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
+            <div id="enrolled_student_container" class="my-4"></div>
         </div>
         {{-- grades --}}
 
-        @can('sp_fi_only')
+        @can('fi_only')
             <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
                 <p>Grade</p>
             </div>

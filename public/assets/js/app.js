@@ -17,9 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
             new bootstrap.Tab(triggerEl).show();
         }
     } else {
-        const triggerEl = document.querySelector(
-            `#classTab button#streams`
-        );
+        const triggerEl = document.querySelector(`#classTab button#streams`);
         if (triggerEl) {
             new bootstrap.Tab(triggerEl).show();
         }
@@ -870,21 +868,17 @@ $("#updateForm").on("submit", function (e) {
         processData: false,
         data: form,
         success: (response) => {
-            // if (!response.success) {
-            //     error_message("Failed to register user");
-            //     return;
-            // }
+            if (!response.success) {
+                error_message("Failed to register user");
+                return;
+            }
 
-            // success_message(response.message);
-            // $("#errors").hide();
-            // setInterval(() => {
-            //     window.location.reload();
-            // }, 1500);
+            success_message(response.message, "error");
 
-            console.log(response);
-
-
-
+            $("#errors").hide();
+            setInterval(() => {
+                window.location.reload();
+            }, 1500);
         },
         error: (xhr, status, error) => {
             try {

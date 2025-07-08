@@ -223,7 +223,7 @@ class UserController extends Controller
     {
 
         $user = User::find($request->id);
-        $new_id_number = $request->id_number;
+        $new_id_number = $request->id_number ?? '';
         $validator = Validator::make($request->all(), [
             'id_number' => 'nullable|string',
             'name' => 'string|max:255',
@@ -249,8 +249,6 @@ class UserController extends Controller
                     'message' => 'ID Number already Exists',
                 ], 404);
             }
-        } else {
-            $new_id_number = $user->id_number;
         }
 
         if ($request->hasFile('img')) {
@@ -261,24 +259,18 @@ class UserController extends Controller
             $img_name = time() . '_' . $img->getClientOriginalName();
             $img->move(public_path('uploads/users'), $img_name);
             $img_path = 'uploads/users/' . $img_name;
-        } else {
-
-            $gender_img = [
-                0 => asset('assets/img/student-male.png'),
-                1 => asset('assets/img/student-female.jpg'),
-                2 => asset('assets/img/logo.jpg'),
-            ];
-
-            $img_path = $gender_img[$request->gender];
+        }else{
+            $img_path = $user->img;
         }
 
         $user->update([
             'id_number' => $new_id_number,
             'name' => $request->name ?? $user->name,
             'contact' => $request->contact ?? $user->contact,
-            'role' => $request->role ?? $user->role,
+            'role' => $request->role,
             'gender' => $request->gender ?? $user->gender,
-            'img' => $img_path,
+            'img' =>  $img_path,
+            'email' => $request->email
         ]);
 
         return response()->json([
