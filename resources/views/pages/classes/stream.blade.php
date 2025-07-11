@@ -29,15 +29,6 @@
                 People
             </button>
         </li>
-
-        @can('fi_only')
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
-                    role="tab" aria-controls="tab4" aria-selected="false">
-                    Grade
-                </button>
-            </li>
-        @endcan
     </ul>
 
     <div class="tab-content mt-3">
@@ -131,9 +122,14 @@
             <div>
                 <h2 class="text-secondary pb-2 border-bottom mt-3">Lessons</h2>
                 <div class="lessons_stream_container">
+
+
                     @if (isset($lessons) && count($lessons) > 0)
-                        @foreach ($lessons as $lesson)
-                            <div class="accordion mb-2" id="{{ $lesson->title }}">
+                        @foreach ($lessons as $index => $lesson)
+                        @php
+                            $accodrionParent = 'accordionParent' . $index;
+                        @endphp
+                            <div class="accordion mb-2" id="{{  $accodrionParent}}">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button
@@ -162,7 +158,7 @@
                                         </button>
                                     </h2>
                                     <div id="{{ $lesson->id }}" class="accordion-collapse collapse"
-                                        data-bs-parent="#{{ $lesson->title }}">
+                                        data-bs-parent="#{{  $accodrionParent }}">
                                         <div class="accordion-body">
                                             <div class="mb-3">
                                                 {!! $lesson->description !!}
@@ -326,13 +322,7 @@
             <h5 class="mt-5">{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
             <div id="enrolled_student_container" class="my-4"></div>
         </div>
-        {{-- grades --}}
 
-        @can('fi_only')
-            <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
-                <p>Grade</p>
-            </div>
-        @endcan
 
     </div>
 @endsection

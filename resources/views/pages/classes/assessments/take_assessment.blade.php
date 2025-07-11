@@ -83,7 +83,10 @@
                     <a href="#" class="text-decoration-none">
                         <button type="button" class="btn btn-secondary" id="endBtn">End</button>
                     </a>
-                    <button type="button" class="btn btn-primary">Review Quiz</button>
+                    <a href="#" class="text-decoration-none" id="reviewQuiz">
+                        <button type="button" class="btn btn-primary">Review Quiz</button>
+                    </a>
+
                 </div>
             </div>
         </div>
@@ -143,7 +146,24 @@
             localStorage.removeItem('results')
             pre_loader()
             setTimeout(() => {
-                window.location.href = "/assessments"
+                window.location.href = `${localStorage.getItem('class_id')}`
+            }, 1500);
+        })
+
+        $('#reviewQuiz').on('click', () => {
+
+            let results = JSON.parse(localStorage.getItem("results"))
+            if (results == null) {
+                alert("No result found in localStorage.");
+                return
+            }
+
+            pre_loader()
+            setTimeout(() => {
+                window.location.href = `/assessments/progress/${results.progress_id}`
+                localStorage.setItem('show', 1)
+                localStorage.removeItem('answers')
+                localStorage.removeItem('results')
             }, 1500);
         })
 
@@ -232,7 +252,9 @@
                         status: response.status,
                         score: response.score,
                         totals: response.total,
+                        progress_id: response.progress_id,
                     };
+
                     localStorage.setItem("results", JSON.stringify(result));
                     showResults()
                 },

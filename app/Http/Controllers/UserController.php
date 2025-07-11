@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Classes;
 use App\Models\ClassUser;
+use App\Models\Assessnents;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -13,7 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Mail\VerifyEmail;
+use App\Models\Assessment;
 use Illuminate\Support\Facades\Mail;
+use Carbon\Carbon;
+
+use function PHPUnit\Framework\isEmpty;
 
 class UserController extends Controller
 {
@@ -112,7 +117,32 @@ class UserController extends Controller
 
     public function Dashboard()
     {
-        return view('Dashboard');
+        $studentsCount = User::where('role', 0)->count();
+        $fiCount = User::where('role', 1)->count();
+        $cgiCount = User::where('role', 2)->count();
+        $classesCount = Classes::count();
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
+
+        $user = $this->user->find(Auth::id());
+        $class = $user->activeClasses()->first();
+
+        if ($class) {
+            $upcomingThisWeek = Assessment::where("class_id", $class->id)->whereBetween('assessment_date', [$startOfWeek, $endOfWeek])
+                ->orderBy('assessment_date')
+                ->get();
+        }else{
+            $upcomingThisWeek = collect();
+        }
+
+
+        return view('Dashboard', [
+            'studentsCount' => $studentsCount,
+            'fiCount' => $fiCount,
+            'cgiCount' => $cgiCount,
+            'classesCount' => $classesCount,
+            'upcomingThisWeek' => $upcomingThisWeek,
+        ]);
     }
 
     public function ViewUsers($userId)
@@ -259,7 +289,7 @@ class UserController extends Controller
             $img_name = time() . '_' . $img->getClientOriginalName();
             $img->move(public_path('uploads/users'), $img_name);
             $img_path = 'uploads/users/' . $img_name;
-        }else{
+        } else {
             $img_path = $user->img;
         }
 

@@ -538,6 +538,7 @@ class AssessmentController extends Controller
             "percentage" => $percentage,
             "status" => $status,
             "statusText" => $statusText,
+            'progress_id' => $assessment_progress->id,
         ]);
     }
 

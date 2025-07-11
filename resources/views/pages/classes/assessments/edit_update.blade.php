@@ -135,7 +135,7 @@
 
 
                 <div class="mb-3 mt-5 d-flex align-items-center justify-content-end gap-1">
-                    <input type="submit" value="Update Questions" class="btn btn-primary">
+                    <input type="submit" value="Update Assessments" class="btn btn-primary">
                     <a href="{{ route('assessment.index') }}" class="btn btn-outline-danger"><i
                             class="fa-solid fa-arrow-left-long"></i> Back</a>
                 </div>
