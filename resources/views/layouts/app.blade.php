@@ -18,6 +18,12 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
     <script src="https://unpkg.com/libphonenumber-js@1.10.25/bundle/libphonenumber-js.min.js"></script>
+    <style>
+        .breadcrumb {
+            background: transparent;
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 
 <body style="background-color: #F4F5F7">
@@ -29,7 +35,18 @@
     <div class="nav_container">
         @include('partials.navbar')
     </div>
+
     <div class="main-content">
+        <h2>
+
+        </h2>
+
+        <h2 class="mx-4 my-3 text-2xl font-semibold text-gray-700 dark:text-gray-300">
+            @yield('class_title')
+        </h2>
+        @php
+            $class_name = $class_name ?? 'nope';
+        @endphp
 
         <header>
             <div class="card my-2 mx-3 {{ isset($title) && $title === 'Streams' ? 'd-none' : '' }}">
@@ -376,14 +393,29 @@
                 ajax: '{{ route('assessment.show.progress') }}',
                 dom: 'Blfrtip',
                 buttons: ['copy', 'csv', 'print', 'colvis'],
-                columns: [
-                    { data: 'user_name' },
-                    { data: 'name' },
-                    { data: 'type' },
-                    { data: 'total' },
-                    { data: 'score' },
-                    { data: 'status' },
-                    { data: 'action', orderable: false, searchable: false }
+                columns: [{
+                        data: 'user_name'
+                    },
+                    {
+                        data: 'name'
+                    },
+                    {
+                        data: 'type'
+                    },
+                    {
+                        data: 'total'
+                    },
+                    {
+                        data: 'score'
+                    },
+                    {
+                        data: 'status'
+                    },
+                    {
+                        data: 'action',
+                        orderable: false,
+                        searchable: false
+                    }
                 ]
             });
         });

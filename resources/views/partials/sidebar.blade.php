@@ -19,12 +19,6 @@
                 Users</a>
         @endcan
 
-        @can('not_for_sp_fi')
-            <a href="{{ route('class.instructor') }}"
-                class="nav-link {{ request()->routeIs('class.instructor') ? 'active text-primary' : 'text-dark' }} mb-1"><i
-                    class="fa-solid fa-user-tie me-2"></i> Instructor</a>
-        @endcan
-
         <a href="{{ route('class.index') }}"
             class="nav-link {{ request()->routeIs('class.index') ? 'active text-primary' : 'text-dark' }}"><i
                 class="fa-solid fa-house-user me-2"></i>Classes </a>
@@ -34,9 +28,6 @@
                 class="nav-link {{ request()->routeIs('course.index') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-award me-2"></i>
                 Courses</a>
-            <a href="#"
-                class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
-                    class="fa-solid fa-book me-2"></i> Contents</a>
             <a href="{{ route('assessment.index') }}"
                 class="nav-link {{ request()->routeIs('assessment.index') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                     class="fa-solid fa-bookmark me-2"></i> Assessments</a>

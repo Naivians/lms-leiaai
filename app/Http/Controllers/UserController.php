@@ -17,6 +17,7 @@ use App\Mail\VerifyEmail;
 use App\Models\Assessment;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -123,18 +124,30 @@ class UserController extends Controller
         $classesCount = Classes::count();
         $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfWeek();
+        $classIds = [];
 
         $user = $this->user->find(Auth::id());
-        $class = $user->activeClasses()->first();
+        $class = $user->activeClasses;
+
+        $classIds = ClassUser::where('user_id', Auth::id())
+            ->pluck('class_id');
+
+
+        $countStudentPerClass = ClassUser::whereIn('class_id', $classIds)
+            ->where('role_id', 0)
+            ->select('class_id', DB::raw('count(*) as student_count'))
+            ->groupBy('class_id')
+            ->with('class:id,id,class_name') // eager load class name only
+            ->get();
+
 
         if ($class) {
-            $upcomingThisWeek = Assessment::where("class_id", $class->id)->whereBetween('assessment_date', [$startOfWeek, $endOfWeek])
+            $upcomingThisWeek = Assessment::whereIn("class_id",  $classIds)->whereBetween('assessment_date', [$startOfWeek, $endOfWeek])
                 ->orderBy('assessment_date')
                 ->get();
-        }else{
+        } else {
             $upcomingThisWeek = collect();
         }
-
 
         return view('Dashboard', [
             'studentsCount' => $studentsCount,
@@ -142,6 +155,8 @@ class UserController extends Controller
             'cgiCount' => $cgiCount,
             'classesCount' => $classesCount,
             'upcomingThisWeek' => $upcomingThisWeek,
+            'classes' => $countStudentPerClass,
+            'class' => $countStudentPerClass,
         ]);
     }
 

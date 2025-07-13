@@ -86,8 +86,8 @@ class ClassController extends Controller
         $announcements = Classes::with(['announcements.user'])->find(id: $class_id);
         $announcements = $announcements->announcements ?? null;
 
-        $course_name = $this->classModel->select('course_name')->where('id', $class_id);
-        $course_id = CourseModel::get_course_id($course_name);
+        $course = $this->classModel->select('id','course_name', 'class_name')->where('id', $class_id)->first();
+        $course_id = CourseModel::get_course_id($course->course_name);
 
         $courses_lessons = $this->courseModel->find($course_id);
         $courses_lessons = $courses_lessons->lessons;
@@ -107,6 +107,7 @@ class ClassController extends Controller
             'announcements' => $announcements ?? null,
             'lessons' => $courses_lessons,
             'assessments' => $assessments,
+            'class_name' => $course->class_name,
         ]);
     }
     function Instructor()

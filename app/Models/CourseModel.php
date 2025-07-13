@@ -25,7 +25,7 @@ class CourseModel extends Model
 
     public static function get_course_id($course_name)
     {
-        $course = self::select('id')->where('course_name', $course_name)->first();
+        $course = self::select('id', 'course_name')->where('course_name', $course_name)->first();
         return $course ? $course->id : null;
     }
 }

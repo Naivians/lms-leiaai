@@ -84,8 +84,7 @@
                 </div>
             @else
                 <div class="alert alert-secondary text-center my-4 py-4 rounded shadow-sm">
-                    <h5 class="mb-1">No materials uploaded</h5>
-                    <p class="mb-0 text-muted">You haven’t added any files for this lesson yet.</p>
+                    <h5 class="mb-1">No materials uploaded in this lesson</h5>
                 </div>
             @endif
             @can('admin_lvl1')
