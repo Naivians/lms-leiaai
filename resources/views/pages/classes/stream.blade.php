@@ -3,6 +3,40 @@
 @endphp
 
 @extends('layouts.app')
+@section('styles')
+    <style>
+        .table-fixed thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #fff;
+        }
+
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 11;
+            background-color: #fff;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .name-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .dropdown-sort {
+            min-width: 200px;
+        }
+    </style>
+@endsection
 
 @section('content')
 
@@ -27,6 +61,12 @@
             <button class="nav-link" id="people" data-bs-toggle="tab" data-bs-target="#tab3" type="button"
                 role="tab" aria-controls="tab3" aria-selected="false">
                 People
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
+                role="tab" aria-controls="tab4" aria-selected="false">
+                Grades
             </button>
         </li>
     </ul>
@@ -126,10 +166,10 @@
 
                     @if (isset($lessons) && count($lessons) > 0)
                         @foreach ($lessons as $index => $lesson)
-                        @php
-                            $accodrionParent = 'accordionParent' . $index;
-                        @endphp
-                            <div class="accordion mb-2" id="{{  $accodrionParent}}">
+                            @php
+                                $accodrionParent = 'accordionParent' . $index;
+                            @endphp
+                            <div class="accordion mb-2" id="{{ $accodrionParent }}">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header">
                                         <button
@@ -158,7 +198,7 @@
                                         </button>
                                     </h2>
                                     <div id="{{ $lesson->id }}" class="accordion-collapse collapse"
-                                        data-bs-parent="#{{  $accodrionParent }}">
+                                        data-bs-parent="#{{ $accodrionParent }}">
                                         <div class="accordion-body">
                                             <div class="mb-3">
                                                 {!! $lesson->description !!}
@@ -321,6 +361,99 @@
             @endcan
             <h5 class="mt-5">{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
             <div id="enrolled_student_container" class="my-4"></div>
+        </div>
+        {{-- Grades --}}
+        <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
+            @if ($assessments && count($assessments) > 0)
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle table-fixed">
+                        <thead>
+                            <tr>
+                                <th class="sticky-col">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light dropdown-toggle dropdown-sort" type="button"
+                                            data-bs-toggle="dropdown">
+                                            Sort by first name
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="#">First name</a></li>
+                                            <li><a class="dropdown-item" href="#">Last name</a></li>
+                                        </ul>
+                                    </div>
+                                </th>
+
+                                @foreach ($assessments as $assessment)
+                                    <th>
+                                        <div>
+                                            <div>
+                                                <strong>{{ \Carbon\Carbon::parse($assessment->assessment_date)->format('M j, Y') }}</strong>
+                                            </div>
+                                            <div>{{ $assessment->name }} ({{ ucfirst($assessment->type) }})</div>
+                                            <div class="text-muted small">out of {{ $assessment->total }}</div>
+                                        </div>
+                                    </th>
+                                @endforeach
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @php
+                                $students = collect();
+                                foreach ($assessments as $assessment) {
+                                    foreach ($assessment->progress as $progress) {
+                                        $students->push($progress->user);
+                                    }
+                                }
+                                $students = $students->unique('id')->sortBy('name')->values();
+                            @endphp
+
+                            @foreach ($students as $student)
+                                <tr>
+                                    <td class="sticky-col">
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ asset($student->img) }}" alt="Avatar" class="avatar me-2">
+                                            <span>{{ $student->name }}</span>
+                                        </div>
+                                    </td>
+
+                                    @foreach ($assessments as $assessment)
+                                        @php
+                                            $progressList = $assessment->progress->where('user_id', $student->id);
+                                        @endphp
+
+                                        <td>
+                                            @if ($progressList->isNotEmpty())
+                                                @foreach ($progressList as $i => $progress)
+                                                    <div class="mb-1">
+                                                        <label for="" class="form-label text-muted small"><strong>{{ \Carbon\Carbon::parse($progress->created_at)->format('M j, Y H:i:s a') }}</strong></label>
+                                                        <input type="number"
+                                                            name="scores[{{ $assessment->id }}][{{ $student->id }}][{{ $progress->id }}]"
+                                                            value="{{ $progress->score }}" class="form-control"
+                                                            min="0" max="{{ $assessment->total }}"
+                                                            placeholder="Attempt {{ $i + 1 }}">
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <input type="number"
+                                                    name="scores[{{ $assessment->id }}][{{ $student->id }}][new]"
+                                                    class="form-control" placeholder="No score yet" min="0"
+                                                    max="{{ $assessment->total }}">
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="text-center text-muted my-5">
+                    <i class="fas fa-graduation-cap fa-3x mb-3"></i>
+                    <h4>No Assessments Available</h4>
+                    <p class="text-secondary">Grades will appear here once assessments are completed.</p>
+                </div>
+            @endif
+
         </div>
 
 

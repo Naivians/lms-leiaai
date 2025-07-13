@@ -108,6 +108,7 @@
 
     @yield('js_imports')
     @yield('scripts')
+    @yield('styles')
 
     <script>
         $("#editAssessmentForms").on("submit", function(e) {

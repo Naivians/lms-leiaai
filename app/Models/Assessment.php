@@ -17,9 +17,8 @@ class Assessment extends Model
         'class_id',
         'assessment_time',
         'assessment_date',
+        'is_published',
     ];
-
-
 
     public function question()
     {
@@ -34,6 +33,10 @@ class Assessment extends Model
     public function lesson()
     {
         return $this->belongsTo(Lessons::class, 'lesson_id');
+    }
+    public function progress()
+    {
+        return $this->hasMany(AssessmentProgress::class, 'assessment_id');
     }
 
     public function getAssessmentTimeArrayAttribute()

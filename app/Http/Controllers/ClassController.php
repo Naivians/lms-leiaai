@@ -93,13 +93,15 @@ class ClassController extends Controller
         $courses_lessons = $courses_lessons->lessons;
 
         $lesson_ids = [];
+        $assessments_ids = [];
 
         foreach ($courses_lessons as $lesson) {
             $lesson_ids[] = $lesson->id;
         }
 
         $lessons = $this->lesson_model->with('materials')->whereIn('id', $lesson_ids)->get();
-        $assessments = $this->assessment_model->where('class_id', $class_id)->get();
+        $assessments = $this->assessment_model->with('progress.user')->where('class_id', $class_id)->get();
+
         return view('pages.classes.stream', [
             'class_id' => $encryptedClassId,
             'announcements' => $announcements ?? null,
@@ -295,7 +297,7 @@ class ClassController extends Controller
 
         foreach ($enrolled_fi as $fi) {
             $img = asset($fi->img);
-            $restriction = $this->userRestrictions->canPerformAction('sp_fi_only') ? '' : '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $fi->id . ', \'fi\')"><i class="fa-solid fa-trash"></i></button>';
+            $restriction = Gate::allows('admin_lvl1') ? '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $fi->id . ', \'students\')"><i class="fa-solid fa-trash"></i></button>' : '';
 
             $fi_html .= '
             <div class="card mb-2">
@@ -318,7 +320,7 @@ class ClassController extends Controller
 
         foreach ($enrolled_students as $sp) {
             $img = asset($sp->img);
-            $restriction = $this->userRestrictions->canPerformAction('sp_fi_only') ? '' : '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $sp->id . ', \'students\')"><i class="fa-solid fa-trash"></i></button>';
+            $restriction = Gate::allows('admin_lvl1') ? '<button class="btn btn-danger" onclick="removeUserFromCLass(' . $sp->id . ', \'students\')"><i class="fa-solid fa-trash"></i></button>' : '';
 
             $sp_html .= '
             <div class="card mb-2">

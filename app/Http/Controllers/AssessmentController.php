@@ -58,10 +58,9 @@ class AssessmentController extends Controller
 
                 ->addColumn('action', function ($row) {
                     //
-                    $viewBtn = '<a href= " ' . route('assessment.show', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
-                    $editBtn = '<a href= " ' . route('assessment.edit', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="edit"><i class="fa-solid fa-pen-to-square"></i></a>';
+                    $editBtn = '<a href= " ' . route('assessment.edit', ['assessment_id' => Crypt::encrypt($row->id)]) . ' " class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view"><i class="fa-solid fa-eye"></i></a>';
                     $deleteBtn = '<a href= "#" class="btn btn-sm btn-danger" data-bs-toggle="tooltip" title="delete"><i class="fa-solid fa-trash" title="Remove question" onclick = "deleteAssessments(\'' . Crypt::encrypt($row->id) . '\')"></i></a>';
-                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                    return $editBtn . ' ' . $deleteBtn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -306,7 +305,7 @@ class AssessmentController extends Controller
             'assessment_time' => $assessment_time,
             'assessment_date' => $request->assessment_date,
             'total' => $assessment->total,
-            'is_publish' => $request->is_publish,
+            'is_published' => $request->is_published,
         ]);
 
         foreach ($request->question as $q_index => $questionText) {
@@ -354,7 +353,7 @@ class AssessmentController extends Controller
                 }
 
                 if ($choiceText == $correctInput) {
-                     $answerKey->update([
+                    $answerKey->update([
                         'answer' => $correctInput,
                         'choice_id' => $choiceId
                     ]);
@@ -544,10 +543,32 @@ class AssessmentController extends Controller
 
     public function progress(Request $request)
     {
+        $fis_classes_ids = [];
+        $assessments_ids = [];
+
+        if (Gate::allows('fi_only')) {
+            $fi = User::find(Auth::id());
+            $classes = $fi->activeClasses;
+
+            foreach ($classes as $class) {
+                $fis_classes_ids[] = $class->id;
+            }
+
+            $assessments = $this->assessment_model->whereIn('class_id', $fis_classes_ids)->get();
+            foreach ($assessments as $item) {
+                $assessments_ids[] = $item->id;
+            }
+
+            $data = $this->assessment_progress_model->with('user')
+                ->whereIn('assessment_id', $assessments_ids)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $data = Gate::allows('admin_lvl1') ? $this->assessment_progress_model->with(['user'])->orderBy('created_at', 'desc')->get() : $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
+        }
+
         if ($request->ajax()) {
 
-            $data = Gate::allows('admin_lvl1') ? $this->assessment_progress_model->with('user')->orderBy('created_at', 'desc')->get() : $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
-            // $data = $this->assessment_progress_model->with('user')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
             return DataTables::of($data)
                 ->addColumn('user_name', function ($row) {
                     return optional($row->user)->name ?? 'N/A';
@@ -565,8 +586,9 @@ class AssessmentController extends Controller
     }
 
 
-    public function viewProgress($progress_id){
-        $view_progress = $this->assessment_progress_model->with(['ProgressDetails','assessment.question.choices.answer_key'])->find($progress_id);
+    public function viewProgress($progress_id)
+    {
+        $view_progress = $this->assessment_progress_model->with(['ProgressDetails', 'assessment.question.choices.answer_key'])->find($progress_id);
         $progress_detail = $view_progress->ProgressDetails;
         $assessment = $view_progress->assessment;
         $questions = $view_progress->assessment->question;

@@ -19,8 +19,9 @@
                     <div class="col-md-4 mb-3">
                         <label for="class_id" class="form-label text-secondary">Select Class</label>
                         <select name="class_id" id="class_id" class="form-select" required>
+                            <option value="" selected disabled> Choose....</option>
                             @foreach ($classes as $class)
-                                <option value="{{ $class->id }}" selected>{{ $class->class_name }}</option>
+                                <option value="{{ $class->id }}">{{ $class->class_name }}</option>
                             @endforeach
                         </select>
                     </div>

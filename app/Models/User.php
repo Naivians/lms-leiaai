@@ -84,7 +84,6 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
-
     public function getRoleLabelAttribute()
 {
     return match ($this->role) {

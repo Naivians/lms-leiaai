@@ -240,8 +240,8 @@ nav a:hover {
 }
 
 .lessons_stream_container, .view_progress_container {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and old Edge */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
 .lessons_stream_container::-webkit-scrollbar {

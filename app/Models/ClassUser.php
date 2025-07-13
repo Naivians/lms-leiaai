@@ -64,14 +64,4 @@ class ClassUser extends Model
                 return $user;
             });
     }
-
-    // public static function usersByClass($classId)
-    // {
-    //     return self::where('class_id', $classId)
-    //         ->with(['user' => function ($query) {
-    //             $query->select('id', 'name', 'email', 'img', 'role');
-    //         }])
-    //         ->get()
-    //         ->pluck('user');
-    // }
 }

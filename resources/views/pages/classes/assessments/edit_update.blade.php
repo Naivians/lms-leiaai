@@ -24,7 +24,7 @@
                             <option value="{{ $assessments->class->id }}" selected class="text-primary">
                                 {{ $assessments->class->class_name }}</option>
                             @foreach ($classes as $class)
-                                <option value="{{ $class->id }}" selected>{{ $class->class_name }}</option>
+                                <option value="{{ $class->id }}">{{ $class->class_name }}</option>
                             @endforeach
                         </select>
                     </div>
