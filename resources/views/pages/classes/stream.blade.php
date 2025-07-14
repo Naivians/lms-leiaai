@@ -421,42 +421,48 @@
                                 @endphp
 
                                 @foreach ($students as $student)
-                                    <tr>
-                                        <td class="sticky-col">
-                                            <div class="d-flex align-items-center">
-                                                <img src="{{ asset($student->img) }}" alt="Avatar" class="avatar me-2">
-                                                <span>{{ $student->name }}</span>
-                                            </div>
-                                        </td>
-
-                                        @foreach ($assessments as $assessment)
-                                            @php
-                                                $progressList = $assessment->progress->where('user_id', $student->id);
-                                            @endphp
-
-                                            <td>
-                                                @if ($progressList->isNotEmpty())
-                                                    @foreach ($progressList as $i => $progress)
-                                                        <div class="mb-1">
-
-                                                            <label for=""
-                                                                class="form-label text-muted small"><strong>{{ \Carbon\Carbon::parse($progress->created_at)->format('M j, Y H:i:s a') }}</strong></label>
-                                                            <input type="number"
-                                                                name="scores[{{ $assessment->id }}][{{ $student->id }}][{{ $progress->id }}]"
-                                                                value="{{ $progress->score }}" class="form-control"
-                                                                min="0" max="{{ $assessment->total }}"
-                                                                placeholder="Attempt {{ $i + 1 }}">
-                                                        </div>
-                                                    @endforeach
-                                                @else
-                                                    <input type="number"
-                                                        name="scores[{{ $assessment->id }}][{{ $student->id }}][new]"
-                                                        class="form-control" placeholder="No score yet" min="0"
-                                                        max="{{ $assessment->total }}">
-                                                @endif
+                                    @if ($student != null)
+                                        <tr>
+                                            <td class="sticky-col">
+                                                <div class="d-flex align-items-center">
+                                                    <img src="{{ asset($student->img) }}" alt="Avatar"
+                                                        class="avatar me-2">
+                                                    <span>{{ $student->name }}</span>
+                                                </div>
                                             </td>
-                                        @endforeach
-                                    </tr>
+
+                                            @foreach ($assessments as $assessment)
+                                                @php
+                                                    $progressList = $assessment->progress->where(
+                                                        'user_id',
+                                                        $student->id,
+                                                    );
+                                                @endphp
+
+                                                <td>
+                                                    @if ($progressList->isNotEmpty())
+                                                        @foreach ($progressList as $i => $progress)
+                                                            <div class="mb-1">
+
+                                                                <label for=""
+                                                                    class="form-label text-muted small"><strong>{{ \Carbon\Carbon::parse($progress->created_at)->format('M j, Y H:i:s a') }}</strong></label>
+                                                                <input type="number"
+                                                                    name="scores[{{ $assessment->id }}][{{ $student->id }}][{{ $progress->id }}]"
+                                                                    value="{{ $progress->score }}" class="form-control"
+                                                                    min="0" max="{{ $assessment->total }}"
+                                                                    placeholder="Attempt {{ $i + 1 }}">
+                                                            </div>
+                                                        @endforeach
+                                                    @else
+                                                        <input type="number"
+                                                            name="scores[{{ $assessment->id }}][{{ $student->id }}][new]"
+                                                            class="form-control" placeholder="No score yet" min="0"
+                                                            max="{{ $assessment->total }}">
+                                                    @endif
+                                                </td>
+                                            @endforeach
+                                        </tr>
+                                    @endif
                                 @endforeach
                             </tbody>
                         </table>

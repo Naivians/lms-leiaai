@@ -40,9 +40,13 @@
         <a href="{{ route('class.archives') }}"
             class="nav-link {{ request()->routeIs('class.archives') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                 class="fa-solid fa-box-archive me-2"></i>
+            Feedback</a>
+        </a>
+        <a href="{{ route('class.archives') }}"
+            class="nav-link {{ request()->routeIs('class.archives') ? 'active text-primary' : 'text-dark' }} mb-1"><i
+                class="fa-solid fa-box-archive me-2"></i>
             Archive Class
         </a>
-
     </nav>
     <div class="footer_container">
         <p class="m-0 mt-3 border border-1">&copy; {{ date('Y') }} LEIAAI LMS. All rights reserved. </p>

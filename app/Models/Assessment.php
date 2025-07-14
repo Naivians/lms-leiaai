@@ -34,6 +34,7 @@ class Assessment extends Model
     {
         return $this->belongsTo(Lessons::class, 'lesson_id');
     }
+
     public function progress()
     {
         return $this->hasMany(AssessmentProgress::class, 'assessment_id');

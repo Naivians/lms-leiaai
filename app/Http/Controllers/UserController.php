@@ -137,7 +137,7 @@ class UserController extends Controller
             ->where('role_id', 0)
             ->select('class_id', DB::raw('count(*) as student_count'))
             ->groupBy('class_id')
-            ->with('class:id,id,class_name') // eager load class name only
+            ->with('class:id,id,class_name')
             ->get();
 
 

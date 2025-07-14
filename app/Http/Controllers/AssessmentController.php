@@ -447,7 +447,7 @@ class AssessmentController extends Controller
             ]);
         }
 
-        $totalQuestion = 3;
+        $totalQuestion = $assessment->total;
         $score = 0;
         $percentage = 0;
         $status = '';
@@ -501,22 +501,16 @@ class AssessmentController extends Controller
             }
         }
 
-        if ($totalQuestion > 0) {
-            $percentage = round(($score / $totalQuestion) * 100, 2);
+        $percentage = round(($score / $totalQuestion) * 100, 2);
 
-            if ($percentage > 75) {
-                $status = "Passed";
-                $statusText = "Nice job, you Passed!";
-            } else {
-                $status = "Failed";
-                $statusText = "Better luck next time";
-            }
+        if ($percentage > 75) {
+            $status = "Passed";
+            $statusText = "Nice job, you Passed!";
         } else {
-            $percentage = 0;
+            $status = "Failed";
+            $statusText = "Better luck next time";
         }
 
-
-        //  $assessment_progress
         $scores = $this->assessment_progress_model->find($assessment_progress->id);
 
         $scores = $scores->update([

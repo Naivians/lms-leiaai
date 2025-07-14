@@ -64,24 +64,38 @@
             @endif --}}
             <div class="container-fluid">
                 <div class="row g-3">
-                    @foreach ($classes as $row)
-                        <div class="col-md-3">
-                            <a href="{{ route('class.stream', ['class_id' => Crypt::encrypt($row->class->id)]) }}"
-                                class="text-decoration-none">
 
-                                <div class="card text-white bg-primary">
-                                    <div class="card-body d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="text-uppercase">{{ $row->class->class_name }}</h6>
-                                            <h3 class="fw-bold">{{ $row->student_count }} </h3>
-                                        </div>
-                                        <i class="fas fa-chalkboard-teacher fa-2x"></i>
-                                    </div>
-                                </div>
-                            </a>
+                    @if ($classes->isEmpty())
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <i class="fas fa-chalkboard-teacher fa-2x mb-2 d-block"></i>
+                                <strong>No classes available.</strong><br>
+                                Please contact your administrator to create a class.
+                            </div>
                         </div>
-                        </a>
-                    @endforeach
+                    @else
+                        @foreach ($classes as $row)
+                            <div class="col-md-3">
+                                <a href="{{ route('class.stream', ['class_id' => Crypt::encrypt($row->class->id)]) }}"
+                                    class="text-decoration-none">
+
+                                    <div class="card text-white bg-primary">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="text-uppercase">{{ $row->class->class_name }}</h6>
+                                                <h3 class="fw-bold">{{ $row->student_count }}
+
+                                                </h3>
+                                            </div>
+                                            <i class="fas fa-chalkboard-teacher fa-2x"></i>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            </a>
+                        @endforeach
+                    @endif
+
                 </div>
             </div>
 

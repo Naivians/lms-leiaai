@@ -167,9 +167,14 @@ body {
 }
 
 .option.correct {
-    background-color: #d4f7dc;
-    border-color: #28a745;
-    color: #155724;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--light-color);
+}
+.option.correctAnswer {
+    background-color: #d1e7dd;
+    border-color: #198754;
+    color: var(--dark-color);
 }
 
 .option.incorrect {
