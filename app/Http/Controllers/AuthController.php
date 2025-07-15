@@ -31,20 +31,26 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        if ($user->isVerified && !$user->login_status) {
+        if ($user->isVerified == 0) {
             return back()->withErrors([
                 'login_error' => 'Your account has been verified but is not yet activated by the Registrar. Please contact the LEIAAI Registrar for activation.',
             ])->withInput();
         }
 
-        if (!$user->isVerified && !$user->login_status) {
+        if ($user->login_status == 0) {
             return back()->withErrors([
                 'login_error' => 'Your account is not verified. Please check your email and verify your account.',
             ])->withInput();
         }
 
-        if (auth()->attempt([$loginField => $loginInput, 'password' => $credentials['password']])) {
-            return redirect()->intended('/user/Dashboard');
+        if ($user && Hash::check($credentials['password'], $user->password)) {
+            if (auth()->attempt([$loginField => $loginInput, 'password' => $credentials['password']])) {
+                return redirect()->route('user.index');
+            }
+        } else {
+            return back()->withErrors([
+                'login_error' => 'The provided credentials do not match our records.',
+            ])->withInput();
         }
     }
 

@@ -41,7 +41,7 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('sp_only', function ($user) {
-            return in_array($user->role, [0, 5]);
+            return in_array($user->role, [0]);
         });
 
         Gate::define('sp_fi_only', function ($user) {
