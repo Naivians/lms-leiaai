@@ -30,7 +30,7 @@
                     <button class="ql-list" value="bullet" data-bs-toggle="tooltip" title="list"></button>
                     <button class="ql-clean" data-bs-toggle="tooltip" title="clear format"></button>
                 </div>
-                <div id="editor" style="height: auto; width: 100%;" class="mb-2">
+                <div id="editor" style="height: 300px; width: 100%;" class="mb-2">
                 </div>
 
                 <div class="mt-3">

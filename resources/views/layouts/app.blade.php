@@ -91,6 +91,14 @@
                                 </div>
                             </div>
                         @break
+                        @case('Feedback')
+                            <div class="card-tools">
+                                <div class="card-tools">
+                                    <a href="{{ route('class.feedback.create') }}"
+                                        class="btn btn-primary btn-sm">Create <i class="fa-solid fa-plus ms-1"></i></a>
+                                </div>
+                            </div>
+                        @break
 
                         @default
                     @endswitch
@@ -383,6 +391,20 @@
                         orderable: false,
                         searchable: false
                     }
+                ]
+            });
+
+            $('#feedback').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: '{{ route('class.feedback.index') }}',
+                columns: [
+                    {
+                        data: 'anonymous_name',
+                    },
+                    {
+                        data: 'feedback'
+                    },
                 ]
             });
 

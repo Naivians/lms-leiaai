@@ -49,7 +49,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/getEnrolledUsers/{class_id}', [ClassController::class, 'getEnrolledUsers'])->name('enrolled');
         Route::get('/instructor', [ClassController::class, 'Instructor'])->name('instructor');
         Route::get('/grade', [ClassController::class, 'Grade'])->name('grade');
+        Route::get('/feedback', [ClassController::class, 'feedbackIndex'])->name('feedback.index');
+        Route::get('/feedback/create', [ClassController::class, 'createFeedback'])->name('feedback.create');
 
+        Route::post('/feedback/save', [ClassController::class, 'storeFeedback'])->name('feedback.store');
         Route::post('/create', [ClassController::class, 'Store'])->name('store');
         Route::post('/update', [ClassController::class, 'Update'])->name('update');
         Route::post('/archive/{classId}', [ClassController::class, 'ArchiveClass'])->name('archive');

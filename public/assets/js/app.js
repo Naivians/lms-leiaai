@@ -192,6 +192,62 @@ $("#announcement_form").on("submit", function (e) {
     });
 });
 
+
+$("#feedback_form").on("submit", function (e) {
+
+    e.preventDefault();
+    if (!quill) {
+        console.error("Quill editor is not initialized.");
+        return;
+    }
+
+    const content = quill.root.innerHTML;
+    const isEmpty = quill.getText().trim().length === 0;
+    if (isEmpty) {
+        error_message("Feedback form cannot be empty.");
+        return;
+    }
+
+    const formData = new FormData(this);
+    formData.append("feedback_content", content);
+
+    $.ajax({
+        url: '/class/feedback/save',
+        method: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+            success_message(response.message);
+            quill.setText("");
+        },
+        error: (xhr) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                    $("#announcement_form")[0].reset();
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+});
+
 $("#edit_announcement_form").on("submit", function (e) {
     e.preventDefault();
 

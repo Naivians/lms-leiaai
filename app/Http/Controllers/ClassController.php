@@ -13,6 +13,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use App\Mail\enrollment_notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 use App\Models\Classes;
 use App\Models\CourseModel;
@@ -21,6 +22,7 @@ use App\Models\User;
 use App\Models\Announcement;
 use App\Models\lessons;
 use App\Models\Assessment;
+use App\Models\Feedback;
 
 class ClassController extends Controller
 {
@@ -86,7 +88,7 @@ class ClassController extends Controller
         $announcements = Classes::with(['announcements.user'])->find(id: $class_id);
         $announcements = $announcements->announcements ?? null;
 
-        $course = $this->classModel->select('id','course_name', 'class_name')->where('id', $class_id)->first();
+        $course = $this->classModel->select('id', 'course_name', 'class_name')->where('id', $class_id)->first();
         $course_id = CourseModel::get_course_id($course->course_name);
 
         $courses_lessons = $this->courseModel->find($course_id);
@@ -465,6 +467,46 @@ class ClassController extends Controller
         return response()->json([
             'success' => true,
             'message' => "User successfully removed from this class",
+        ]);
+    }
+
+    function feedbackIndex(Request $request)
+    {
+        $feedbacks = Feedback::orderBy('created_at', 'desc')
+            ->get();
+
+        return view('pages.classes.feedback.feedback', compact('feedbacks'));
+    }
+
+    function createFeedback(Request $request)
+    {
+        return view('pages.classes.feedback.create');
+    }
+
+
+
+    function storeFeedback(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'feedback_content' => 'required|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ]);
+        }
+
+        $feedback = new Feedback();
+        $feedback->create([
+            'user_id' => Auth::id(),
+            'feedback' => $request->feedback_content,
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Feedback submitted successfully',
         ]);
     }
 }

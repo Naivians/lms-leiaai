@@ -37,11 +37,22 @@
             class="nav-link {{ request()->routeIs('assessment.show.progress') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                 class="fa-solid fa-chart-line me-2"></i> Progress</a>
 
-        <a href="{{ route('class.archives') }}"
-            class="nav-link {{ request()->routeIs('class.archives') ? 'active text-primary' : 'text-dark' }} mb-1"><i
-                class="fa-solid fa-box-archive me-2"></i>
-            Feedback</a>
-        </a>
+        @can('admin_lvl1')
+            <a href="{{ route('class.feedback.index') }}"
+                class="nav-link {{ request()->routeIs('class.feedback.index') ? 'active text-primary' : 'text-dark' }} mb-1"><i
+                    class="fa-solid fa-comment me-2"></i>
+                Feedback</a>
+            </a>
+        @endcan
+
+        @can('sp_only')
+            <a href="{{ route('class.feedback.create') }}"
+                class="nav-link {{ request()->routeIs('class.feedback.create') ? 'active text-primary' : 'text-dark' }} mb-1"><i
+                    class="fa-solid fa-comment me-2"></i>
+                Feedback</a>
+            </a>
+        @endcan
+
         <a href="{{ route('class.archives') }}"
             class="nav-link {{ request()->routeIs('class.archives') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                 class="fa-solid fa-box-archive me-2"></i>

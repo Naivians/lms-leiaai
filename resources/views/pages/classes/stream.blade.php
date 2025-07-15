@@ -382,29 +382,22 @@
                         <table class="table table-bordered align-middle table-fixed">
                             <thead>
                                 <tr>
-                                    <th class="sticky-col">
-                                        <div class="dropdown">
-                                            <button class="btn btn-light dropdown-toggle dropdown-sort" type="button"
-                                                data-bs-toggle="dropdown">
-                                                Sort by first name
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                <li><a class="dropdown-item" href="#">First name</a></li>
-                                                <li><a class="dropdown-item" href="#">Last name</a></li>
-                                            </ul>
-                                        </div>
+                                    <th class="sticky-col" style="width: 50px;">
+                                        Students Name
                                     </th>
 
                                     @foreach ($assessments as $assessment)
-                                        <th>
-                                            <div>
+                                        @if ($assessment->type == 'exam')
+                                            <th style="width: 200px;">
                                                 <div>
-                                                    <strong>{{ \Carbon\Carbon::parse($assessment->assessment_date)->format('M j, Y') }}</strong>
+                                                    <div>
+                                                        <strong>{{ \Carbon\Carbon::parse($assessment->assessment_date)->format('M j, Y') }}</strong>
+                                                    </div>
+                                                    <div>{{ $assessment->name }} ({{ ucfirst($assessment->type) }})</div>
+                                                    <div class="text-muted small">out of {{ $assessment->total }}</div>
                                                 </div>
-                                                <div>{{ $assessment->name }} ({{ ucfirst($assessment->type) }})</div>
-                                                <div class="text-muted small">out of {{ $assessment->total }}</div>
-                                            </div>
-                                        </th>
+                                            </th>
+                                        @endif
                                     @endforeach
                                 </tr>
                             </thead>
@@ -442,22 +435,31 @@
                                                 <td>
                                                     @if ($progressList->isNotEmpty())
                                                         @foreach ($progressList as $i => $progress)
-                                                            <div class="mb-1">
+                                                            @if ($assessment->type == 'exam')
+                                                                <div class="mb-1">
+                                                                    <label for=""
+                                                                        class="form-label text-muted small"><strong>{{ \Carbon\Carbon::parse($progress->created_at)->format('M j, Y H:i:s a') }}</strong></label>
 
-                                                                <label for=""
-                                                                    class="form-label text-muted small"><strong>{{ \Carbon\Carbon::parse($progress->created_at)->format('M j, Y H:i:s a') }}</strong></label>
-                                                                <input type="number"
-                                                                    name="scores[{{ $assessment->id }}][{{ $student->id }}][{{ $progress->id }}]"
-                                                                    value="{{ $progress->score }}" class="form-control"
-                                                                    min="0" max="{{ $assessment->total }}"
-                                                                    placeholder="Attempt {{ $i + 1 }}">
-                                                            </div>
+                                                                    <div
+                                                                        class="align-items-center d-flex justify-content-between border border-1 rounded p-2">
+                                                                        <p class="m-0">
+                                                                            {{ $assessment->score == 0 ? 0 :$assessment->score}} points
+                                                                        </p>
+                                                                        @if ($progress->status == 'passed')
+                                                                            <span class="badge bg-success">
+                                                                                {{ round(($progress->score / $progress->total) * 100, 2) }}%
+                                                                            </span>
+                                                                        @else
+                                                                            <div class="me-2">
+                                                                                <span class="badge bg-danger">
+                                                                                    {{ $progress->status }}
+                                                                                </span>
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            @endif
                                                         @endforeach
-                                                    @else
-                                                        <input type="number"
-                                                            name="scores[{{ $assessment->id }}][{{ $student->id }}][new]"
-                                                            class="form-control" placeholder="No score yet" min="0"
-                                                            max="{{ $assessment->total }}">
                                                     @endif
                                                 </td>
                                             @endforeach
