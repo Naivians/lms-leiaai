@@ -37,11 +37,11 @@ class AuthController extends Controller
             ])->withInput();
         }
 
-        if ($user->login_status == 0) {
-            return back()->withErrors([
-                'login_error' => 'Your account is not verified. Please check your email and verify your account.',
-            ])->withInput();
-        }
+        // if ($user->login_status == 0) {
+        //     return back()->withErrors([
+        //         'login_error' => 'Your account is not verified. Please check your email and verify your account.',
+        //     ])->withInput();
+        // }
 
         if ($user && Hash::check($credentials['password'], $user->password)) {
             if (auth()->attempt([$loginField => $loginInput, 'password' => $credentials['password']])) {
