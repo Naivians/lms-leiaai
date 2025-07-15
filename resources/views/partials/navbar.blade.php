@@ -21,7 +21,6 @@
         </div>
         <div class="account_container d-flex align-items-center justify-content-between gap-2">
             <span class="fw-bold me-2 text-primary"></span>
-            <i class="fa-regular fa-bell fs-4 cursor text-primary"></i>
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown"
                     aria-expanded="false">
