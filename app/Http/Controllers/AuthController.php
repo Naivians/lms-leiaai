@@ -59,10 +59,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             return redirect()->route('user.index');
         }
-
-        // dd(Hash::make("admin12345"));
-
-        return view('pages.auth.login');
+        return view('pages.Auth.Login');
     }
 
     public function RegisterPage()
