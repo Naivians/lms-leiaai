@@ -98,7 +98,7 @@ class LessonsController extends Controller
 
         $lesson = $this->lesson_model->find($request->lesson_id);
 
-        $lessons =$lesson->update([
+        $lessons = $lesson->update([
             'title' => $request->title,
             'description' => $request->lessons_content ?? null,
         ]);
@@ -145,7 +145,18 @@ class LessonsController extends Controller
                 default => 'others',
             };
 
-            $path = $attachment->storeAs("uploads/lessons/$folder", $filename, 'public');
+            $uploadPath = public_path("uploads/lessons/$folder");
+            if (!file_exists($uploadPath)) {
+                mkdir($uploadPath, 0755, true); // Create folder recursively
+            }
+
+            $filePath = $uploadPath . '/' . $filename;
+            if (!move_uploaded_file($attachment->getPathname(), $filePath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Failed to move uploaded file',
+                ], 404);
+            }
 
             $materials = $this->materials_model->create([
                 'lessons_id' => $lesson_id,
@@ -153,7 +164,7 @@ class LessonsController extends Controller
                 'type' => $attachment->getClientMimeType(),
                 'extension' => $extension,
                 'size' => $attachment->getSize(),
-                'path' => Storage::url($path),
+                'path' => "/uploads/lessons/$folder/" . $filename, // ✅ No /storage
             ]);
 
             if (!$materials) {
