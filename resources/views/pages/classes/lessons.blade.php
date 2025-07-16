@@ -59,6 +59,7 @@
                                         <img src="https://cdn-icons-png.flaticon.com/512/337/337946.png" alt="PDF Icon"
                                             style="width: 80px; height: 80px; object-fit: contain;">
                                     </a>
+
                                     <div class="mt-2 small text-muted">{{ $material->filename ?? 'PDF File' }}</div>
                                 @elseif ($material->extension == 'mp4')
                                     <video src="{{ asset($material->path) }}"

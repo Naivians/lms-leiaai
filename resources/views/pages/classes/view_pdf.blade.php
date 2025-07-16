@@ -9,7 +9,8 @@
     <title>LEIAAI LMS | PDF</title>
 
     <style>
-        html, body{
+        html,
+        body {
             margin: 0;
             padding: 0;
         }
@@ -17,9 +18,22 @@
 </head>
 
 <body>
-    <iframe src="{{ url('pdfjs/web/viewer.html') }}?file={{ $pdf_url }}" width="100%"
-        style="height: 100vh; border: none; padding: 0; margin: 0;">
+    <iframe id="pdf-viewer" src="{{ url('pdfjs/web/viewer.html') }}?file={{ urlencode($pdf_url) }}" width="100%"
+        style="height: 100vh; border: none;">
     </iframe>
+
+    {{-- <iframe src="{{ $pdf_url }}" width="100%" height="100%" style="border: none; padding: 0; margin: 0;"> --}}
+
+    <script>
+        document.getElementById('pdf-viewer').onload = function() {
+            setTimeout(function() {
+                var iframe = document.getElementById('pdf-viewer');
+                if (!iframe.contentWindow.PDFViewerApplication) {
+                    window.location.href = "{{ $pdf_url }}";
+                }
+            }, 2000);
+        };
+    </script>
 </body>
 
 </html>

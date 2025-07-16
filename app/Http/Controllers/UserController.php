@@ -106,6 +106,8 @@ class UserController extends Controller
         if (!Gate::allows('admin_lvl1')) {
             return redirect()->route('user.dashboard');
         }
+
+        return view('pages.Auth.Register');
     }
 
     public function Dashboard()
