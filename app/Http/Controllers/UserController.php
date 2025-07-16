@@ -18,6 +18,7 @@ use App\Models\Assessment;
 use Illuminate\Support\Facades\Mail;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 use function PHPUnit\Framework\isEmpty;
 
@@ -41,10 +42,8 @@ class UserController extends Controller
     public function Index(Request $request)
     {
 
-        if (Auth::user()->role != 3 && Auth::user()->role != 4 && Auth::user()->role != 5) {
-            return redirect()->route('user.dashboard')->withErrors([
-                'access' => 'You do not have permission to access this page.'
-            ]);
+        if (!Gate::allows('admin_lvl1')) {
+            return redirect()->route('user.dashboard');
         }
 
         if ($request->ajax()) {
@@ -102,18 +101,11 @@ class UserController extends Controller
         return view('pages.users.user');
     }
 
-    /**
-     * Show the form to add new users.
-     */
     public function Register()
     {
-        if (Auth::user()->role === 3 || Auth::user()->role === 4 || Auth::user()->role === 5) {
-            return view('pages.users.edit_users');
+        if (!Gate::allows('admin_lvl1')) {
+            return redirect()->route('user.dashboard');
         }
-
-        return redirect()->route('user.dashboard')->withErrors([
-            'access' => 'You do not have permission to access this page.'
-        ]);
     }
 
     public function Dashboard()
@@ -198,9 +190,9 @@ class UserController extends Controller
 
         if ($validator->fails()) {
             return response()->json([
-                'message' => $validator->errors()->first(), // First error message
-                'errors' => $validator->errors(),           // All error messages
-            ], 422);
+                'success' => false,
+                'message' => $validator->errors()->first(),
+            ]);
         }
 
         $gender_img = [

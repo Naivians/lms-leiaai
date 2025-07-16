@@ -167,8 +167,7 @@
                 <h2 class="text-secondary pb-2 border-bottom mt-3">Lessons</h2>
                 <div class="lessons_stream_container">
 
-
-                    @if (isset($lessons) && count($lessons) > 0)
+                    @if ($lessons->isNotEmpty())
                         @foreach ($lessons as $index => $lesson)
                             @php
                                 $accodrionParent = 'accordionParent' . $index;

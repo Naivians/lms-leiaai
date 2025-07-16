@@ -7,6 +7,8 @@ use App\Models\CourseModel;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
+
 
 
 class CourseModelController extends Controller
@@ -24,13 +26,12 @@ class CourseModelController extends Controller
 
             return DataTables::of($data)
                 ->addColumn('action', function ($row) {
-                    $editBtn = '<i class="fa-solid fa-user-pen btn btn-warning" onclick ="showCourse(' . $row->id . ')"></i>';
-                    $deleteBtn = '<i class="fa-solid fa-trash btn  btn-danger" onclick ="deleteCourse(' . $row->id . ')"></i>';
-
-                    if (Auth::user()->role === 5) {
-                        return $editBtn . ' ' . $deleteBtn;
+                    if (auth()->user()->can('admin_lvl3')) {
+                        return '<i class="fa-solid fa-user-pen btn btn-warning" onclick="showCourse(' . $row->id . ')"></i>';
                     }
+                    return '';
                 })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 

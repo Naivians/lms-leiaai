@@ -91,11 +91,12 @@
                                 </div>
                             </div>
                         @break
+
                         @case('Feedback')
                             <div class="card-tools">
                                 <div class="card-tools">
-                                    <a href="{{ route('class.feedback.create') }}"
-                                        class="btn btn-primary btn-sm">Create <i class="fa-solid fa-plus ms-1"></i></a>
+                                    <a href="{{ route('class.feedback.create') }}" class="btn btn-primary btn-sm">Create <i
+                                            class="fa-solid fa-plus ms-1"></i></a>
                                 </div>
                             </div>
                         @break
@@ -350,17 +351,27 @@
                 serverSide: true,
                 ajax: '{{ route('course.index') }}',
                 columns: [{
-                        data: 'course_name'
+                        data: 'course_name',
+                        name: 'course_name' // Add name for server-side processing
                     },
                     {
-                        data: 'course_description'
+                        data: 'course_description',
+                        name: 'course_description'
                     },
                     {
                         data: 'action',
+                        name: 'action',
                         orderable: false,
-                        searchable: false
+                        searchable: false,
+                        render: function(data) {
+                            return data || ''; // Handle empty action
+                        }
                     }
-                ]
+                ],
+                columnDefs: [{
+                    targets: 2, // Action column (0-based index)
+                    className: 'text-center' // Optional: center align
+                }]
             });
 
             // LessonsTable
@@ -398,8 +409,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('class.feedback.index') }}',
-                columns: [
-                    {
+                columns: [{
                         data: 'anonymous_name',
                     },
                     {

@@ -12,12 +12,14 @@ class enrollment_notification extends Mailable implements ShouldQueue
     use Queueable, SerializesModels;
 
     public $user;
+    public $student;
     public $class;
 
 
-    public function __construct($user, $class = null)
+    public function __construct($user = null, $class = null, $student = null)
     {
         $this->user = $user;
+        $this->student = $student;
         $this->class = $class;
     }
 
@@ -28,6 +30,7 @@ class enrollment_notification extends Mailable implements ShouldQueue
             ->with([
                 'user' => $this->user,
                 'class' => $this->class,
+                'student_name' => $this->student,
             ]);
     }
 }

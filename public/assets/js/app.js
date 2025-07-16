@@ -192,9 +192,7 @@ $("#announcement_form").on("submit", function (e) {
     });
 });
 
-
 $("#feedback_form").on("submit", function (e) {
-
     e.preventDefault();
     if (!quill) {
         console.error("Quill editor is not initialized.");
@@ -212,7 +210,7 @@ $("#feedback_form").on("submit", function (e) {
     formData.append("feedback_content", content);
 
     $.ajax({
-        url: '/class/feedback/save',
+        url: "/class/feedback/save",
         method: "POST",
         data: formData,
         processData: false,
@@ -841,7 +839,7 @@ $("#registerForm").on("submit", function (e) {
         },
         success: (response) => {
             if (!response.success) {
-                error_message("Failed to update user");
+                error_message(response.message);
                 return;
             }
 
@@ -1011,6 +1009,10 @@ function validate_input_accept_numbers_only(input) {
         }
     }
 }
+
+$("#show_password").on("change", function () {
+    showPassword();
+});
 
 function showPassword() {
     const password = document.getElementById("validationCustom06");

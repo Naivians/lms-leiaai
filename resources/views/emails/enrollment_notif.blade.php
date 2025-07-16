@@ -55,7 +55,7 @@
             <h2>🎉 Enrollment Confirmed</h2>
         </div>
         <div class="content">
-            <p>Hi {{ $user->name ?? 'Student' }},</p>
+            <p>Good day! {{ session()->get('student_name') ?? "NO NAME" }},</p>
 
             <p>Congratulations! You have been successfully enrolled in:</p>
 
@@ -67,14 +67,8 @@
 
             <p>Your classes will begin on
                 <strong>{{ $class->created_at ? $class->created_at->format('F j, Y') : 'TBD' }}</strong>. Please make
-                sure to check the student portal for updated schedules, materials, and announcements.
+                sure to check the school portal for updated schedules, materials, and announcements.
             </p>
-
-            @if ($user->login_status == 0)
-                <p style="color: red"><strong>NOTE:</strong> Your account has been verified but is not yet activated by
-                    the Registrar. Please contact the LEIAAI Registrar for activation.</p>
-            @endif
-
 
             <a href="{{ url('http://127.0.0.1:8000/') ?? '#' }}" class="button">Go to Class Portal</a>
 
@@ -84,7 +78,7 @@
         </div>
 
         <div class="footer">
-            &copy; {{ date('Y') }} Your School Name. All rights reserved.
+            &copy; {{ date('Y') }} Your Leading Edge International Aviation Academy Inc.. All rights reserved.
         </div>
     </div>
 </body>

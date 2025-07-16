@@ -7,7 +7,6 @@
 @section('content')
     @include('partials.messages', ['title' => 'Login Error'])
     <div class="container mt-3">
-
         <div class=" border border-1 w-50 mx-auto">
             <h1 class="bg-primary p-3 text-white text-center">Register Account</h1>
             <div class="my-3 alert alert-warning d-none" id="errors">
@@ -15,7 +14,7 @@
             </div>
             <form class="row g-3 p-3" id="registerForm">
                 <div class="col-md-12">
-                    <label for="id_number" class="form-label">ID Number <span class="text-warning"> (optional but
+                    <label for="id_number" class="form-label">ID Number <span class="text-dark"> (optional but
                             needed)</span></label>
                     <input type="text" class="form-control" id="id_number" name="id_number" placeholder="24-007">
                 </div>
@@ -63,7 +62,7 @@
 
                 <div class="col-md-6">
                     <label for="gender" class="form-label">Select Gender</label>
-                    <select class="form-select" id="gender" name="gender" required>
+                    <select class="form-control" id="gender" name="gender" required>
                         <option selected disabled value="">Choose...</option>
                         <option value="0">Male</option>
                         <option value="1">Female</option>
@@ -82,6 +81,4 @@
             </form>
         </div>
     </div>
-    {{-- <div class="bg-light">
-    </div> --}}
 @endsection

@@ -29,7 +29,7 @@
                 <ul class="dropdown-menu">
                     <li>
                         <a href="{{ route('user.edit', ['userId' => Auth::id()]) }}" class="dropdown-item">
-                            <i class="fa-solid fa-user me-2"></i> Profilessss
+                            <i class="fa-solid fa-user me-2"></i> Profile
                         </a>
                     </li>
                     <a href="#" id="logoutBtn" class="dropdown-item"><i

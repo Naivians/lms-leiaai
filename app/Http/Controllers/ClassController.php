@@ -89,25 +89,23 @@ class ClassController extends Controller
         $announcements = $announcements->announcements ?? null;
 
         $course = $this->classModel->select('id', 'course_name', 'class_name')->where('id', $class_id)->first();
+
+
+
         $course_id = CourseModel::get_course_id($course->course_name);
 
-        $courses_lessons = $this->courseModel->find($course_id);
-        $courses_lessons = $courses_lessons->lessons;
-
-        $lesson_ids = [];
-        $assessments_ids = [];
-
-        foreach ($courses_lessons as $lesson) {
-            $lesson_ids[] = $lesson->id;
+        if ($course_id) {
+            $courses_lessons = $this->courseModel->find($course_id);
+            $courses_lessons = $courses_lessons->lessons;
         }
 
-        $lessons = $this->lesson_model->with('materials')->whereIn('id', $lesson_ids)->get();
+
         $assessments = $this->assessment_model->with('progress.user')->where('class_id', $class_id)->get();
 
         return view('pages.classes.stream', [
             'class_id' => $encryptedClassId,
             'announcements' => $announcements ?? null,
-            'lessons' => $courses_lessons,
+            'lessons' => $courses_lessons ?? collect(),
             'assessments' => $assessments,
             'class_name' => $course->class_name,
         ]);
@@ -407,20 +405,18 @@ class ClassController extends Controller
             ]);
         }
 
-        $user = $this->userModel->find($userId);
+        $users = $this->userModel->find($userId);
 
-        if (!$user) {
+        if (!$users) {
             return response()->json([
                 'success' => false,
                 'message' => "this user doesn't exists on our database",
             ]);
         }
-
-
         $user = $this->enrollment->create([
             'user_id' => $userId,
             'class_id' => $classId,
-            'role_id' => $user->role,
+            'role_id' => $users->role,
         ]);
 
         if (!$user) {
@@ -430,16 +426,45 @@ class ClassController extends Controller
             ]);
         }
 
-        $classes = $user->class;
-        $userInfo = $user->user;
+        if ($role_id == 1) {
+            $classes = $this->enrollment->with(['class', 'user'])
+                ->where('role_id', $role_id)
+                ->where('class_id', $classId)
+                ->first();
+            $userInfo = $classes->user;
+            $classes = $classes->class;
+            $studentInfo = null;
+            $email = $userInfo->email;
+        } else {
+            $classes = $this->enrollment->with(['class', 'user'])
+                ->where('role_id', 1)
+                ->where('class_id', $classId)
+                ->first();
 
-        try {
-            Mail::to($userInfo->email)->queue(new enrollment_notification($userInfo, $classes));
-        } catch (\Exception $e) {
-            Log::error('Failed to send enrollment email to ' . $userInfo->email . ': ' . $e->getMessage());
+            if ($classes) {
+                $userInfo = $classes->user;
+                $classes = $classes->class;
+                $studentInfo = $users;
+                session()->put('student_name', $users->name);
+                $email = $studentInfo->email;
+            } else {
+                $classes = $this->enrollment->with(['class', 'user'])
+                    ->where('role_id', $role_id)
+                    ->where('class_id', $classId)
+                    ->first();
+
+                $studentInfo = $classes->user;
+                $classes = $classes->class;
+                $userInfo = null;
+                $email = $studentInfo->email;
+            }
         }
 
-
+        try {
+            Mail::to($email)->queue(new enrollment_notification($userInfo, $classes, $studentInfo));
+        } catch (\Exception $e) {
+            Log::error('Failed to send enrollment email to ' . $email . ': ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,
@@ -475,6 +500,12 @@ class ClassController extends Controller
         $feedbacks = Feedback::orderBy('created_at', 'desc')
             ->get();
 
+        $feedbacks = $feedbacks->map(function ($feedback) {
+            $user = User::find($feedback->user_id);
+            $feedback->user_id = $user ? $user->name : 'Anonymous';
+            return $feedback;
+        });
+
         return view('pages.classes.feedback.feedback', compact('feedbacks'));
     }
 
@@ -482,8 +513,6 @@ class ClassController extends Controller
     {
         return view('pages.classes.feedback.create');
     }
-
-
 
     function storeFeedback(Request $request)
     {
