@@ -7,7 +7,7 @@
 @section('content')
     @include('partials.messages', ['title' => 'Validation Error'])
 
-    <div class="container w-50 mt-5">
+    <div class="container mt-5">
         <h1 class="bg-primary text-white p-3 mb-3">Forgot Your Password?</h1>
 
         @if (session('status'))
@@ -36,6 +36,7 @@
 
             <div class="text-end">
                 <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                <a href="{{ route('login') }}" class="btn btn-outline-danger">Back</a>
             </div>
         </form>
     </div>

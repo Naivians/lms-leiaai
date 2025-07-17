@@ -116,6 +116,25 @@
                 padding: 30px 24px;
             }
         }
+
+        /* School logo and name */
+        .school-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .school-logo {
+            width: 70px;
+            height: auto;
+            margin-bottom: 12px;
+        }
+
+        .school-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a73e8;
+            margin: 0;
+        }
     </style>
 
 </head>

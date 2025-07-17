@@ -32,9 +32,9 @@
 
                     @if ($questions->hasMorePages())
                         <div>
-                            {{-- <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
+                            <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
                             <button class="next-btn" id="previous">Back</button>
-                        </a> --}}
+                        </a>
                             <a href="{{ $questions->nextPageUrl() }}" class="text-decoration-none">
                                 <button class="next-btn" id="next">Next Que</button>
                             </a>
@@ -58,7 +58,6 @@
                 <div class="modal-body">
                     <div class="result_icon text-center">
                         <div id='result_icon'>
-                            {{-- <i class="fa-solid fa-circle-check" style="font-size: 100px"></i> --}}
                             <img src="{{ asset(Auth::user()->img) }}" alt="" style="width: 150px; height: auto;">
                         </div>
                         <p class="text-success mt-3 " id="result_description">Nice job, you passed</p>

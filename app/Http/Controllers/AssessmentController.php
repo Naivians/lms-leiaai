@@ -302,6 +302,8 @@ class AssessmentController extends Controller
 
         $assessment->update([
             'name' => $request->name,
+            'class_id' => $request->class_id,
+            'type' => $request->type,
             'assessment_time' => $assessment_time,
             'assessment_date' => $request->assessment_date,
             'total' => $assessment->total,

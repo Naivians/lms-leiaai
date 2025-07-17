@@ -42,30 +42,24 @@
 @section('content')
 
 
-
-
-    <input type="hidden" name="encrypted_class_id" id="encrypted_class_id" value="{{ $class_id ?? '' }}">
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" id="classTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="streams" data-bs-toggle="tab" data-bs-target="#tab1" type="button" role="tab"
-                aria-controls="tab1" aria-selected="true">
-                Streams
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="classwork" data-bs-toggle="tab" data-bs-target="#tab2" type="button"
-                role="tab" aria-controls="tab2" aria-selected="false">
-                Classwork
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="people" data-bs-toggle="tab" data-bs-target="#tab3" type="button"
-                role="tab" aria-controls="tab3" aria-selected="false">
-                People
-            </button>
-        </li>
-        @can('fi_only')
+      <!-- Nav tabs -->
+  <ul class="nav nav-tabs" id="classTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="Streams-tab" data-bs-toggle="tab" data-bs-target="#Streams" type="button" role="tab">
+        Streams
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="Classwork-tab" data-bs-toggle="tab" data-bs-target="#Classwork" type="button" role="tab">
+        Classwork
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="People-tab" data-bs-toggle="tab" data-bs-target="#People" type="button" role="tab">
+        People
+      </button>
+    </li>
+      @can('fi_only')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
                     role="tab" aria-controls="tab4" aria-selected="false">
@@ -73,12 +67,12 @@
                 </button>
             </li>
         @endcan
-    </ul>
+  </ul>
 
-    <div class="tab-content mt-3">
-        {{-- announcement --}}
-        <div class="tab-pane fade" id="tab1" role="tabpanel" aria-labelledby="streams">
-            @can('not_for_sp')
+  <!-- Tab panes -->
+  <div class="tab-content pt-3">
+    <div class="tab-pane fade show active" id="Streams" role="tabpanel">
+      @can('not_for_sp')
                 <a href="{{ route('announcement.index', ['class_id' => $class_id ?? null, 'announcement_id' => 0]) }}"
                     class="text-decoration-none">
                     <div class="announce_form-controller my-3">
@@ -142,12 +136,9 @@
                     <p class="text-secondary">Stay tuned — announcements will appear here once posted.</p>
                 </div>
             @endif
-
-        </div>
-        {{-- classwork --}}
-        <div class="tab-pane fade" id="tab2" role="tabpanel" aria-labelledby="classwork">
-
-            @can('admin_lvl1')
+    </div>
+    <div class="tab-pane fade" id="Classwork" role="tabpanel">
+      @can('admin_lvl1')
                 <div class="dropdown">
                     <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
                         Create Classwork
@@ -177,16 +168,14 @@
                                     <h2 class="accordion-header">
                                         <button
                                             class="accordion-button collapsed d-flex justify-content-between align-items-center"
-                                            type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#{{ $lesson->id }}" aria-expanded="false"
-                                            aria-controls="{{ $lesson->id }}">
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#{{ $lesson->id }}"
+                                            aria-expanded="false" aria-controls="{{ $lesson->id }}">
 
                                             <span>{{ $lesson->title }}</span>
 
                                             <div class="ms-auto d-flex gap-2">
                                                 <a href="{{ route('lesson.index', ['class_id' => $class_id ?? null, 'lesson_id' => $lesson->id]) }}"
-                                                    class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
-                                                    title="view">
+                                                    class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
 
@@ -254,14 +243,14 @@
                                 </div>
                             </div>
                         @endforeach
+                    @else
+                        <div style="text-align: center; padding: 2rem; color: #6c757d;">
+                            <i class="fas fa-book-open fa-3x" style="margin-bottom: 1rem;"></i>
+                            <h3 style="font-weight: 500;">No Lessons Available</h3>
+                            <p>Please check back later or contact your instructor.</p>
+                        </div>
+                    @endif
                 </div>
-            @else
-                <div style="text-align: center; padding: 2rem; color: #6c757d;">
-                    <i class="fas fa-book-open fa-3x" style="margin-bottom: 1rem;"></i>
-                    <h3 style="font-weight: 500;">No Lessons Available</h3>
-                    <p>Please check back later or contact your instructor.</p>
-                </div>
-                @endif
             </div>
 
             <div>
@@ -311,10 +300,9 @@
                     </div>
                 @endif
             </div>
-        </div>
-        {{-- people --}}
-        <div class="tab-pane fade" id="tab3" role="tabpanel" aria-labelledby="people">
-            @can('not_for_sp_fi')
+    </div>
+    <div class="tab-pane fade" id="People" role="tabpanel">
+       @can('not_for_sp_fi')
                 <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container"
                     data-toggle-form="enroll_fi">
                     <div class="google-classroom-announce announce_btn">
@@ -371,10 +359,8 @@
             @endcan
             <h5 class="mt-5">{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
             <div id="enrolled_student_container" class="my-4"></div>
-        </div>
-        {{-- Grades --}}
-
-        @can('fi_only')
+    </div>
+   @can('fi_only')
             <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
                 @if ($assessments && count($assessments) > 0)
                     <div class="table-responsive">
@@ -434,6 +420,7 @@
                                                 <td>
                                                     @if ($progressList->isNotEmpty())
                                                         @foreach ($progressList as $i => $progress)
+
                                                             @if ($assessment->type == 'exam')
                                                                 <div class="mb-1">
                                                                     <label for=""
@@ -442,7 +429,7 @@
                                                                     <div
                                                                         class="align-items-center d-flex justify-content-between border border-1 rounded p-2">
                                                                         <p class="m-0">
-                                                                            {{ $assessment->score == 0 ? 0 :$assessment->score}} points
+                                                                            {{ $progress->score == 0 ? 0 : $progress->score}} points
                                                                         </p>
                                                                         @if ($progress->status == 'passed')
                                                                             <span class="badge bg-success">
@@ -478,7 +465,6 @@
 
             </div>
         @endcan
-
-
-    </div>
+  </div>
+</div>
 @endsection

@@ -89,6 +89,42 @@ class AuthController extends Controller
         return view('emails.email_verification');
     }
 
+    public function verificationStatus(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|exists:users,id',
+            'verification_status' => 'required|in:0,1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $user = User::find($request->id);
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not found.',
+            ]);
+        }
+
+        $user->isVerified = $request->verification_status;
+        $user->save();
+
+        $message = $request->verification_status == 1
+            ? "Verification status change to verified"
+            : "Verification status change to not verified";
+
+        return response()->json([
+            'success' => true,
+            'message' => $message
+        ]);
+    }
     public function LoginStatus(Request $request)
     {
         $validator = Validator::make($request->all(), [

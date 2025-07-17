@@ -69,14 +69,19 @@ class UserController extends Controller
                 })
 
                 ->addColumn('isVerified', function ($row) {
-                    if ($row->isVerified) {
-                        $icon = '<i class="fa-solid fa-circle-check text-success"></i>';
-                        $class = "badge bg-success";
-                    } else {
-                        $icon = '<i class="fa-solid fa-circle-xmark text-danger"></i>';
-                        $class = "badge bg-success";
-                    }
-                    return '<div class="text-center"><span class="text-center">' . $icon . '</span></div>';
+                    $class = $row->isVerified == 0 ? "badge bg-danger" : "badge bg-success";
+                    $name = $row->isVerified == 0 ? "not verified" : "verified";
+
+                    $alternate_name =  $row->isVerified == 0 ?  'verified' : 'not verified';
+                    $alternate_value =  $row->isVerified == 0 ? 1 : 0;
+
+
+                    $select_options = '<select name="verification_status"   onchange="verification_status(this, ' . $row->id . ')" class="form-select ' . $class . '" style="cursor: pointer;">
+                            <option value="' . $row->isVerified . '" selected>' . $name . '</option>
+                            <option value="' . $alternate_value . '">' . $alternate_name . '</option>
+                        </select>';
+
+                    return $select_options;
                 })
 
                 ->addColumn('role_name', function ($row) {

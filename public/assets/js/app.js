@@ -1086,6 +1086,49 @@ function login_status(selectElement, userId) {
         },
     });
 }
+function verification_status(selectElement, userId) {
+    const selectedValue = selectElement.value;
+    $.ajax({
+        url: "update/account_verification_status",
+        type: "POST",
+        data: {
+            id: userId,
+            verification_status: selectedValue,
+        },
+        headers: {
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+        },
+        beforeSend() {
+            pre_loader();
+        },
+        success: function (response) {
+            if (!response.success) {
+                error_message(response.message);
+                return;
+            }
+            success_message(response.message);
+            refreshTable('#userTable');
+        },
+        error: (xhr, status, error) => {
+            try {
+                const response = JSON.parse(xhr.responseText);
+
+                if (response.errors) {
+                    $("#errors").removeClass("d-none");
+                    Object.values(response.errors)
+                        .flat()
+                        .forEach((msg) => {
+                            console.log(msg);
+                        });
+                } else if (response.message) {
+                    error_message(response.message);
+                }
+            } catch (e) {
+                console.error("An unexpected error occurred", e);
+            }
+        },
+    });
+}
 
 // add courses
 function AddCourse() {

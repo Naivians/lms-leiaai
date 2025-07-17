@@ -28,6 +28,7 @@ Route::get('/forgot-password', function () {
 Route::middleware(['auth'])->group(function () {
     // Auth
     Route::post('update/login_status', [AuthController::class, 'LoginStatus'])->name('auth.Login.Status');
+    Route::post('update/account_verification_status', [AuthController::class, 'verificationStatus'])->name('auth.Login.verificationStatus');
 
     // users
     Route::prefix('user')->name('user.')->group(function () {
