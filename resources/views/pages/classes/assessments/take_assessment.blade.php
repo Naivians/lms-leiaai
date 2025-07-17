@@ -23,25 +23,28 @@
                 @endforeach
 
                 <div class="footer">
-
                     <input type="hidden" name="total" id="total" value="{{ $questions->total() }}">
                     <input type="hidden" name="pages" id="pages" value="{{ $questions->currentPage() }}">
                     <input type="hidden" name="assessment_id" id="assessment_id"
                         data-assessment-id="{{ $assessments->id }}">
+
                     <div>{{ $questions->currentPage() }} of {{ $questions->total() }} Questions</div>
 
-                    @if ($questions->hasMorePages())
-                        <div>
+                    <div>
+                        @if (!$questions->onFirstPage())
                             <a href="{{ $questions->previousPageUrl() }}" class="text-decoration-none">
-                            <button class="next-btn" id="previous">Back</button>
-                        </a>
+                                <button class="next-btn" id="previous">Back</button>
+                            </a>
+                        @endif
+
+                        @if ($questions->hasMorePages())
                             <a href="{{ $questions->nextPageUrl() }}" class="text-decoration-none">
                                 <button class="next-btn" id="next">Next Que</button>
                             </a>
-                        </div>
-                    @else
-                        <button class="next-btn" id="finish">Finish</button>
-                    @endif
+                        @else
+                            <button class="next-btn" id="finish">Finish</button>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -107,12 +110,19 @@
             }
 
             const options = $('#options');
+
+            const storedAnswers = JSON.parse(localStorage.getItem('answers') || '[]');
+            storedAnswers.forEach(ans => {
+                const selector = `.option[data-q_id="${ans.qid}"][data-choice-id="${ans.cid}"]`;
+                $(selector).addClass('correct');
+            });
+
             options.on('click', '.option', function() {
-                options.find('.option').removeClass('correct');
+                const question_id = $(this).data('q_id');
+                options.find(`.option[data-q_id="${question_id}"]`).removeClass('correct');
                 $(this).addClass('correct');
 
                 const choice_id = $(this).data('choice-id');
-                const question_id = $(this).data('q_id');
 
                 let answers = JSON.parse(localStorage.getItem('answers') || '[]');
 
