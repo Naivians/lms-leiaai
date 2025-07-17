@@ -4,18 +4,22 @@
 
 @extends('layouts.assessment')
 @section('content')
-
     <div class="assessment_info_container">
-
+        @php
+            $percentage =
+                $assessment_progress->total > 0 ? round(($assessment_progress->score / $assessment_progress->total) * 100, 2) : 0;
+        @endphp
 
         <h5>Name: <span><strong>{{ $assessment->name }}</strong></span></h5>
         <h5>Type: <span><strong>{{ ucfirst($assessment->type) }}</strong></span></h5>
         <h5>Total: <span><strong>{{ $assessment->total }}</strong></span></h5>
         <h5>Score: <span><strong>{{ $assessment_progress->score }}</strong></span></h5>
+        <h5>Percentage: <span><strong>{{ $percentage }}</strong></span></h5>
         <h5>Status: <span><strong>{{ $assessment_progress->status }}</strong></span></h5>
 
         <div class="my-4">
-            <a href="{{route('assessment.show.progress')}}" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <a href="{{ route('assessment.show.progress') }}" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i>
+                Back</a>
         </div>
     </div>
     <div class="view_progress_container">
@@ -32,7 +36,8 @@
                         @endphp
 
                         <div class="options">
-                            <div class="option my-2 {{ $isCorrect ? 'correctAnswer' : 'incorrect' }}" style="cursor:default;">
+                            <div class="option my-2 {{ $isCorrect ? 'correctAnswer' : 'incorrect' }}"
+                                style="cursor:default;">
                                 {{ $choice->choices }}
                             </div>
                         </div>
