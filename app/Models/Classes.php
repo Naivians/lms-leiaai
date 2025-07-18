@@ -30,7 +30,7 @@ class Classes extends Model
 
     public function announcements()
     {
-        return $this->hasMany(Announcement::class, 'class_id');
+        return $this->hasMany(Announcement::class, 'class_id')->orderBy('announcement_date', 'desc');
     }
 
 }

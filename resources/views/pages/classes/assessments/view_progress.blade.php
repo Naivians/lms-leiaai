@@ -50,12 +50,14 @@
                     @php
                         $userAnswer = $progress_detail->firstWhere('qid', $question->id);
                         $selectedChoice = $question->choices->firstWhere('id', $userAnswer?->cid);
+                        $isCorrect = $selectedChoice && $selectedChoice->answer_key && $selectedChoice->answer_key->choice_id == $selectedChoice->id;
                     @endphp
 
                     @if ($selectedChoice)
                         <div class="options">
-                            <div class="option user-answer" style="cursor:default;">
+                            <div class="option user-answer d-flex align-items-center justify-content-between" style="cursor:default;">
                                 {{ $selectedChoice->choices }}
+                                <i class="fa-solid {{ $isCorrect ? 'fa-circle-check text-success' : 'fa-circle-xmark text-danger' }} ms-2"></i>
                             </div>
                         </div>
                     @else

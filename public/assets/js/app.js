@@ -170,6 +170,9 @@ $("#announcement_form").on("submit", function (e) {
         success: function (response) {
             success_message(response.message);
             quill.setText("");
+
+            console.log(response);
+
         },
         error: (xhr) => {
             try {

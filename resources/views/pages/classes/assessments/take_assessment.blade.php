@@ -121,13 +121,9 @@
                 const question_id = $(this).data('q_id');
                 options.find(`.option[data-q_id="${question_id}"]`).removeClass('correct');
                 $(this).addClass('correct');
-
                 const choice_id = $(this).data('choice-id');
-
                 let answers = JSON.parse(localStorage.getItem('answers') || '[]');
-
                 const index = answers.findIndex(ans => ans.qid === question_id);
-
                 if (index >= 0) {
                     answers[index].cid = choice_id;
                 } else {

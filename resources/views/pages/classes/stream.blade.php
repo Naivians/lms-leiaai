@@ -100,35 +100,47 @@
             {{-- Announcements --}}
 
             @if (isset($announcements) && $announcements->count() > 0)
-                @foreach ($announcements as $announcement)
-                    <div class="card my-3">
-                        <div class="card-header announcement_header">
-                            <div class="announcement_header">
-                                <div class="announcement_img_container">
-                                    <img src="{{ $announcement->user->img }}" alt="">
-                                </div>
-                                <div>
-                                    <h5 class="mx-2 my-0">{{ $announcement->user->name }}</h5>
-                                    <small class="mx-2">{{ $announcement->user->role_label }}</small>
-                                </div>
-                            </div>
-                            @can('not_for_sp')
-                                <div class="edit_btn">
-                                    <a href="{{ route('announcement.index', ['class_id' => Crypt::encrypt($announcement->class_id), 'announcement_id' => $announcement->id]) }}"
-                                        class="btn btn-outline-warning text-decoration-none">
-                                        <i class="fa-solid fa-pen-to-square ">
-                                        </i>
-                                    </a>
-                                    <i class="fa-solid fa-trash btn btn-outline-danger"
-                                        onclick='delete_announcement({{ $announcement->id }})'></i>
-                                </div>
-                            @endcan
+                <div class="accordion" id="announcementAccordion">
+    @foreach ($announcements as $announcement)
+        <div class="accordion-item my-3">
+            <h2 class="accordion-header" id="heading{{ $announcement->id }}">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapse{{ $announcement->id }}" aria-expanded="false"
+                    aria-controls="collapse{{ $announcement->id }}">
+                    <div class="d-flex align-items-center">
+                        <div class="announcement_img_container me-2">
+                            <img src="{{ $announcement->user->img }}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
                         </div>
-                        <div class="card-body">
-                            {!! $announcement->content !!}
+                        <div>
+                            <h6 class="mb-0">{{ $announcement->user->name }}</h6>
+                            <small>{{ $announcement->user->role_label }}</small>
                         </div>
                     </div>
-                @endforeach
+                </button>
+            </h2>
+            <div id="collapse{{ $announcement->id }}" class="accordion-collapse collapse"
+                aria-labelledby="heading{{ $announcement->id }}" data-bs-parent="#announcementAccordion">
+                <div class="accordion-body">
+                    <div class="d-flex justify-content-between mb-2">
+                        <div></div>
+                        @can('not_for_sp')
+                            <div class="edit_btn">
+                                <a href="{{ route('announcement.index', ['class_id' => Crypt::encrypt($announcement->class_id), 'announcement_id' => $announcement->id]) }}"
+                                    class="btn btn-outline-warning btn-sm me-1">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <i class="fa-solid fa-trash btn btn-outline-danger btn-sm"
+                                    onclick='delete_announcement({{ $announcement->id }})'></i>
+                            </div>
+                        @endcan
+                    </div>
+                    {!! $announcement->content !!}
+                </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
             @else
                 <div class="text-center text-muted my-5">
                     <i class="fas fa-bullhorn fa-3x mb-3"></i>
