@@ -10,6 +10,41 @@
     --white-color: #fff;
 }
 
+.breadcrumb {
+    --bs-breadcrumb-divider: '>';
+    font-size: 0.9rem;
+}
+.breadcrumb-item {
+    padding: 0.25rem 0.5rem;
+}
+.breadcrumb-item a {
+    color: #64748b;
+    text-decoration: none;
+    transition: all 0.2s;
+    border-radius: 4px;
+    padding: 0.25rem 0.2rem;
+}
+.breadcrumb-item a:hover {
+    color: #3b82f6;
+    background-color: rgba(59, 130, 246, 0.1);
+}
+.breadcrumb-item.active {
+    color: #1e293b;
+    font-weight: 500;
+    background-color: rgba(59, 130, 246, 0.1);
+    border-radius: 4px;
+}
+
+/* nav[aria-label="breadcrumb"] {
+    padding: 0.5rem 0;
+    margin-top: 10px;
+}
+nav[aria-label="breadcrumb"] > ol {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+} */
 .white-bg {
     background-color: var(--white-color);
 }

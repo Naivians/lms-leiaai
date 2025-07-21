@@ -41,7 +41,6 @@ class UserController extends Controller
      */
     public function Index(Request $request)
     {
-
         if (!Gate::allows('admin_lvl1')) {
             return redirect()->route('user.dashboard');
         }

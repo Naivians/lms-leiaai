@@ -73,7 +73,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('course')->name('course.')->group(function () {
         Route::get('/', [CourseModelController::class, 'Index'])->name('index');
         Route::post('/create', [CourseModelController::class, 'Create'])->name('create');
-        Route::get('/show/{courseId}', [CourseModelController::class, 'Show'])->name('view');
+        Route::get('/show/{courseId}', action: [CourseModelController::class, 'Show'])->name('view');
         Route::get('/edit/{courseId}', [CourseModelController::class, 'Edit'])->name('edit');
         Route::post('/update', [CourseModelController::class, 'Update'])->name('update');
         Route::post('/delete/{courseId}', [CourseModelController::class, 'Destroy'])->name('delete');
