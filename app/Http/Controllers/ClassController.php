@@ -81,7 +81,7 @@ class ClassController extends Controller
             $class_id = Crypt::decrypt($class_id);
         } catch (DecryptException $e) {
             return redirect()->route('class.index')->withErrors([
-                'error' => 'Invalid class ID',
+                'error' => 'Invalid class awdawdwad',
             ]);
         }
 

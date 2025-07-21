@@ -29,15 +29,18 @@ class AnnouncementController extends Controller
             }
             return view('pages.classes.announcement', ['class_id' => $class_id ?? null, 'announcement' => $announcement]);
         }
+
         $enncrypted_class_id = Crypt::encrypt($class_id);
 
-        try {
-            $class_id = Crypt::decrypt($class_id);
-        } catch (DecryptException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => "Invalid class ID.",
-            ], 404);
+        if ($class_id != 0) {
+            try {
+                $class_id = Crypt::decrypt($class_id);
+            } catch (DecryptException $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Invalid class ID.",
+                ], 404);
+            }
         }
 
         $user = User::find(Auth::id());
@@ -50,12 +53,11 @@ class AnnouncementController extends Controller
                 ->get();
         }
 
-        return view('pages.classes.announcement', ['class_id' => $class_id ?? null, 'classes' => $classes]);
+        return view('pages.classes.announcement', ['class_id' => $class_id ?? null, 'classes' => $classes, "announcement" => null]);
     }
 
     public function store(Request $request)
     {
-
         $tag_classes = $request->tag_classes ?? [];
 
         if ($request->announcement_content == '') {
@@ -65,7 +67,9 @@ class AnnouncementController extends Controller
             ], 400);
         }
 
-        $tag_classes[] = $request->class_id;
+        if($request->class_id != 0){
+            $tag_classes[] = $request->class_id;
+        }
 
         foreach ($tag_classes as $tag_class) {
             $announcement = $this->announcement->create([

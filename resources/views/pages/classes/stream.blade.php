@@ -441,7 +441,7 @@
                                                                     <div
                                                                         class="align-items-center d-flex justify-content-between border border-1 rounded p-2">
                                                                         <p class="m-0">
-                                                                            {{ $progress->score == 0 ? 0 : $progress->score}} points
+                                                                            {{ round(($progress->score / $progress->total) * 100, 2)}}%
                                                                         </p>
                                                                         @if ($progress->status == 'passed')
                                                                             <span class="badge bg-success">

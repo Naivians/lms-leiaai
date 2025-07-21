@@ -20,8 +20,6 @@
             </div>
 
             <div id="editor" style="height: 400px; width: 100%;" class="mb-2"></div>
-
-
             {{-- tag classes --}}
             <div class="tag_classes mt-4 mb-5">
                 @can('admin_lvl1')
@@ -56,7 +54,13 @@
 
             <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-bullhorn"></i> Announce
             </button>
-            <a href="{{ route('class.stream', ['class_id' => $class_id]) }}" class="btn btn-outline-danger">Back</a>
+
+            @php
+                $backUrl = Gate::allows('admin_lvl1') && $class_id == 0 ? route('class.index') : route('class.stream', ['class_id' => Crypt::encrypt($class_id)]);
+            @endphp
+
+            <a href="{{ $backUrl }}"
+                class="btn btn-outline-danger">Back</a>
         </form>
     @else
         <form id="edit_announcement_form">

@@ -6,8 +6,6 @@
     </div>
 
     <nav class="nav flex-column">
-
-
         <a href="{{ route('user.dashboard') }}"
             class="nav-link {{ request()->routeIs('user.dashboard') ? 'active text-primary' : 'text-dark' }} mb-1"><i
                 class="fa-solid fa-house me-2"></i>
@@ -58,6 +56,13 @@
                 class="fa-solid fa-box-archive me-2"></i>
             Archive Class
         </a>
+
+        @can('admin_lvl1')
+            <a href="{{ route('announcement.index', ['class_id' => 0, 'announcement_id' => 0]) }}"
+                class="nav-link {{ request()->routeIs('announcement.index', ['class_id' => 0, 'announcement_id' => 0]) ? 'active text-primary' : 'text-dark' }} mb-1"><i class="fa-solid fa-bullhorn me-2"></i>
+                Announce</a>
+            </a>
+        @endcan
     </nav>
     <div class="footer_container">
         <p class="m-0 mt-3 border border-1">&copy; {{ date('Y') }} LEIAAI LMS. All rights reserved. </p>
