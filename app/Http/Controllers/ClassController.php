@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 use App\Services\UserRestrictions;
-use Illuminate\Contracts\Encryption\DecryptException;
 use App\Mail\enrollment_notification;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;

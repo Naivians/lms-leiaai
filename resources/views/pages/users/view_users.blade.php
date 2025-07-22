@@ -68,7 +68,7 @@
                             @php
                                 $courses_names = [];
                                 foreach ($classes as $course_name) {
-                                    $courses_names[]= $course_name->course_name;
+                                    $courses_names[] = $course_name->course_name;
                                 }
                             @endphp
                             @foreach ($classes as $class)
@@ -97,39 +97,46 @@
                             </div>
                         </div>
 
-                        <div class="my-4">
-                            <label for="course" class="form-label text-secondary">Filter</label>
-                            <select name="course" id="course" class="form-select">
-                                @foreach ($courses_names as $course_name)
-                                    <option value="{{ $course_name }}">{{ $course_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <table class="table table-striped" id="defaultTable">
-                            <thead>
-                                <th class="bg-secondary text-light">Assessment Name</th>
-                                <th class="bg-secondary text-light">Type</th>
-                                <th class="bg-secondary text-light">Total</th>
-                                <th class="bg-secondary text-light">Score</th>
-                                <th class="bg-secondary text-light">Status</th>
-                            </thead>
-                            <tbody>
-                                @foreach ($assessments as $assessment)
-                                    @php
-                                        $class = $assessment->status == 'Passed' ? 'text-success' : 'text-danger';
-                                    @endphp
-                                    <tr>
-                                        <td>{{ $assessment->name }}</td>
-                                        <td>{{ $assessment->type }}</td>
-                                        <td>{{ $assessment->total }}</td>
-                                        <td>{{ $assessment->score }}</td>
-                                        <td><span class="badge {{ $class }}">{{ $assessment->status }}</span></td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                        @if (isset($assessments) && count($assessments) > 0)
+                            @if (isset($courses_names) && count($courses_names) > 0)
+                                <div class="my-4">
+                                    <label for="course" class="form-label text-secondary">Filter</label>
+                                    <select name="course" id="course" class="form-select">
+                                        @foreach ($courses_names as $course_name)
+                                            <option value="{{ $course_name }}">{{ $course_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                            <table class="table table-striped" id="defaultTable">
+                                <thead>
+                                    <th class="bg-secondary text-light">Assessment Name</th>
+                                    <th class="bg-secondary text-light">Type</th>
+                                    <th class="bg-secondary text-light">Total</th>
+                                    <th class="bg-secondary text-light">Score</th>
+                                    <th class="bg-secondary text-light">Status</th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($assessments as $assessment)
+                                        @php
+                                            $class = $assessment->status == 'Passed' ? 'text-success' : 'text-danger';
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $assessment->name }}</td>
+                                            <td>{{ $assessment->type }}</td>
+                                            <td>{{ $assessment->total }}</td>
+                                            <td>{{ $assessment->score }}</td>
+                                            <td><span class="badge {{ $class }}">{{ $assessment->status }}</span>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                            <div id="filterTable"></div>
+                        @else
+                            <h5 class="text-muted text-center my-4">This student is not yet taken ay assessments</h5>
+                        @endif
 
-                        <div id="filterTable"></div>
                     @endif
 
                 @endif

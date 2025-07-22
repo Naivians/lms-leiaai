@@ -42,24 +42,27 @@
 @section('content')
 
 
-      <!-- Nav tabs -->
-  <ul class="nav nav-tabs" id="classTab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="Streams-tab" data-bs-toggle="tab" data-bs-target="#Streams" type="button" role="tab">
-        Streams
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="Classwork-tab" data-bs-toggle="tab" data-bs-target="#Classwork" type="button" role="tab">
-        Classwork
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="People-tab" data-bs-toggle="tab" data-bs-target="#People" type="button" role="tab">
-        People
-      </button>
-    </li>
-      @can('fi_only')
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="classTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="Streams-tab" data-bs-toggle="tab" data-bs-target="#Streams" type="button"
+                role="tab">
+                Streams
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="Classwork-tab" data-bs-toggle="tab" data-bs-target="#Classwork" type="button"
+                role="tab">
+                Classwork
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="People-tab" data-bs-toggle="tab" data-bs-target="#People" type="button"
+                role="tab">
+                People
+            </button>
+        </li>
+        @can('fi_only')
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="grade" data-bs-toggle="tab" data-bs-target="#tab4" type="button"
                     role="tab" aria-controls="tab4" aria-selected="false">
@@ -67,12 +70,12 @@
                 </button>
             </li>
         @endcan
-  </ul>
+    </ul>
 
-  <!-- Tab panes -->
-  <div class="tab-content pt-3">
-    <div class="tab-pane fade show active" id="Streams" role="tabpanel">
-      @can('not_for_sp')
+    <!-- Tab panes -->
+    <div class="tab-content pt-3">
+        <div class="tab-pane fade show active" id="Streams" role="tabpanel">
+            @can('not_for_sp')
                 <a href="{{ route('announcement.index', ['class_id' => $class_id ?? null, 'announcement_id' => 0]) }}"
                     class="text-decoration-none">
                     <div class="announce_form-controller my-3">
@@ -101,46 +104,51 @@
 
             @if (isset($announcements) && $announcements->count() > 0)
                 <div class="accordion" id="announcementAccordion">
-    @foreach ($announcements as $announcement)
-        <div class="accordion-item my-3">
-            <h2 class="accordion-header" id="heading{{ $announcement->id }}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse{{ $announcement->id }}" aria-expanded="false"
-                    aria-controls="collapse{{ $announcement->id }}">
-                    <div class="d-flex align-items-center">
-                        <div class="announcement_img_container me-2">
-                            <img src="{{ $announcement->user->img }}" alt="" style="width: 40px; height: 40px; border-radius: 50%;">
-                        </div>
-                        <div>
-                            <h6 class="mb-0">{{ $announcement->user->name }}</h6>
-                            <small>{{ $announcement->user->role_label }}</small>
-                        </div>
-                    </div>
-                </button>
-            </h2>
-            <div id="collapse{{ $announcement->id }}" class="accordion-collapse collapse"
-                aria-labelledby="heading{{ $announcement->id }}" data-bs-parent="#announcementAccordion">
-                <div class="accordion-body">
-                    <div class="d-flex justify-content-between mb-2">
-                        <div></div>
-                        @can('not_for_sp')
-                            <div class="edit_btn">
-                                <a href="{{ route('announcement.index', ['class_id' => Crypt::encrypt($announcement->class_id), 'announcement_id' => $announcement->id]) }}"
-                                    class="btn btn-outline-warning btn-sm me-1">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <i class="fa-solid fa-trash btn btn-outline-danger btn-sm"
-                                    onclick='delete_announcement({{ $announcement->id }})'></i>
+                    @foreach ($announcements as $announcement)
+                        <div class="accordion-item my-3">
+                            <h2 class="accordion-header" id="heading{{ $announcement->id }}">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#collapse{{ $announcement->id }}" aria-expanded="false"
+                                    aria-controls="collapse{{ $announcement->id }}">
+                                    <div class="d-flex align-items-center">
+                                        <div class="announcement_img_container me-2">
+                                            <img src="{{ $announcement->user->img }}" alt=""
+                                                style="width: 40px; height: 40px; border-radius: 50%;">
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ $announcement->user->name }}</h6>
+                                            <small class="text-muted">{{ $announcement->user->role_label }}</small> <br>
+                                            <small class="text-muted"
+                                                style="font-size: 12px;">{{ \Carbon\Carbon::parse($announcement->created_at)->format('M j, Y h:i:s a') }}</small>
+                                        </div>
+                                    </div>
+                                </button>
+                            </h2>
+                            <div id="collapse{{ $announcement->id }}" class="accordion-collapse collapse"
+                                aria-labelledby="heading{{ $announcement->id }}" data-bs-parent="#announcementAccordion">
+                                <div class="accordion-body">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <div></div>
+                                        @can('not_for_sp')
+                                            @if ($announcement->user->role == Auth::user()->role)
+                                                <div class="edit_btn">
+                                                    <a
+                                                        href="{{ route('announcement.index', ['class_id' => Crypt::encrypt($announcement->class_id), 'announcement_id' => $announcement->id]) }}"
+                                                        class="btn btn-outline-warning btn-sm me-1">
+                                                        <i class="fa-solid fa-pen-to-square"></i>
+                                                    </a>
+                                                    <i class="fa-solid fa-trash btn btn-outline-danger btn-sm"
+                                                        onclick='delete_announcement({{ $announcement->id }})'></i>
+                                                </div>
+                                            @endif
+                                        @endcan
+                                    </div>
+                                    {!! $announcement->content !!}
+                                </div>
                             </div>
-                        @endcan
-                    </div>
-                    {!! $announcement->content !!}
+                        </div>
+                    @endforeach
                 </div>
-            </div>
-        </div>
-    @endforeach
-</div>
-
             @else
                 <div class="text-center text-muted my-5">
                     <i class="fas fa-bullhorn fa-3x mb-3"></i>
@@ -148,9 +156,9 @@
                     <p class="text-secondary">Stay tuned — announcements will appear here once posted.</p>
                 </div>
             @endif
-    </div>
-    <div class="tab-pane fade" id="Classwork" role="tabpanel">
-      @can('admin_lvl1')
+        </div>
+        <div class="tab-pane fade" id="Classwork" role="tabpanel">
+            @can('admin_lvl1')
                 <div class="dropdown">
                     <button class="btn btn-primary" type="button" data-bs-toggle="dropdown">
                         Create Classwork
@@ -180,14 +188,16 @@
                                     <h2 class="accordion-header">
                                         <button
                                             class="accordion-button collapsed d-flex justify-content-between align-items-center"
-                                            type="button" data-bs-toggle="collapse" data-bs-target="#{{ $lesson->id }}"
-                                            aria-expanded="false" aria-controls="{{ $lesson->id }}">
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#{{ $lesson->id }}" aria-expanded="false"
+                                            aria-controls="{{ $lesson->id }}">
 
                                             <span>{{ $lesson->title }}</span>
 
                                             <div class="ms-auto d-flex gap-2">
                                                 <a href="{{ route('lesson.index', ['class_id' => $class_id ?? null, 'lesson_id' => $lesson->id]) }}"
-                                                    class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="view">
+                                                    class="btn btn-sm btn-primary" data-bs-toggle="tooltip"
+                                                    title="view">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
 
@@ -312,9 +322,9 @@
                     </div>
                 @endif
             </div>
-    </div>
-    <div class="tab-pane fade" id="People" role="tabpanel">
-       @can('not_for_sp_fi')
+        </div>
+        <div class="tab-pane fade" id="People" role="tabpanel">
+            @can('not_for_sp_fi')
                 <div class="announce_form-controller my-3" style="cursor: pointer;" id="enroll_fi_container"
                     data-toggle-form="enroll_fi">
                     <div class="google-classroom-announce announce_btn">
@@ -371,8 +381,8 @@
             @endcan
             <h5 class="mt-5">{{ Gate::allows('sp_only') ? 'Classmates' : 'Students' }}</h5>
             <div id="enrolled_student_container" class="my-4"></div>
-    </div>
-   @can('fi_only')
+        </div>
+        @can('fi_only')
             <div class="tab-pane fade" id="tab4" role="tabpanel" aria-labelledby="grade">
                 @if ($assessments && count($assessments) > 0)
                     <div class="table-responsive">
@@ -432,7 +442,6 @@
                                                 <td>
                                                     @if ($progressList->isNotEmpty())
                                                         @foreach ($progressList as $i => $progress)
-
                                                             @if ($assessment->type == 'exam')
                                                                 <div class="mb-1">
                                                                     <label for=""
@@ -441,7 +450,7 @@
                                                                     <div
                                                                         class="align-items-center d-flex justify-content-between border border-1 rounded p-2">
                                                                         <p class="m-0">
-                                                                            {{ round(($progress->score / $progress->total) * 100, 2)}}%
+                                                                            {{ round(($progress->score / $progress->total) * 100, 2) }}%
                                                                         </p>
                                                                         @if ($progress->status == 'passed')
                                                                             <span class="badge bg-success">
@@ -477,6 +486,6 @@
 
             </div>
         @endcan
-  </div>
-</div>
+    </div>
+    </div>
 @endsection

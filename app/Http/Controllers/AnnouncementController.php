@@ -22,6 +22,19 @@ class AnnouncementController extends Controller
     }
     public function index($class_id, $announcement_id)
     {
+
+
+        $user = User::find(Auth::id());
+        if (Gate::allows('admin_lvl1')) {
+            $classes = Classes::select('id', "class_name")->get();
+        } else {
+            $classes = $user->classes()
+                ->select('classes.id', 'class_name')
+                ->where('classes.id', '!=', $class_id)
+                ->get();
+        }
+
+
         if ($announcement_id != 0) {
             $announcement = $this->announcement->find($announcement_id);
             if (!$announcement) {
@@ -43,15 +56,7 @@ class AnnouncementController extends Controller
             }
         }
 
-        $user = User::find(Auth::id());
-        if (Gate::allows('admin_lvl1')) {
-            $classes = Classes::select('id', "class_name")->get();
-        } else {
-            $classes = $user->classes()
-                ->select('classes.id', 'class_name')
-                ->where('classes.id', '!=', $class_id)
-                ->get();
-        }
+
 
         return view('pages.classes.announcement', ['class_id' => $class_id ?? null, 'classes' => $classes, "announcement" => null]);
     }
@@ -67,7 +72,7 @@ class AnnouncementController extends Controller
             ], 400);
         }
 
-        if($request->class_id != 0){
+        if ($request->class_id != 0) {
             $tag_classes[] = $request->class_id;
         }
 
