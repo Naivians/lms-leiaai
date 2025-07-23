@@ -440,6 +440,12 @@ class AssessmentController extends Controller
     public function saveAssessments(Request $request)
     {
 
+        // return response()->json([
+        //     'success' => false,
+        //     // "data" => $request->input("answers" . $request->assessment_id)
+        //     "data" => $request->input('answers')[$request->assessment_id]
+        // ]);
+
         $assessment = $this->assessment_model->find($request->assessment_id);
 
         if (!$assessment) {
@@ -472,7 +478,7 @@ class AssessmentController extends Controller
             ]);
         }
 
-        foreach ($request->answers as $answer) {
+        foreach ($request->input('answers')[$request->assessment_id] as $answer) {
             $qid = $answer['qid'];
             $cid = $answer['cid'];
 

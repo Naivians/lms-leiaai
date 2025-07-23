@@ -9,6 +9,7 @@
             <div class="quiz-container mx-auto">
                 <div class="quiz-header">
                     <h2>{{ $assessments->name }}</h2>
+                    <input type="hidden" name="assessmnet_id" id="assessment_id" data-assessment-id="{{ $assessments->id }}">
                 </div>
 
                 @foreach ($questions as $question)
@@ -104,14 +105,19 @@
 
         $(document).ready(function() {
 
-            if (parseInt(localStorage.getItem('show')) == 1) {
+            const assessment_id = $('#assessment_id').data('assessment-id');
+
+            if (parseInt(localStorage.getItem('show')) === 1) {
                 showResults();
                 disableElements();
             }
 
             const options = $('#options');
 
-            const storedAnswers = JSON.parse(localStorage.getItem('answers') || '[]');
+            let allAnswers = JSON.parse(localStorage.getItem('answers') || '{}');
+
+            let storedAnswers = allAnswers[assessment_id] || [];
+
             storedAnswers.forEach(ans => {
                 const selector = `.option[data-q_id="${ans.qid}"][data-choice-id="${ans.cid}"]`;
                 $(selector).addClass('correct');
@@ -119,10 +125,14 @@
 
             options.on('click', '.option', function() {
                 const question_id = $(this).data('q_id');
+                const choice_id = $(this).data('choice-id');
+
                 options.find(`.option[data-q_id="${question_id}"]`).removeClass('correct');
                 $(this).addClass('correct');
-                const choice_id = $(this).data('choice-id');
-                let answers = JSON.parse(localStorage.getItem('answers') || '[]');
+
+                allAnswers[assessment_id] = allAnswers[assessment_id] || [];
+                const answers = allAnswers[assessment_id];
+
                 const index = answers.findIndex(ans => ans.qid === question_id);
                 if (index >= 0) {
                     answers[index].cid = choice_id;
@@ -132,7 +142,8 @@
                         cid: choice_id
                     });
                 }
-                localStorage.setItem('answers', JSON.stringify(answers));
+
+                localStorage.setItem('answers', JSON.stringify(allAnswers));
             });
         });
 
