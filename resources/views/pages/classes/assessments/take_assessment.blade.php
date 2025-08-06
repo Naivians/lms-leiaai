@@ -4,6 +4,8 @@
 
 @extends('layouts.assessment')
 @section('content')
+
+
     @if ($assessments != null)
         <div class="quiz_outer_container">
             <div class="quiz-container mx-auto">
@@ -98,10 +100,29 @@
 
 @section('script')
     <script>
+        // const urlParams = new URLSearchParams(window.location.search);
+        // const page = urlParams.get("page");
+
+        let visitedPages = JSON.parse(localStorage.getItem("pages")) || [];
+
+
+
+        // if (visitedPages.includes(page)) {
+        //     alert("You cannot go back to this page.");
+        //     return;
+        // }
+
+
+
+
         var total = $('#total').val();
         var pages = $('#pages').val();
         var finishBtn = $('#finish');
         let show = parseInt(localStorage.getItem('show'));
+
+        // localStorage.setItem('pages', pages)
+
+        console.log(`Visited pages ${visitedPages} current page ${pages}`);
 
         $(document).ready(function() {
 

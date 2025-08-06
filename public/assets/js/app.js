@@ -312,7 +312,7 @@ $("#edit_announcement_form").on("submit", function (e) {
     });
 });
 
-// lessons
+
 
 function deleteLesson(lesson_id) {
     Swal.fire({

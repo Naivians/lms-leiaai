@@ -18,6 +18,18 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
     <script src="https://unpkg.com/libphonenumber-js@1.10.25/bundle/libphonenumber-js.min.js"></script>
+
+    <script>
+        // Push two dummy states into history
+        history.pushState(null, "", location.href);
+        history.pushState(null, "", location.href);
+
+        window.addEventListener("popstate", function(event) {
+            // Force push forward again
+            history.pushState(null, "", location.href);
+            alert("Going back is disabled on this page.");
+        });
+    </script>
 </head>
 
 <body style="background-color: #F4F5F7">

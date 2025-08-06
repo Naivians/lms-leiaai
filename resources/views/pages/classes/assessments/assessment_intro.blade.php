@@ -32,6 +32,7 @@
 
 @section('script')
     <script>
+        localStorage.setItem('pages' , 0)
         localStorage.setItem('show', 0);
         const class_id = "{{ route('class.stream', ['class_id' => Crypt::encrypt($assessment->class_id)]) }}";
         localStorage.setItem('class_id', class_id);
