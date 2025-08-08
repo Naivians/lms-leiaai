@@ -308,8 +308,6 @@
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('user.index') }}',
-                dom: 'Blfrtip',
-                buttons: ['copy', 'csv', 'print', 'colvis'],
                 language: {
                     emptyTable: "No Users found. Please add new users"
                 },
@@ -429,8 +427,6 @@
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('assessment.show.progress') }}',
-                dom: 'Blfrtip',
-                buttons: ['copy', 'csv', 'print', 'colvis'],
                 columns: [{
                         data: 'user_name'
                     },
