@@ -23,8 +23,8 @@ class AnnouncementController extends Controller
     public function index($class_id, $announcement_id)
     {
 
-
         $user = User::find(Auth::id());
+
         if (Gate::allows('admin_lvl1')) {
             $classes = Classes::select('id', "class_name")->get();
         } else {
@@ -33,7 +33,6 @@ class AnnouncementController extends Controller
                 ->where('classes.id', '!=', $class_id)
                 ->get();
         }
-
 
         if ($announcement_id != 0) {
             $announcement = $this->announcement->find($announcement_id);

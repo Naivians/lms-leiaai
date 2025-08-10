@@ -57,7 +57,7 @@
             Archive Class
         </a>
 
-        @can('admin_lvl1')
+        @can('not_for_sp')
             <a href="{{ route('announcement.index', ['class_id' => 0, 'announcement_id' => 0]) }}"
                 class="nav-link {{ request()->routeIs('announcement.index', ['class_id' => 0, 'announcement_id' => 0]) ? 'active text-primary' : 'text-dark' }} mb-1"><i class="fa-solid fa-bullhorn me-2"></i>
                 Announce</a>

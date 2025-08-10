@@ -24,6 +24,8 @@ use App\Models\Question;
 use App\Models\AssessmentProgress;
 use App\Models\ProgressDetail;
 
+use function Laravel\Prompts\progress;
+
 class AssessmentController extends Controller
 {
     private $assessment_model;
@@ -84,23 +86,158 @@ class AssessmentController extends Controller
         $timeArray = $assessment->assessment_time_array;
         return view('pages.classes.assessments.assessment_intro', compact('assessment'));
     }
-    public function takeAssessment($assessment_id)
+
+    public function takeAssessment(Request $request, $assessment_id)
     {
-
-        $encryptedClassId = $assessment_id;
-
         try {
-            $assessment_id = Crypt::decrypt($assessment_id);
+            $decryptedId = Crypt::decrypt($assessment_id);
         } catch (DecryptException $e) {
-            return redirect()->route('class.index')->withErrors([
-                'error' => 'Invalid class ID',
+            return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+        }
+
+        $assessment = $this->assessment_model
+            ->select('id', 'total', 'type', 'assessment_date', 'assessment_time', 'name')
+            ->findOrFail($decryptedId);
+
+        $sessionKey = "quiz_progress_{$decryptedId}";
+
+        // if (session()->has($sessionKey)) {
+        //     $progress = session($sessionKey);
+        //     if ($progress['current_page'] > $assessment->total) {
+        //         session()->forget($sessionKey);
+        //         return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
+        //     }
+        // }
+
+        if (!session()->has($sessionKey)) {
+            session()->put($sessionKey, [
+                'current_page' => 1,
+                'start_time'   => now(),
             ]);
         }
 
-        $questions = $this->question_model::where('assessment_id', $assessment_id)->with('choices.answer_key')->paginate(1);
-        $assessments = $this->assessment_model->find($assessment_id);
-        $timeArray = $assessments->assessment_time_array;
-        return view('pages.classes.assessments.take_assessment', compact(['questions', 'assessments']));
+        $progress = session($sessionKey);
+
+        $requestedPage = (int) $request->query('page', 1);
+        if ($requestedPage !== $progress['current_page']) {
+            return redirect()->route('assessment.take', [
+                'assessment_id' => $assessment_id,
+                'page'          => $progress['current_page']
+            ]);
+        }
+
+        $questions = $this->question_model
+            ->where('assessment_id', $decryptedId)
+            ->with('choices.answer_key')
+            ->paginate(1, ['*'], 'page', $progress['current_page']);
+
+        return view('pages.classes.assessments.take_assessment', compact('questions', 'assessment'));
+    }
+
+    public function answer(Request $request, $assessment_id)
+    {
+
+        try {
+            $decryptedId = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+        }
+
+        $assessment = $this->assessment_model->findOrFail($decryptedId);
+
+
+        $progressRecords = $this->assessment_progress_model->firstOrCreate(
+            [
+                'user_id'       => Auth::id(),
+                'assessment_id' => $decryptedId
+            ],
+            [
+                'user_id' => Auth::id(),
+                'assessment_id' => $decryptedId,
+                'name' => $assessment->name,
+                'type' => $assessment->type,
+                'total' => $assessment->total,
+                'score' => 0,
+                'status' => "In progress",
+            ]
+        );
+
+        $sessionKey = "quiz_progress_{$decryptedId}";
+        $progress   = session($sessionKey);
+
+        // Increment to next question
+        $progress['current_page']++;
+        session()->put($sessionKey, $progress);
+
+        $totalQuestions = $this->question_model::where('assessment_id', $decryptedId)->count();
+
+        $this->assessment_progress_details_model->create([
+            'progress_id' => $progressRecords->id,
+            'qid' => $request->qid,
+            'cid' => $request->cid,
+        ]);
+
+        session()->put('progress_id', $progressRecords->id);
+
+        if ($progress['current_page'] > $totalQuestions) {
+            session()->forget($sessionKey);
+            return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
+        }
+
+        return redirect()->route('assessment.take', [
+            'assessment_id' => $assessment_id,
+            'page'          => $progress['current_page']
+        ]);
+    }
+
+    public function complete($assessment_id)
+    {
+        try {
+            $decryptedId = Crypt::decrypt($assessment_id);
+        } catch (DecryptException $e) {
+            return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+        }
+
+        $assessment = $this->assessment_model->select('total', 'class_id', 'name')->find($decryptedId);
+
+        $class_id = Crypt::encrypt($assessment->class_id);
+
+        if (!session()->has('progress_id')) {
+            return redirect()->route('class.index')->withErrors(['error' => 'No progress found for this assessment.']);
+        }
+
+        $progressId = session('progress_id');
+
+        // Step 1: Get all chosen answers for this progress
+        $progress_detail = $this->assessment_progress_details_model
+            ->where('progress_id', $progressId)
+            ->get();
+
+        // Step 2: Get answer keys that match chosen cids (correct answers)
+        $answer_key = $this->answer_key_model
+            ->whereIn('choice_id', $progress_detail->pluck('cid'))
+            ->get();
+
+        // Step 3: Count correct answers
+        $correctCount = $answer_key->count();
+
+        $scorePercentage = 0;
+        $status = 'Failed';
+        if ($correctCount > 0) {
+            $scorePercentage = ($correctCount / $assessment->total) * 100;
+        }
+
+        // Step 4: Update score in assessment_progress table
+        $this->assessment_progress_model
+            ->where('id', $progressId)
+            ->update([
+                'score'  => $correctCount,
+                'status' => $scorePercentage >= 75 ? 'Passed' : 'Failed',
+            ]);
+
+        $assessmentProgress = $this->assessment_progress_model->find($progressId);
+
+        return view('pages.classes.assessments.completed', compact('class_id', 'decryptedId', 'assessmentProgress', 'assessment', ));
     }
 
     public function create($class_id)
@@ -440,12 +577,6 @@ class AssessmentController extends Controller
     public function saveAssessments(Request $request)
     {
 
-        // return response()->json([
-        //     'success' => false,
-        //     // "data" => $request->input("answers" . $request->assessment_id)
-        //     "data" => $request->input('answers')[$request->assessment_id]
-        // ]);
-
         $assessment = $this->assessment_model->find($request->assessment_id);
 
         if (!$assessment) {
@@ -461,7 +592,7 @@ class AssessmentController extends Controller
         $status = '';
         $statusText = '';
 
-        $assessment_progress = $this->assessment_progress_model->create([
+        $assessmentProgressData = [
             'user_id' => Auth::id(),
             'assessment_id' => $assessment->id,
             'name' => $assessment->name,
@@ -469,7 +600,32 @@ class AssessmentController extends Controller
             'total' => $assessment->total,
             'score' => 0,
             'status' => "Not set",
-        ]);
+        ];
+
+        if ($request->input('answers') == null) {
+            $status = "Failed";
+            $statusText = "Better luck next time";
+            $assessmentProgressData['status'] = "Failed";
+            $assessment_progress = $this->assessment_progress_model->create($assessmentProgressData);
+
+            if (!$assessment_progress) {
+                return response()->json([
+                    'success' => false,
+                    "message" => "Failed to save assessment record."
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                "score" =>  0,
+                "percentage" => 0,
+                "status" => $status,
+                "statusText" => $statusText,
+                'progress_id' => $assessment_progress->id,
+            ]);
+        }
+
+        $assessment_progress = $this->assessment_progress_model->create($assessmentProgressData);
 
         if (!$assessment_progress) {
             return response()->json([
@@ -590,6 +746,7 @@ class AssessmentController extends Controller
 
     public function viewProgress($progress_id)
     {
+
         $view_progress = $this->assessment_progress_model->with(['ProgressDetails', 'assessment.question.choices.answer_key'])->find($progress_id);
         $progress_detail = $view_progress->ProgressDetails;
         $assessment = $view_progress->assessment;

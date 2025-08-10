@@ -98,7 +98,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/create/{class_id}', [AssessmentController::class, 'create'])->name('create');
         Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
         Route::get('/edit/{assessment_id}', [AssessmentController::class, 'edit'])->name('edit');
-        Route::get('/assessment/{assessment_id}', [AssessmentController::class, 'takeAssessment'])->name('take');
+
+        Route::get('/take/{assessment_id}', [AssessmentController::class, 'takeAssessment'])->name('take');
+
+        Route::post('/answer/{assessment_id}', [AssessmentController::class, 'answer'])
+            ->name('answer');
+
+        Route::get('/complete/{assessment_id}', [AssessmentController::class, 'complete'])
+            ->name('complete');
+
+
         Route::post('/store', [AssessmentController::class, 'store'])->name('store');
         Route::post('/update', [AssessmentController::class, 'update'])->name('update');
         Route::post('/destroyQuestion', [AssessmentController::class, 'destroyQuestion'])->name('destroy.question');
@@ -108,7 +117,6 @@ Route::middleware(['auth'])->group(function () {
         // progress
         Route::get('/progress', [AssessmentController::class, 'progress'])->name('show.progress');
         Route::get('/progress/{progress_id}', [AssessmentController::class, 'viewProgress'])->name('view.progress');
-
     });
 
     // logout
