@@ -90,11 +90,11 @@ class AssessmentController extends Controller
 
     public function takeAssessment(Request $request, $assessment_id)
     {
-
         try {
             $decryptedId = Crypt::decrypt($assessment_id);
         } catch (DecryptException $e) {
-            return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+            return redirect()->route('class.index')
+                ->withErrors(['error' => 'Invalid class ID']);
         }
 
         $assessment = $this->assessment_model
@@ -103,83 +103,56 @@ class AssessmentController extends Controller
 
         $sessionKey = "quiz_progress_{$decryptedId}";
 
-
-
-        if (!session()->has($sessionKey)) {
-            // Check if there's an existing progress record in the database
-
+        // Step 1: Load from session if exists
+        if (session()->has($sessionKey)) {
+            $progress = session($sessionKey);
+        } else {
+            // Step 2: Try to recover from DB
             $activeProgress = ActiveAssessment::where('assessment_id', $decryptedId)
                 ->where('user_id', Auth::id())
                 ->where('session_key', $sessionKey)
                 ->first();
 
-
-
             if ($activeProgress) {
-                session()->put($activeProgress->session_key, [
-                    'current_page' => $activeProgress->current_page,
+                // Restore to session
+                $progress = [
+                    'current_page' => $activeProgress->page_number,
                     'start_time'   => $activeProgress->start_time,
-                    'progress_id'   => $activeProgress->id,
-                    'session_key'   => $activeProgress->session_key,
-                ]);
+                    'progress_id'  => $activeProgress->progress_id,
+                ];
+                session()->put($sessionKey, $progress);
             } else {
-                $progressRecords = $this->assessment_progress_model->create(
-                    [
-                        'user_id' => Auth::id(),
-                        'assessment_id' => $decryptedId,
-                        'name' => $assessment->name,
-                        'type' => $assessment->type,
-                        'total' => $assessment->total,
-                        'score' => 0,
-                        'status' => "In progress",
-                    ]
-                );
+                // Step 3: No active record — create new attempt
+                $progressRecords = $this->assessment_progress_model->create([
+                    'user_id'       => Auth::id(),
+                    'assessment_id' => $decryptedId,
+                    'name'          => $assessment->name,
+                    'type'          => $assessment->type,
+                    'total'         => $assessment->total,
+                    'score'         => 0,
+                    'status'        => "In progress",
+                ]);
 
-                session()->put($sessionKey, [
+                $progress = [
                     'current_page' => 1,
                     'start_time'   => now(),
+                    'progress_id'  => $progressRecords->id,
+                ];
+                session()->put($sessionKey, $progress);
+
+                // Save to DB for future recovery
+                ActiveAssessment::create([
+                    'user_id'       => Auth::id(),
+                    'assessment_id' => $decryptedId,
                     'progress_id'   => $progressRecords->id,
+                    'page_number'   => 1,
+                    'start_time'    => now(),
+                    'session_key'   => $sessionKey,
                 ]);
             }
         }
 
-
-
-
-        // if (session()->has($sessionKey)) {
-        //     session()->forget($sessionKey);
-        //     return redirect()->route('class.index')->withErrors(['error' => 'No progress found for this assessment.']);
-        // }
-
-        $progress = session($sessionKey);
-
-        $activeProgress = ActiveAssessment::exists($sessionKey);
-
-        if (!$activeProgress) {
-            ActiveAssessment::create([
-                'user_id' => Auth::id(),
-                'assessment_id' => $decryptedId,
-                'progress_id' => $progress['progress_id'],
-                'page_number' => $progress['current_page'],
-                'start_time' => $progress['start_time'],
-                'session_key' => $sessionKey,
-            ]);
-        } else {
-            ActiveAssessment::where('session_key', $sessionKey)
-                ->update([
-                    'user_id' => Auth::id(),
-                    'assessment_id' => $decryptedId,
-                    'progress_id' => $progress['progress_id'],
-                    'page_number' => $progress['current_page'],
-                    'start_time' => $progress['start_time'],
-                ]);
-
-            return redirect()->route('assessment.take', [
-                'assessment_id' => $assessment_id,
-                'page'          => $progress['current_page']
-            ]);
-        }
-
+        // Step 4: Ensure page sync
         $requestedPage = (int) $request->query('page', 1);
         if ($requestedPage !== $progress['current_page']) {
             return redirect()->route('assessment.take', [
@@ -188,6 +161,7 @@ class AssessmentController extends Controller
             ]);
         }
 
+        // Step 5: Load questions
         $questions = $this->question_model
             ->where('assessment_id', $decryptedId)
             ->with('choices.answer_key')
@@ -195,7 +169,6 @@ class AssessmentController extends Controller
 
         return view('pages.classes.assessments.take_assessment', compact('questions', 'assessment', 'progress'));
     }
-
     public function answer(Request $request, $assessment_id)
     {
         try {
@@ -293,6 +266,10 @@ class AssessmentController extends Controller
 
         $assessmentProgress = $this->assessment_progress_model->find($progressId);
         session()->forget($sessionKey);
+        ActiveAssessment::where('session_key', $sessionKey)
+            ->where('user_id', Auth::id())
+            ->where('assessment_id', $decryptedId)
+            ->delete();
 
         return view('pages.classes.assessments.completed', compact('class_id', 'decryptedId', 'assessmentProgress', 'assessment',));
     }
