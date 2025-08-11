@@ -7,8 +7,11 @@
     <div class="assessment_info_container">
         @php
             $percentage =
-                $assessment_progress->total > 0 ? round(($assessment_progress->score / $assessment_progress->total) * 100, 2) : 0;
+                $assessment_progress->total > 0
+                    ? round(($assessment_progress->score / $assessment_progress->total) * 100, 2)
+                    : 0;
         @endphp
+
 
         <h5>Name: <span><strong>{{ $assessment->name }}</strong></span></h5>
         <h5>Type: <span><strong>{{ ucfirst($assessment->type) }}</strong></span></h5>
@@ -49,15 +52,24 @@
 
                     @php
                         $userAnswer = $progress_detail->firstWhere('qid', $question->id);
+                        // $userAnswer = $progress_detail->first(function ($items) use ($question, $assessment_progress) {
+                        //     return $items->qid == $question->id && $items->progress_id == $assessment_progress->id;
+                        // });
+
                         $selectedChoice = $question->choices->firstWhere('id', $userAnswer?->cid);
-                        $isCorrect = $selectedChoice && $selectedChoice->answer_key && $selectedChoice->answer_key->choice_id == $selectedChoice->id;
+                        $isCorrect =
+                            $selectedChoice &&
+                            $selectedChoice->answer_key &&
+                            $selectedChoice->answer_key->choice_id == $selectedChoice->id;
                     @endphp
 
                     @if ($selectedChoice)
                         <div class="options">
-                            <div class="option user-answer d-flex align-items-center justify-content-between" style="cursor:default;">
+                            <div class="option user-answer d-flex align-items-center justify-content-between"
+                                style="cursor:default;">
                                 {{ $selectedChoice->choices }}
-                                <i class="fa-solid {{ $isCorrect ? 'fa-circle-check text-success' : 'fa-circle-xmark text-danger' }} ms-2"></i>
+                                <i
+                                    class="fa-solid {{ $isCorrect ? 'fa-circle-check text-success' : 'fa-circle-xmark text-danger' }} ms-2"></i>
                             </div>
                         </div>
                     @else

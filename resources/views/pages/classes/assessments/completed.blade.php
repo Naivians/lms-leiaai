@@ -8,7 +8,7 @@
 
 @section('content')
     <div class= "intro_main_container" style="height: 600px;">
-        <div class="intro_container" >
+        <div class="intro_container">
             <div class="result_icon text-center">
                 <div id='result_icon'>
                     <img src="{{ asset(Auth::user()->img) }}" alt="" style="width: 150px; height: auto;">
@@ -20,29 +20,36 @@
                 @endif
             </div>
 
+            @php
+                $percentage = ($assessmentProgress->score / $assessment->total) * 100;
+
+                // $percentage = number_format($percentage, 2);
+                $textStatus = '';
+                if ($percentage >= 75) {
+                    $textStatus = 'Passed';
+                } else {
+                    $textStatus = 'Failed';
+                }
+
+                $statusClass = $textStatus == 'Passed' ? 'text-success' : 'text-danger';
+
+            @endphp
+
             <div class="d-flex align-items-center justify-content-center gap-2 my-5">
                 <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column text-success rounded"
                     style="width: 200px; height: 200px;">
-                    <p style="font-size: 40px" class="m-0"><span id="percentage">
-                            @php
-                                $percentage = ($assessmentProgress->score / $assessment->total) * 100;
-                                $textStatus = '';
-                                if ($percentage >= 75) {
-                                    $textStatus = 'Passed';
-                                } else {
-                                    $textStatus = 'Failed';
-                                }
-                            @endphp
+                    <p style="font-size: 40px" class="m-0"><span id="percentage" class="{{ $statusClass }}">
+
                             {{ $percentage }}%</span>
                         </span></p>
-                    <p class="text-success status">{{ $textStatus }}</p>
+                    <p class="{{ $statusClass }} status">{{ $textStatus }}</p>
                 </div>
                 <div class="result_percentage  bg-light text-center d-flex align-items-center justify-content-center flex-column  rounded"
                     style="width: 200px; height: 200px;">
-                    <p style="font-size: 40px" class="m-0 text-success" id="points"><span
+                    <p style="font-size: 40px" class="m-0 {{ $statusClass }}" id="points"><span
                             id="score">{{ $assessmentProgress->score }}</span>
                         / <span id="totals">{{ $assessment->total }}</span></p>
-                    <p class="text-success status">{{ $textStatus }}</p>
+                    <p class="{{ $statusClass }} status">{{ $textStatus }}</p>
                 </div>
             </div>
 
@@ -59,8 +66,6 @@
 
 @section('script')
     <script>
-        launchConfetti(5000);
-
         function launchConfetti(duration = 5000) {
             const end = Date.now() + duration;
 
@@ -87,4 +92,5 @@
                 }
             })();
         }
+
     </script>
