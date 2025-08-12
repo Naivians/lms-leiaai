@@ -99,14 +99,17 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/show/{assessment_id}', [AssessmentController::class, 'show'])->name('show');
         Route::get('/edit/{assessment_id}', [AssessmentController::class, 'edit'])->name('edit');
 
-        Route::get('/take/{assessment_id}', [AssessmentController::class, 'takeAssessment'])->name('take');
+        Route::get('/take/{assessment_id}', [AssessmentController::class, 'takeAssessment'])
+            ->middleware('prevent.exam.cache')
+            ->name('take');
 
         Route::post('/answer/{assessment_id}', [AssessmentController::class, 'answer'])
+            ->middleware('prevent.exam.cache')
             ->name('answer');
 
         Route::get('/complete/{assessment_id}', [AssessmentController::class, 'complete'])
+            ->middleware('prevent.exam.cache')
             ->name('complete');
-
 
         Route::post('/store', [AssessmentController::class, 'store'])->name('store');
         Route::post('/update', [AssessmentController::class, 'update'])->name('update');
