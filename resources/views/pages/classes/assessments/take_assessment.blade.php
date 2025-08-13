@@ -92,11 +92,22 @@
                             {{ $questions->currentPage() }}. {{ $question->q_name }}
                         </div>
 
-                        <div class="options" id="options">
+                        {{-- <div class="options" id="options">
                             @foreach ($question->choices as $choice)
                                 <label class="option" data-choice-id="{{ $choice->id }}" data-q_id={{ $question->id }}>
                                     <input type="hidden" name="qid" value="{{ $question->id }}">
                                     <input type="hidden" name="cid" value="{{ $choice->id }}">
+                                    {{ $choice->choices }}
+                                </label>
+                            @endforeach
+                        </div> --}}
+
+                        <div class="options" id="options">
+                            <input type="hidden" name="qid" value="{{ $question->id }}">
+
+                            @foreach ($question->choices as $choice)
+                                <label class="option" data-choice-id="{{ $choice->id }}" data-q_id="{{ $question->id }}">
+                                    <input type="radio" name="cid" value="{{ $choice->id }}">
                                     {{ $choice->choices }}
                                 </label>
                             @endforeach
@@ -114,7 +125,8 @@
                                 </button>
 
                                 {{-- Next / Finish --}}
-                                <button type="submit" name="action" value="next" class="btn btn-primary">
+                                <button type="submit" name="action"
+                                    value="{{ $questions->hasMorePages() ? 'next' : 'finish' }}" class="btn btn-primary next-btn">
                                     @if ($questions->hasMorePages())
                                         Next Question
                                     @else
@@ -126,7 +138,6 @@
                     </form>
                 @endforeach
 
-                {{-- Question Navigator --}}
                 <div class="mt-4 p-3 border rounded bg-light">
                     <h6>Unanswered / Skipped Questions</h6>
 
@@ -155,21 +166,14 @@
 @section('script')
     <script>
         (function() {
-            // You can set this from Laravel dynamically:
-            // Example: Exam ends in 30 minutes from now
             const endTimeFromServer = "{{ $endTime->timestamp }}";
-
-            // LocalStorage key for this specific assessment
             const timerKey = "exam_end_time_{{ $assessment->id }}";
 
-            // Save end time if not already saved
             if (!localStorage.getItem(timerKey)) {
                 localStorage.setItem(timerKey, endTimeFromServer);
             }
 
-            // Retrieve stored end time
             const endTime = parseInt(localStorage.getItem(timerKey), 10) * 1000;
-
             const timerElement = document.getElementById('exam-timer');
 
             function updateTimer() {
@@ -178,12 +182,13 @@
 
                 if (distance < 0) {
                     timerElement.innerHTML = "TIME UP!";
-                    // Optional: Auto-submit form or redirect
-
+                    localStorage.removeItem(timerKey); // clear stored time for retake
+                    window.location.href =
+                        "{{ route('assessment.complete', ['assessment_id' => Crypt::encrypt($assessment->id)]) }}";
                     return;
                 }
 
-                const hours = Math.floor((distance / (1000 * 60 * 60)));
+                const hours = Math.floor(distance / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
@@ -193,7 +198,7 @@
                     String(seconds).padStart(2, '0');
             }
 
-            updateTimer(); // initial call
+            updateTimer();
             setInterval(updateTimer, 1000);
         })();
 
@@ -211,11 +216,23 @@
 
         $(document).ready(function() {
             const options = $('#options');
+            const submitBtn = $('.next-btn'); // adjust selector if needed
+
+            // Disable the button initially
+            submitBtn.prop('disabled', true);
+
             options.on('click', '.option', function() {
                 const question_id = $(this).data('q_id');
                 const choice_id = $(this).data('choice-id');
+
+                // Remove selection from all options of the same question
                 options.find(`.option[data-q_id="${question_id}"]`).removeClass('correct');
+
+                // Mark the clicked option
                 $(this).addClass('correct');
+
+                // Enable the Next/Finish button
+                submitBtn.prop('disabled', false);
             });
         });
     </script>

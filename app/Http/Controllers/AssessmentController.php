@@ -191,6 +191,8 @@ class AssessmentController extends Controller
         ));
     }
 
+
+
     public function answer(Request $request, $assessment_id)
     {
         // 1. Decrypt assessment ID
@@ -223,29 +225,10 @@ class AssessmentController extends Controller
 
         $totalQuestions = count($questionIds);
 
-        // ========================
-        // FINISH — End assessment regardless of unanswered
-        // ========================
-        if ($action === 'finish') {
-            // Optional: mark unanswered as null in DB so scoring is accurate
-            // $answeredQids = $this->assessment_progress_details_model
-            //     ->where('progress_id', $progress['progress_id'])
-            //     ->pluck('qid')
-            //     ->toArray();
-            // foreach (array_diff($questionIds, $answeredQids) as $unansweredQid) {
-            //     $this->assessment_progress_details_model->updateOrCreate(
-            //         ['progress_id' => $progress['progress_id'], 'qid' => $unansweredQid],
-            //         ['cid' => null]
-            //     );
-            // }
 
-            session()->forget($sessionKey); // clear progress
+        if ($action === 'finish') {
             return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
         }
-
-        // ========================
-        // SKIP — Mark as skipped and move forward
-        // ========================
         if ($action === 'skip') {
             if (!in_array($page, $progress['skipped_pages']) && !in_array($page, $progress['answered_pages'])) {
                 $progress['skipped_pages'][] = $page;
@@ -262,17 +245,18 @@ class AssessmentController extends Controller
             ]);
         }
 
-        // ========================
-        // NEXT — Save answer and update progress
-        // ========================
+
         $qid = $request->input('qid');
         $cid = $request->input('cid');
 
-        $this->assessment_progress_details_model->updateOrCreate(
-            ['progress_id' => $progress['progress_id'], 'qid' => $qid],
-            ['cid' => $cid]
-        );
+        // dd($cid);
 
+        if (!empty($cid)) {
+            $this->assessment_progress_details_model->updateOrCreate(
+                ['progress_id' => $progress['progress_id'], 'qid' => $qid],
+                ['cid' => $cid]
+            );
+        }
         $pageIndex = array_search($qid, $questionIds);
         $answeredPage = $pageIndex !== false ? $pageIndex + 1 : null;
 
@@ -292,9 +276,7 @@ class AssessmentController extends Controller
 
         session()->put($sessionKey, $progress);
 
-        // If all questions answered → complete
         if (count($progress['answered_pages']) >= $totalQuestions) {
-            session()->forget($sessionKey);
             return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
         }
 

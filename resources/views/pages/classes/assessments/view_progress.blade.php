@@ -51,10 +51,10 @@
                     <label class="form-label">Your Answer</label>
 
                     @php
-                        $userAnswer = $progress_detail->firstWhere('qid', $question->id);
-                        // $userAnswer = $progress_detail->first(function ($items) use ($question, $assessment_progress) {
-                        //     return $items->qid == $question->id && $items->progress_id == $assessment_progress->id;
-                        // });
+                        // $userAnswer = $progress_detail->firstWhere('qid', $question->id);
+                        $userAnswer = $progress_detail->first(function ($items) use ($question, $assessment_progress) {
+                            return $items->qid == $question->id && $items->progress_id == $assessment_progress->id;
+                        });
 
                         $selectedChoice = $question->choices->firstWhere('id', $userAnswer?->cid);
                         $isCorrect =
