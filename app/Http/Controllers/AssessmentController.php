@@ -226,9 +226,24 @@ class AssessmentController extends Controller
         $totalQuestions = count($questionIds);
 
 
+
+        $qid = $request->input('qid');
+        $cid = $request->input('cid');
+
+
+        if (!empty($cid)) {
+            $this->assessment_progress_details_model->updateOrCreate(
+                ['progress_id' => $progress['progress_id'], 'qid' => $qid],
+                ['cid' => $cid]
+            );
+        }
+
+
         if ($action === 'finish') {
             return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
         }
+
+
         if ($action === 'skip') {
             if (!in_array($page, $progress['skipped_pages']) && !in_array($page, $progress['answered_pages'])) {
                 $progress['skipped_pages'][] = $page;
@@ -246,17 +261,7 @@ class AssessmentController extends Controller
         }
 
 
-        $qid = $request->input('qid');
-        $cid = $request->input('cid');
 
-        // dd($cid);
-
-        if (!empty($cid)) {
-            $this->assessment_progress_details_model->updateOrCreate(
-                ['progress_id' => $progress['progress_id'], 'qid' => $qid],
-                ['cid' => $cid]
-            );
-        }
         $pageIndex = array_search($qid, $questionIds);
         $answeredPage = $pageIndex !== false ? $pageIndex + 1 : null;
 
@@ -273,6 +278,8 @@ class AssessmentController extends Controller
         if ($page === $progress['current_page'] && $progress['current_page'] < $totalQuestions) {
             $progress['current_page']++;
         }
+
+
 
         session()->put($sessionKey, $progress);
 
