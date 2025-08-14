@@ -87,6 +87,254 @@ class AssessmentController extends Controller
         $timeArray = $assessment->assessment_time_array;
         return view('pages.classes.assessments.assessment_intro', compact('assessment'));
     }
+    // no active assessments tracking
+    // public function takeAssessment(Request $request, $assessment_id)
+    // {
+    //     try {
+    //         $decryptedId = Crypt::decrypt($assessment_id);
+    //     } catch (DecryptException $e) {
+    //         return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+    //     }
+
+    //     $assessment = $this->assessment_model
+    //         ->select('id', 'total', 'type', 'assessment_date', 'assessment_time', 'name')
+    //         ->findOrFail($decryptedId);
+
+    //     $sessionKey = "quiz_progress_{$decryptedId}";
+
+    //     if (!session()->has($sessionKey)) {
+    //         $progressRecords = $this->assessment_progress_model->create([
+    //             'user_id'       => Auth::id(),
+    //             'assessment_id' => $decryptedId,
+    //             'name'          => $assessment->name,
+    //             'type'          => $assessment->type,
+    //             'total'         => $assessment->total,
+    //             'score'         => 0,
+    //             'status'        => "In progress",
+    //         ]);
+
+    //         session()->put($sessionKey, [
+    //             'current_page'   => 1,      // highest unlocked page
+    //             'answered_pages' => [],     // pages answered
+    //             'skipped_pages'  => [],     // pages skipped (unanswered)
+    //             'progress_id'    => $progressRecords->id,
+    //             'start_time'     => now(),
+    //         ]);
+    //     }
+
+    //     $progress = session($sessionKey);
+
+    //     // Prepare question ordering (must match paginate order)
+    //     $questionIds = $this->question_model
+    //         ->where('assessment_id', $decryptedId)
+    //         ->orderBy('id') // ensure consistent order
+    //         ->pluck('id')
+    //         ->toArray();
+
+    //     $totalQuestions = count($questionIds);
+
+    //     // Recover answered pages from DB if needed (in case session was lost)
+    //     $answeredQids = $this->assessment_progress_details_model
+    //         ->where('progress_id', $progress['progress_id'])
+    //         ->pluck('qid')
+    //         ->toArray();
+
+    //     $answeredPages = [];
+    //     foreach ($answeredQids as $qid) {
+    //         $idx = array_search($qid, $questionIds);
+    //         if ($idx !== false) {
+    //             $answeredPages[] = $idx + 1; // pages are 1-based
+    //         }
+    //     }
+
+    //     // merge recovered answeredPages into session (avoid duplicates)
+    //     $progress['answered_pages'] = array_values(array_unique(array_merge($progress['answered_pages'] ?? [], $answeredPages)));
+
+    //     // normalize skipped_pages array
+    //     $progress['skipped_pages'] = array_values($progress['skipped_pages'] ?? []);
+
+    //     // requested page
+    //     $requestedPage = (int) $request->query('page', $progress['current_page']);
+
+    //     if (in_array($requestedPage, $progress['answered_pages'])) {
+    //         return redirect()->route('assessment.take', ['assessment_id' => $assessment_id, 'page' => $progress['current_page']]);
+    //     }
+
+    //     if ($requestedPage !== $progress['current_page'] && !in_array($requestedPage, $progress['skipped_pages'])) {
+    //         // not allowed to jump to arbitrary pages
+    //         return redirect()->route('assessment.take', ['assessment_id' => $assessment_id, 'page' => $progress['current_page']]);
+    //     }
+
+    //     $questions = $this->question_model
+    //         ->where('assessment_id', $decryptedId)
+    //         ->orderBy('id')
+    //         ->with('choices.answer_key')
+    //         ->paginate(1, ['*'], 'page', $requestedPage);
+
+    //     session()->put($sessionKey, $progress);
+
+    //     $skippedPages = $progress['skipped_pages'];
+
+    //     return view('pages.classes.assessments.take_assessment', compact(
+    //         'questions',
+    //         'assessment',
+    //         'progress',
+    //         'skippedPages',
+    //         'totalQuestions'
+    //     ));
+    // }
+
+    // restore last progress from session or active_assessments
+    // public function takeAssessment(Request $request, $assessment_id)
+    // {
+    //     try {
+    //         $decryptedId = Crypt::decrypt($assessment_id);
+    //     } catch (DecryptException $e) {
+    //         return redirect()->route('class.index')->withErrors(['error' => 'Invalid class ID']);
+    //     }
+
+    //     $assessment = $this->assessment_model
+    //         ->select('id', 'total', 'type', 'assessment_date', 'assessment_time', 'name')
+    //         ->findOrFail($decryptedId);
+
+    //     $sessionKey = "quiz_progress_{$decryptedId}";
+    //     $progress = session($sessionKey);
+
+    //     // 🟢 STEP 1 — If no session, try to restore from active_assessments
+    //     if (!$progress) {
+    //         $active = ActiveAssessment::where('user_id', Auth::id())
+    //             ->where('assessment_id', $decryptedId)
+    //             ->latest()
+    //             ->first();
+
+    //         if ($active) {
+    //             // Restore progress record from DB
+    //             $progressRecord = $this->assessment_progress_model->find($active->progress_id);
+    //             if ($progressRecord) {
+    //                 // Get answered question IDs
+    //                 $answeredQids = $this->assessment_progress_details_model
+    //                     ->where('progress_id', $active->progress_id)
+    //                     ->pluck('qid')
+    //                     ->toArray();
+
+    //                 // Map to page numbers
+    //                 $questionIds = $this->question_model
+    //                     ->where('assessment_id', $decryptedId)
+    //                     ->orderBy('id')
+    //                     ->pluck('id')
+    //                     ->toArray();
+
+    //                 $answeredPages = [];
+    //                 foreach ($answeredQids as $qid) {
+    //                     $idx = array_search($qid, $questionIds);
+    //                     if ($idx !== false) {
+    //                         $answeredPages[] = $idx + 1; // pages are 1-based
+    //                     }
+    //                 }
+
+    //                 $progress = [
+    //                     'current_page'   => $active->page_number ?? 1,
+    //                     'answered_pages' => $answeredPages,
+    //                     'skipped_pages'  => [], // We could store skipped in DB later if needed
+    //                     'progress_id'    => $progressRecord->id,
+    //                     'start_time'     => $active->start_time ?? now(),
+    //                 ];
+
+    //                 session()->put($sessionKey, $progress);
+    //             }
+    //         }
+    //     }
+
+    //     // 🟢 STEP 2 — If still no progress, create fresh record
+    //     if (!$progress) {
+    //         $progressRecord = $this->assessment_progress_model->create([
+    //             'user_id'       => Auth::id(),
+    //             'assessment_id' => $decryptedId,
+    //             'name'          => $assessment->name,
+    //             'type'          => $assessment->type,
+    //             'total'         => $assessment->total,
+    //             'score'         => 0,
+    //             'status'        => "In progress",
+    //         ]);
+
+    //         $progress = [
+    //             'current_page'   => 1,
+    //             'answered_pages' => [],
+    //             'skipped_pages'  => [],
+    //             'progress_id'    => $progressRecord->id,
+    //             'start_time'     => now(),
+    //         ];
+
+    //         session()->put($sessionKey, $progress);
+
+    //         // Store in active_assessments
+    //         ActiveAssessment::updateOrCreate(
+    //             [
+    //                 'user_id'       => Auth::id(),
+    //                 'assessment_id' => $decryptedId,
+    //             ],
+    //             [
+    //                 'progress_id' => $progressRecord->id,
+    //                 'page_number' => 1,
+    //                 'start_time'  => now(),
+    //                 'session_key' => $sessionKey,
+    //             ]
+    //         );
+    //     }
+
+    //     // 🟢 STEP 3 — Question order + pagination
+    //     $questionIds = $this->question_model
+    //         ->where('assessment_id', $decryptedId)
+    //         ->orderBy('id')
+    //         ->pluck('id')
+    //         ->toArray();
+
+    //     $totalQuestions = count($questionIds);
+
+    //     $requestedPage = (int) $request->query('page', $progress['current_page']);
+
+    //     // Prevent jumping ahead
+    //     if (
+    //         $requestedPage !== $progress['current_page'] &&
+    //         !in_array($requestedPage, $progress['skipped_pages'])
+    //     ) {
+    //         return redirect()->route('assessment.take', [
+    //             'assessment_id' => $assessment_id,
+    //             'page' => $progress['current_page']
+    //         ]);
+    //     }
+
+    //     $questions = $this->question_model
+    //         ->where('assessment_id', $decryptedId)
+    //         ->orderBy('id')
+    //         ->with('choices.answer_key')
+    //         ->paginate(1, ['*'], 'page', $requestedPage);
+
+    //     // Save latest page in both session & DB
+    //     $progress['current_page'] = $requestedPage;
+    //     session()->put($sessionKey, $progress);
+
+    //     ActiveAssessment::updateOrCreate(
+    //         [
+    //             'user_id'       => Auth::id(),
+    //             'assessment_id' => $decryptedId,
+    //         ],
+    //         [
+    //             'progress_id' => $progress['progress_id'],
+    //             'page_number' => $requestedPage,
+    //             'start_time'  => $progress['start_time'],
+    //             'session_key' => $sessionKey,
+    //         ]
+    //     );
+
+    //     return view('pages.classes.assessments.take_assessment', [
+    //         'questions'       => $questions,
+    //         'assessment'      => $assessment,
+    //         'progress'        => $progress,
+    //         'skippedPages'    => $progress['skipped_pages'],
+    //         'totalQuestions'  => $totalQuestions,
+    //     ]);
+    // }
 
     public function takeAssessment(Request $request, $assessment_id)
     {
@@ -102,38 +350,94 @@ class AssessmentController extends Controller
 
         $sessionKey = "quiz_progress_{$decryptedId}";
 
+        // 🆕 Restore session or create new
         if (!session()->has($sessionKey)) {
-            $progressRecords = $this->assessment_progress_model->create([
-                'user_id'       => Auth::id(),
-                'assessment_id' => $decryptedId,
-                'name'          => $assessment->name,
-                'type'          => $assessment->type,
-                'total'         => $assessment->total,
-                'score'         => 0,
-                'status'        => "In progress",
-            ]);
+            $active = ActiveAssessment::where('user_id', Auth::id())
+                ->where('assessment_id', $decryptedId)
+                ->latest()
+                ->first();
 
-            session()->put($sessionKey, [
-                'current_page'   => 1,      // highest unlocked page
-                'answered_pages' => [],     // pages answered
-                'skipped_pages'  => [],     // pages skipped (unanswered)
-                'progress_id'    => $progressRecords->id,
-                'start_time'     => now(),
-            ]);
+            if ($active) {
+                $progressRecord = $this->assessment_progress_model->find($active->progress_id);
+                if ($progressRecord) {
+                    $answeredQids = $this->assessment_progress_details_model
+                        ->where('progress_id', $active->progress_id)
+                        ->pluck('qid')
+                        ->toArray();
+
+                    $questionIds = $this->question_model
+                        ->where('assessment_id', $decryptedId)
+                        ->orderBy('id')
+                        ->pluck('id')
+                        ->toArray();
+
+                    $answeredPages = [];
+                    foreach ($answeredQids as $qid) {
+                        $idx = array_search($qid, $questionIds);
+                        if ($idx !== false) {
+                            $answeredPages[] = $idx + 1;
+                        }
+                    }
+
+                    $progress = [
+                        'current_page'   => $active->page_number ?? 1,
+                        'answered_pages' => $answeredPages,
+                        'skipped_pages'  => json_decode($active->skipped_pages, true) ?? [],
+                        'progress_id'    => $progressRecord->id,
+                        'start_time'     => $active->start_time ?? now(),
+                    ];
+
+                    session()->put($sessionKey, $progress);
+                }
+            } else {
+                $progressRecords = $this->assessment_progress_model->create([
+                    'user_id'       => Auth::id(),
+                    'assessment_id' => $decryptedId,
+                    'name'          => $assessment->name,
+                    'type'          => $assessment->type,
+                    'total'         => $assessment->total,
+                    'score'         => 0,
+                    'status'        => "In progress",
+                ]);
+
+                $progress = [
+                    'current_page'   => 1,
+                    'answered_pages' => [],
+                    'skipped_pages'  => [],
+                    'progress_id'    => $progressRecords->id,
+                    'start_time'     => now(),
+                ];
+
+                session()->put($sessionKey, $progress);
+
+                ActiveAssessment::updateOrCreate(
+                    [
+                        'user_id'       => Auth::id(),
+                        'assessment_id' => $decryptedId,
+                    ],
+                    [
+                        'progress_id'   => $progressRecords->id,
+                        'page_number'   => 1,
+                        'skipped_pages' => json_encode([]),
+                        'start_time'    => $progress['start_time'],
+                        'session_key'   => $sessionKey,
+                    ]
+                );
+            }
         }
 
         $progress = session($sessionKey);
 
-        // Prepare question ordering (must match paginate order)
+        // Prepare questions
         $questionIds = $this->question_model
             ->where('assessment_id', $decryptedId)
-            ->orderBy('id') // ensure consistent order
+            ->orderBy('id')
             ->pluck('id')
             ->toArray();
 
         $totalQuestions = count($questionIds);
 
-        // Recover answered pages from DB if needed (in case session was lost)
+        // Merge answered pages from DB
         $answeredQids = $this->assessment_progress_details_model
             ->where('progress_id', $progress['progress_id'])
             ->pluck('qid')
@@ -143,43 +447,56 @@ class AssessmentController extends Controller
         foreach ($answeredQids as $qid) {
             $idx = array_search($qid, $questionIds);
             if ($idx !== false) {
-                $answeredPages[] = $idx + 1; // pages are 1-based
+                $answeredPages[] = $idx + 1;
             }
         }
 
-        // merge recovered answeredPages into session (avoid duplicates)
         $progress['answered_pages'] = array_values(array_unique(array_merge($progress['answered_pages'] ?? [], $answeredPages)));
+        $progress['skipped_pages']  = array_values($progress['skipped_pages'] ?? []);
 
-        // normalize skipped_pages array
-        $progress['skipped_pages'] = array_values($progress['skipped_pages'] ?? []);
-
-        // requested page
+        // Requested page logic + skipped pages tracking
         $requestedPage = (int) $request->query('page', $progress['current_page']);
 
-        // Enforce access rules:
-        // - allowed: requestedPage == current_page OR requestedPage in skipped_pages
-        // - denied: requestedPage in answered_pages OR requestedPage not allowed -> redirect to current_page
+        // If user tries to go to a new page without answering, mark it as skipped
+        if (
+            $requestedPage !== $progress['current_page'] &&
+            !in_array($requestedPage, $progress['answered_pages']) &&
+            !in_array($requestedPage, $progress['skipped_pages'])
+        ) {
+            $progress['skipped_pages'][] = $requestedPage;
+        }
+
+        // Restrict navigation to valid pages
         if (in_array($requestedPage, $progress['answered_pages'])) {
-            // can't view previously answered page
-            return redirect()->route('assessment.take', ['assessment_id' => $assessment_id, 'page' => $progress['current_page']]);
+            return redirect()->route('assessment.take', [
+                'assessment_id' => $assessment_id,
+                'page'          => $progress['current_page']
+            ]);
         }
 
-        if ($requestedPage !== $progress['current_page'] && !in_array($requestedPage, $progress['skipped_pages'])) {
-            // not allowed to jump to arbitrary pages
-            return redirect()->route('assessment.take', ['assessment_id' => $assessment_id, 'page' => $progress['current_page']]);
-        }
-
-        // Load the single question for this page (pagination keeps same order)
         $questions = $this->question_model
             ->where('assessment_id', $decryptedId)
             ->orderBy('id')
             ->with('choices.answer_key')
             ->paginate(1, ['*'], 'page', $requestedPage);
 
-        // Save updated session (answered_pages may have been restored)
+        // Save updated session and DB record
         session()->put($sessionKey, $progress);
 
-        // Only pass skipped pages (unanswered) to the view for navigator
+        ActiveAssessment::updateOrCreate(
+            [
+                'user_id'       => Auth::id(),
+                'assessment_id' => $decryptedId,
+            ],
+            [
+                'progress_id'   => $progress['progress_id'],
+                'page_number'   => $progress['current_page'],
+                'skipped_pages' => json_encode($progress['skipped_pages']),
+                'start_time'    => $progress['start_time'],
+                'session_key'   => $sessionKey,
+            ]
+        );
+
         $skippedPages = $progress['skipped_pages'];
 
         return view('pages.classes.assessments.take_assessment', compact(
@@ -191,11 +508,108 @@ class AssessmentController extends Controller
         ));
     }
 
+    // public function answer(Request $request, $assessment_id)
+    // {
+    //     try {
+    //         $decryptedId = Crypt::decrypt($assessment_id);
+    //     } catch (DecryptException $e) {
+    //         return redirect()
+    //             ->route('class.index')
+    //             ->withErrors(['error' => 'Invalid class ID']);
+    //     }
 
+    //     // 2. Load progress from session
+    //     $sessionKey = "quiz_progress_{$decryptedId}";
+    //     $progress = session($sessionKey);
+
+    //     if (!$progress) {
+    //         return redirect()
+    //             ->route('class.index')
+    //             ->withErrors(['error' => 'No active progress found.']);
+    //     }
+
+    //     // 3. Prepare variables
+    //     $action = $request->input('action', 'next');
+    //     $page   = (int) $request->input('page', $progress['current_page']); // current page number
+    //     $questionIds = $this->question_model
+    //         ->where('assessment_id', $decryptedId)
+    //         ->orderBy('id')
+    //         ->pluck('id')
+    //         ->toArray();
+
+    //     $totalQuestions = count($questionIds);
+
+
+
+    //     $qid = $request->input('qid');
+    //     $cid = $request->input('cid');
+
+
+    //     if (!empty($cid)) {
+    //         $this->assessment_progress_details_model->updateOrCreate(
+    //             ['progress_id' => $progress['progress_id'], 'qid' => $qid],
+    //             ['cid' => $cid]
+    //         );
+    //     }
+
+
+    //     if ($action === 'finish') {
+    //         return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
+    //     }
+
+
+    //     if ($action === 'skip') {
+    //         if (!in_array($page, $progress['skipped_pages']) && !in_array($page, $progress['answered_pages'])) {
+    //             $progress['skipped_pages'][] = $page;
+    //         }
+
+    //         if ($progress['current_page'] < $totalQuestions) {
+    //             $progress['current_page']++;
+    //         }
+
+    //         session()->put($sessionKey, $progress);
+    //         return redirect()->route('assessment.take', [
+    //             'assessment_id' => $assessment_id,
+    //             'page'          => $progress['current_page']
+    //         ]);
+    //     }
+
+
+
+    //     $pageIndex = array_search($qid, $questionIds);
+    //     $answeredPage = $pageIndex !== false ? $pageIndex + 1 : null;
+
+    //     if ($answeredPage) {
+    //         if (!in_array($answeredPage, $progress['answered_pages'])) {
+    //             $progress['answered_pages'][] = $answeredPage;
+    //         }
+    //         if (($k = array_search($answeredPage, $progress['skipped_pages'])) !== false) {
+    //             unset($progress['skipped_pages'][$k]);
+    //             $progress['skipped_pages'] = array_values($progress['skipped_pages']);
+    //         }
+    //     }
+
+    //     if ($page === $progress['current_page'] && $progress['current_page'] < $totalQuestions) {
+    //         $progress['current_page']++;
+    //     }
+
+
+
+    //     session()->put($sessionKey, $progress);
+
+    //     if (count($progress['answered_pages']) >= $totalQuestions) {
+    //         return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
+    //     }
+
+    //     // Otherwise → next highest unlocked page
+    //     return redirect()->route('assessment.take', [
+    //         'assessment_id' => $assessment_id,
+    //         'page'          => $progress['current_page']
+    //     ]);
+    // }
 
     public function answer(Request $request, $assessment_id)
     {
-        // 1. Decrypt assessment ID
         try {
             $decryptedId = Crypt::decrypt($assessment_id);
         } catch (DecryptException $e) {
@@ -204,7 +618,7 @@ class AssessmentController extends Controller
                 ->withErrors(['error' => 'Invalid class ID']);
         }
 
-        // 2. Load progress from session
+        // Load progress from session
         $sessionKey = "quiz_progress_{$decryptedId}";
         $progress = session($sessionKey);
 
@@ -214,9 +628,8 @@ class AssessmentController extends Controller
                 ->withErrors(['error' => 'No active progress found.']);
         }
 
-        // 3. Prepare variables
         $action = $request->input('action', 'next');
-        $page   = (int) $request->input('page', $progress['current_page']); // current page number
+        $page   = (int) $request->input('page', $progress['current_page']);
         $questionIds = $this->question_model
             ->where('assessment_id', $decryptedId)
             ->orderBy('id')
@@ -224,13 +637,10 @@ class AssessmentController extends Controller
             ->toArray();
 
         $totalQuestions = count($questionIds);
-
-
-
         $qid = $request->input('qid');
         $cid = $request->input('cid');
 
-
+        // Save answer if provided
         if (!empty($cid)) {
             $this->assessment_progress_details_model->updateOrCreate(
                 ['progress_id' => $progress['progress_id'], 'qid' => $qid],
@@ -238,12 +648,12 @@ class AssessmentController extends Controller
             );
         }
 
-
+        // Finish action
         if ($action === 'finish') {
             return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
         }
 
-
+        // Skip action
         if ($action === 'skip') {
             if (!in_array($page, $progress['skipped_pages']) && !in_array($page, $progress['answered_pages'])) {
                 $progress['skipped_pages'][] = $page;
@@ -253,15 +663,30 @@ class AssessmentController extends Controller
                 $progress['current_page']++;
             }
 
+            // 🆕 Persist skip changes to DB
+            ActiveAssessment::updateOrCreate(
+                [
+                    'user_id'       => Auth::id(),
+                    'assessment_id' => $decryptedId,
+                ],
+                [
+                    'progress_id'   => $progress['progress_id'],
+                    'page_number'   => $progress['current_page'],
+                    'skipped_pages' => json_encode($progress['skipped_pages']),
+                    'start_time'    => $progress['start_time'] ?? now(),
+                    'session_key'   => $sessionKey,
+                ]
+            );
+
             session()->put($sessionKey, $progress);
+
             return redirect()->route('assessment.take', [
                 'assessment_id' => $assessment_id,
                 'page'          => $progress['current_page']
             ]);
         }
 
-
-
+        // Mark as answered
         $pageIndex = array_search($qid, $questionIds);
         $answeredPage = $pageIndex !== false ? $pageIndex + 1 : null;
 
@@ -269,6 +694,8 @@ class AssessmentController extends Controller
             if (!in_array($answeredPage, $progress['answered_pages'])) {
                 $progress['answered_pages'][] = $answeredPage;
             }
+
+            // Remove from skipped if answered
             if (($k = array_search($answeredPage, $progress['skipped_pages'])) !== false) {
                 unset($progress['skipped_pages'][$k]);
                 $progress['skipped_pages'] = array_values($progress['skipped_pages']);
@@ -279,7 +706,20 @@ class AssessmentController extends Controller
             $progress['current_page']++;
         }
 
-
+        // 🆕 Always persist progress to DB
+        ActiveAssessment::updateOrCreate(
+            [
+                'user_id'       => Auth::id(),
+                'assessment_id' => $decryptedId,
+            ],
+            [
+                'progress_id'   => $progress['progress_id'],
+                'page_number'   => $progress['current_page'],
+                'skipped_pages' => json_encode($progress['skipped_pages']),
+                'start_time'    => $progress['start_time'] ?? now(),
+                'session_key'   => $sessionKey,
+            ]
+        );
 
         session()->put($sessionKey, $progress);
 
@@ -287,12 +727,12 @@ class AssessmentController extends Controller
             return redirect()->route('assessment.complete', ['assessment_id' => $assessment_id]);
         }
 
-        // Otherwise → next highest unlocked page
         return redirect()->route('assessment.take', [
             'assessment_id' => $assessment_id,
             'page'          => $progress['current_page']
         ]);
     }
+
 
     public function complete($assessment_id)
     {

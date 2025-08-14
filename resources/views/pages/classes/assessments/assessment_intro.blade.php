@@ -4,6 +4,8 @@
 
 @extends('layouts.assessment')
 @section('content')
+
+
     <div class= "intro_main_container" style="width: 100%;">
         <div class="intro_container">
             <h1 class="text-center">{{ $assessment->name }}</h1>

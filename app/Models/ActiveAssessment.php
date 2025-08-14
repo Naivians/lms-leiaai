@@ -16,5 +16,6 @@ class ActiveAssessment extends Model
         'page_number',
         'start_time',
         'session_key',
+        'skipped_pages',
     ];
 }

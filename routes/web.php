@@ -9,6 +9,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\LessonsController;
 use App\Http\Controllers\AssessmentController;
 
+use App\Http\Controllers\DebugController;
 Route::get('/', [AuthController::class, 'Index'])->name('login');
 Route::post('/login', [AuthController::class, 'Login'])->name('auth.login');
 Route::get('/user/register', [AuthController::class, 'RegisterPage'])->name('auth.Register');
