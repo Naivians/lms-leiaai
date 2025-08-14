@@ -18,7 +18,6 @@ class Assessment extends Model
         'assessment_time',
         'assessment_date',
         'is_published',
-
     ];
 
     public function question()
