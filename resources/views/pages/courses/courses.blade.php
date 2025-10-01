@@ -9,10 +9,6 @@
 @section('content')
     <div class="card mb-3">
         <div class="card-body" id="">
-            <div class="alert alert-warning">
-                <strong>Note:</strong> If you want to <strong>edit</strong>, <strong>delete</strong>, or
-                <strong>add</strong> a new course aside from those listed below, please contact the developer.
-            </div>
             <h5 class="card-title" id="card-title">Add New Course</h5>
             <div class="addCourse">
                 <select name="course_name" id="course_name" class="form-select w-25" onchange="AddCourse()">
@@ -22,6 +18,8 @@
                     <option value="ATPL">ATPL</option>
                     <option value="ME">ME</option>
                     <option value="FIC">FIC</option>
+                    <option value="IR">IR</option>
+                    <option value="CBT">CBT</option>
                 </select>
             </div>
 

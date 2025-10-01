@@ -328,15 +328,6 @@
                         data: 'name'
                     },
                     {
-                        data: 'role_name'
-                    },
-                    {
-                        data: 'email'
-                    },
-                    {
-                        data: 'contact'
-                    },
-                    {
                         data: 'isVerified'
                     },
                     {
@@ -356,7 +347,7 @@
                 ajax: '{{ route('course.index') }}',
                 columns: [{
                         data: 'course_name',
-                        name: 'course_name' // Add name for server-side processing
+                        name: 'course_name'
                     },
                     {
                         data: 'course_description',
@@ -368,13 +359,13 @@
                         orderable: false,
                         searchable: false,
                         render: function(data) {
-                            return data || ''; // Handle empty action
+                            return data || '';
                         }
                     }
                 ],
                 columnDefs: [{
-                    targets: 2, // Action column (0-based index)
-                    className: 'text-center' // Optional: center align
+                    targets: 2,
+                    className: 'text-center'
                 }]
             });
 

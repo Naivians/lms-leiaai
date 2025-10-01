@@ -51,7 +51,7 @@
                          <div class="mb-3">
                              <label for="class_description" class="form-label">Start Date</label>
                              <input  type="date" name="start_date" id="start_date" class="
-                             form-control" required>
+                             form-control">
                          </div>
                  </div>
                  <div class="modal-footer">

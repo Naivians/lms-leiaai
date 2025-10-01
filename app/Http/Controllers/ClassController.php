@@ -127,8 +127,8 @@ class ClassController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'class_name' => 'required|string|max:255',
-            'start_date' => 'required|string|max:255',
-            'class_description' => 'required|string|max:255',
+            'start_date' => 'nullable|string|max:255',
+            'class_description' => 'nullable|string|max:255',
             'course_name' => 'required|string',
             'class_image' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
         ]);
@@ -142,11 +142,11 @@ class ClassController extends Controller
 
         $class = $this->classModel->create([
             'class_name' => $request->class_name,
-            'class_description' => $request->class_description,
+            'class_description' => $request->class_description ?? null,
             'course_name' => $request->course_name,
             'user_id' => null,
             'class_code' => strtoupper(uniqid($request->course_name . '_')),
-            'created_at' => $request->start_date ?? now(),
+            'created_at' => $request->start_date ?? null,
         ]);
 
         $getCgi = $this->userModel->select('id', 'role', 'name', 'email', 'isVerified', 'login_status')->where('role', 2)->get();

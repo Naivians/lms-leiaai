@@ -16,7 +16,8 @@
                     <img src="{{ asset('assets/img/leiaai_logo.png') }}" class="card-img-top" alt="...">
                     <div class="card-body">
                         <h5 class="card-title fw-bold">{{ $class->class_name }} - {{ $class->course_name }}</h5>
-                        <p class="card-text">{{ $class->class_description }}</p>
+                        <p class="card-text text-secondary m-0">{{ $class->class_description }}</p>
+                        <p class="card-text text-secondary"><span class="fw-bold">{{ $class->created_at?->format('F j, Y') ?? "Tentative Date" }}</p>
                     </div>
                     <div class="card-footer">
                         <a href="{{ route('class.stream', ['class_id' => Crypt::encrypt($class->id)]) }}"
